@@ -5,8 +5,8 @@
             <div :style="headingContainerStyle">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="35"
-                    height="35"
+                    width="28"
+                    height="28"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -53,7 +53,7 @@
 import { ref, computed } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import RecycleCard from '../components/RecycleCard.vue'
-import { theme } from '../config/theme'
+import { theme } from '@/config/theme'
 
 interface HistoryItem {
     date: string;
@@ -102,6 +102,7 @@ const headingContainerStyle = {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
+    size: theme.fonts.size.subheading,
     marginBottom: '20px',
 }
 
@@ -110,7 +111,7 @@ const iconStyle = {
 }
 
 const headingStyle = {
-    fontSize: theme.fonts.size.heading,
+    fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
     margin: 0,
 }

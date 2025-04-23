@@ -15,7 +15,20 @@
                 <p :style="amountStyle">
                     Rp{{ item.amount.toLocaleString('id-ID') }}
                 </p>
-                <span style="font-size: 18px; color: #ccc; margin-left: 8px;">›</span>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :style="arrowStyle"
+                >
+                    <path d="M9 18l6-6-6-6"/>
+                </svg>
             </div>
         </div>
     </li>
@@ -23,7 +36,7 @@
 
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue'
-import { theme } from '../config/theme'
+import { theme } from '@/config/theme'
 
 interface HistoryItem {
     date: string
@@ -58,8 +71,8 @@ const columnStyle = {
 }
 
 const dateStyle = {
-    fontSize: '14px',
-    fontWeight: 500,
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.medium,
     margin: 0,
     textAlign: 'left',
     width: '100%',
@@ -69,11 +82,11 @@ const statusBadgeStyle = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '4px 12px',
-    borderRadius: '8px',
-    fontSize: '12px',
-    fontWeight: 500,
-    color: '#fff',
+    padding: '14px 4px',
+    borderRadius: '10px',
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.medium,
+    color: theme.colors.whiteElement,
     textTransform: 'capitalize',
     width: '100px',
     height: '24px',
@@ -83,16 +96,16 @@ const statusBadgeStyle = {
 
 const statusBackgroundStyle = computed(() => {
     const status = props.item.status.toLowerCase()
-    if (status === 'success') return { backgroundColor: '#4caf50' }
-    if (status === 'waiting') return { backgroundColor: '#ff9800' }
-    if (status === 'cancel') return { backgroundColor: '#f44336' }
+    if (status === 'success') return { backgroundColor: theme.colors.primary }
+    if (status === 'waiting') return { backgroundColor: theme.colors.yellow }
+    if (status === 'cancel') return { backgroundColor: theme.colors.red }
     return { backgroundColor: theme.colors.grey }
 })
 
 const amountStyle = {
-    fontSize: '14px',
-    fontWeight: 600,
-    color: '#2e7d32',
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.bold,
+    color: theme.colors.primary,
     margin: 0,
 }
 </script>

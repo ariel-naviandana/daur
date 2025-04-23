@@ -4,6 +4,8 @@ export const theme = {
         whiteBg: '#fafafa',
         whiteElement: '#ffffff',
         darkGrey: '#484848',
+        yellow: '#ff9800',
+        red: '#f44336'
     },
     fonts: {
         family: `'DM Sans', sans-serif`,
@@ -15,8 +17,9 @@ export const theme = {
         },
         size: {
             base: '16px',
-            heading: '28px',
+            medium: '20px',
             subheading: '24px',
+            heading: '28px',
             large: '32px',
         },
     },

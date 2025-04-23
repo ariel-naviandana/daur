@@ -9,7 +9,7 @@
 
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
-import { theme } from '../config/theme'
+import { theme } from '@/config/theme'
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -24,11 +24,6 @@ const contentStyle = {
 const headingStyle = {
     fontSize: theme.fonts.size.heading,
     fontWeight: theme.fonts.weight.bold,
-}
-
-const paragraphStyle = {
-    fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.regular,
 }
 </script>
 

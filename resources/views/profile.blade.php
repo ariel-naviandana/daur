@@ -1,6 +1,6 @@
 @extends('master')
 
-@section('title', 'Profile Page')
+@section('title', 'Profil')
 @section('page', 'profile')
 
 @section('content')

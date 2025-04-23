@@ -67,7 +67,7 @@
                 <li><a href="/recycle" @click="closeSidebar" :style="linkStyle('/recycle')">Recycle</a></li>
                 <li><a href="/artikel" @click="closeSidebar" :style="linkStyle('/artikel')">Artikel</a></li>
                 <li><a href="/chat" @click="closeSidebar" :style="linkStyle('/chat')">Chat</a></li>
-                <li><a href="/profile" @click="closeSidebar" :style="linkStyle('/profile')">Profile</a></li>
+                <li><a href="/profile" @click="closeSidebar" :style="linkStyle('/profile')">Profil</a></li>
             </ul>
         </div>
     </nav>
@@ -75,7 +75,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { theme } from '../config/theme'
+import { theme } from '@/config/theme'
 
 const sidebarOpen = ref(false)
 const toggleSidebar = () => {
