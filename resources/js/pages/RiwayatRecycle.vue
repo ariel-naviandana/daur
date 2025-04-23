@@ -1,0 +1,137 @@
+<template>
+    <div :style="layoutStyle">
+        <Navbar />
+        <div :style="contentStyle" class="p-6">
+            <div :style="headingContainerStyle">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="35"
+                    height="35"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :style="iconStyle"
+                >
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                <h1 :style="headingStyle">Riwayat Recycle</h1>
+            </div>
+            <div class="filters">
+                <select v-model="selectedFilter" :style="selectStyle">
+                    <option value="all">Semua</option>
+                    <option value="success">Success</option>
+                    <option value="waiting">Waiting</option>
+                    <option value="cancel">Cancel</option>
+                </select>
+                <select v-model="selectedSort" :style="selectStyle">
+                    <option value="latest">Terbaru</option>
+                    <option value="oldest">Terlama</option>
+                    <option value="highest">Tertinggi</option>
+                    <option value="lowest">Terendah</option>
+                </select>
+            </div>
+            <ul class="history-list">
+                <RecycleCard
+                    v-for="(item, index) in filteredHistory"
+                    :key="index"
+                    :item="item"
+                />
+            </ul>
+        </div>
+    </div>
+</template>
+
+<script lang="ts" setup>
+import { ref, computed } from 'vue'
+import Navbar from '../components/Navbar.vue'
+import RecycleCard from '../components/RecycleCard.vue'
+import { theme } from '../config/theme'
+
+interface HistoryItem {
+    date: string;
+    status: string;
+    amount: number;
+}
+
+const selectedFilter = ref<string>('all')
+const selectedSort = ref<string>('latest')
+
+const history = ref<HistoryItem[]>([
+    { date: "Selasa, 18 Maret 2025", status: "Waiting", amount: 56000 },
+    { date: "Senin, 17 Maret 2025", status: "Success", amount: 105000 },
+    { date: "Minggu, 16 Maret 2025", status: "Success", amount: 60000 },
+    { date: "Sabtu, 15 Maret 2025", status: "Cancel", amount: 62000 },
+    { date: "Kamis, 14 Maret 2025", status: "Success", amount: 60000 },
+])
+
+const filteredHistory = computed(() => {
+    let filtered = history.value
+    if (selectedFilter.value !== 'all')
+        filtered = filtered.filter(item => item.status.toLowerCase() === selectedFilter.value)
+
+    if (selectedSort.value === 'latest')
+        filtered = filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    else if (selectedSort.value === 'highest')
+        filtered = filtered.sort((a, b) => b.amount - a.amount)
+    else if (selectedSort.value === 'lowest')
+        filtered = filtered.sort((a, b) => a.amount - b.amount)
+    else
+        filtered = filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    return filtered
+})
+
+const layoutStyle = {
+    backgroundColor: theme.colors.whiteBg,
+    minHeight: '100vh',
+    fontFamily: theme.fonts.family,
+}
+
+const contentStyle = {
+    color: theme.colors.darkGrey,
+}
+
+const headingContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '20px',
+}
+
+const iconStyle = {
+    color: theme.colors.darkGrey,
+}
+
+const headingStyle = {
+    fontSize: theme.fonts.size.heading,
+    fontWeight: theme.fonts.weight.bold,
+    margin: 0,
+}
+
+const selectStyle = {
+    padding: '8px 12px',
+    fontSize: theme.fonts.size.base,
+    borderRadius: '6px',
+    border: `1px solid #ccc`,
+    fontFamily: theme.fonts.family,
+}
+</script>
+
+<style scoped>
+.filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.history-list {
+    list-style: none;
+    padding: 0;
+}
+</style>

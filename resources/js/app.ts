@@ -2,6 +2,7 @@ import './bootstrap';
 import { createApp } from 'vue';
 import Home from './pages/Home.vue';
 import Profile from './pages/Profile.vue';
+import RiwayatRecycle from './pages/RiwayatRecycle.vue';
 
 const el = document.getElementById('app');
 
@@ -17,6 +18,9 @@ if (el) {
     case 'profile':
       component = Profile;
       break;
+    case 'riwayat-recycle':
+        component = RiwayatRecycle;
+        break;
     default:
       console.error('Unknown page component:', page);
       break;

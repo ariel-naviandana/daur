@@ -9,3 +9,7 @@ Route::get('/', function () {
 Route::get('/profile', function () {
     return view('profile');
 })->name('profile');
+
+Route::get('/riwayat', function () {
+    return view('riwayat-recycle');
+})->name('riwayat');
