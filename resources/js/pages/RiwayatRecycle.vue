@@ -38,7 +38,30 @@
                     <option value="lowest">Terendah</option>
                 </select>
             </div>
-            <ul class="history-list">
+
+            <div v-if="filteredHistory.length === 0" :style="noResultsStyle">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :style="noResultsIconStyle"
+                >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <p :style="noResultsTextStyle">Tidak ada hasil yang ditemukan</p>
+                <p :style="noResultsDescStyle">
+                    Coba sesuaikan filter Anda
+                </p>
+            </div>
+
+            <ul v-else class="history-list">
                 <RecycleCard
                     v-for="(item, index) in filteredHistory"
                     :key="index"
@@ -118,10 +141,43 @@ const headingStyle = {
 
 const selectStyle = {
     padding: '8px 12px',
+    paddingRight: '36px',
     fontSize: theme.fonts.size.base,
     borderRadius: '6px',
     border: `1px solid #ccc`,
     fontFamily: theme.fonts.family,
+    appearance: 'none',
+    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 8px center',
+    backgroundSize: '16px',
+}
+
+const noResultsStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '48px 0',
+    textAlign: 'center',
+}
+
+const noResultsIconStyle = {
+    color: theme.colors.grey,
+    marginBottom: '16px',
+}
+
+const noResultsTextStyle = {
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.bold,
+    color: theme.colors.darkGrey,
+    margin: '0 0 8px 0',
+}
+
+const noResultsDescStyle = {
+    fontSize: theme.fonts.size.sm,
+    color: theme.colors.grey,
+    margin: 0,
 }
 </script>
 
@@ -134,5 +190,9 @@ const selectStyle = {
 .history-list {
     list-style: none;
     padding: 0;
+}
+
+[style*="flex-direction: column"] {
+    display: flex;
 }
 </style>
