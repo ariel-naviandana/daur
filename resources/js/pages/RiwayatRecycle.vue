@@ -66,9 +66,16 @@
                     v-for="(item, index) in filteredHistory"
                     :key="index"
                     :item="item"
+                    @showDetail="openPopup"
                 />
             </ul>
         </div>
+
+        <PopupDetailSampah
+            :isOpen="showPopup"
+            @close="closePopup"
+            @add="handleAddItems"
+        />
     </div>
 </template>
 
@@ -76,6 +83,7 @@
 import { ref, computed } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import RecycleCard from '../components/RecycleCard.vue'
+import PopupDetailSampah from '../components/PopupDetailSampah.vue'
 import { theme } from '@/config/theme'
 
 interface HistoryItem {
@@ -86,6 +94,8 @@ interface HistoryItem {
 
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
+const showPopup = ref(false)
+const selectedItem = ref<HistoryItem | null>(null)
 
 const history = ref<HistoryItem[]>([
     { date: "Selasa, 18 Maret 2025", status: "Waiting", amount: 56000 },
@@ -110,6 +120,21 @@ const filteredHistory = computed(() => {
         filtered = filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     return filtered
 })
+
+const openPopup = (item: HistoryItem) => {
+    selectedItem.value = item
+    showPopup.value = true
+}
+
+const closePopup = () => {
+    showPopup.value = false
+    selectedItem.value = null
+}
+
+const handleAddItems = (items: { type: string, quantity: number }) => {
+    console.log('Added items:', items)
+    closePopup()
+}
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,

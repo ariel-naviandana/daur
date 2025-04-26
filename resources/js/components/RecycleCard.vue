@@ -26,6 +26,7 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     :style="arrowStyle"
+                    @click="$emit('showDetail', item)"
                 >
                     <path d="M9 18l6-6-6-6"/>
                 </svg>
@@ -45,6 +46,7 @@ interface HistoryItem {
 }
 
 const props = defineProps<{ item: HistoryItem }>()
+defineEmits(['showDetail'])
 
 const cardStyle = {
     backgroundColor: theme.colors.whiteElement,
@@ -111,5 +113,8 @@ const amountStyle = {
 
 const arrowStyle = {
     marginLeft: '8px',
+    cursor: 'pointer',
+    color: theme.colors.darkGrey,
+    transition: 'color 0.2s ease',
 }
 </script>
