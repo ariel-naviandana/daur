@@ -1,8 +1,27 @@
 <template>
     <li :style="cardStyle">
         <div :style="containerStyle">
-            <div :style="columnStyle">
-                <p :style="dateStyle">{{ item.date }}</p>
+            <div :style="profileColumnStyle">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="35"
+                    height="35"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :style="iconStyle"
+                >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="10" r="3"></circle>
+                    <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
+                </svg>
+                <div :style="userInfoStyle">
+                    <p :style="usernameStyle">{{ item.username }}</p>
+                    <p :style="dateStyle">{{ item.date }}</p>
+                </div>
             </div>
 
             <div :style="columnStyle">
@@ -42,6 +61,7 @@ interface HistoryItem {
     date: string
     status: string
     amount: number
+    username: string
 }
 
 const props = defineProps<{ item: HistoryItem }>()
@@ -49,7 +69,10 @@ const props = defineProps<{ item: HistoryItem }>()
 const cardStyle = {
     backgroundColor: theme.colors.whiteElement,
     borderRadius: '12px',
-    padding: '16px',
+    paddingLeft: '16px',
+    paddingRight: '16px',
+    paddingBottom: '8px',
+    paddingTop: '8px',
     marginBottom: '12px',
     boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
     fontFamily: theme.fonts.family,
@@ -65,15 +88,38 @@ const containerStyle = {
     width: '100%',
 }
 
+const profileColumnStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+}
+
+const userInfoStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+}
+
+const usernameStyle = {
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.bold,
+    margin: 0,
+    color: theme.colors.darkGrey,
+}
+
+const iconStyle = {
+    color: theme.colors.grey,
+}
+
 const columnStyle = {
     display: 'flex',
     alignItems: 'center',
 }
 
 const dateStyle = {
-    fontSize: theme.fonts.size.base,
+    fontSize: '14px',
     fontWeight: theme.fonts.weight.medium,
     margin: 0,
+    color: theme.colors.grey,
     textAlign: 'left',
     width: '100%',
 }

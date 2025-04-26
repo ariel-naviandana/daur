@@ -3,6 +3,7 @@ import { createApp } from 'vue';
 import Home from './pages/Home.vue';
 import Profile from './pages/Profile.vue';
 import RiwayatRecycle from './pages/RiwayatRecycle.vue';
+import RiwayatRecycleAdmin from './pages/RiwayatRecycleAdmin.vue';
 
 const el = document.getElementById('app');
 
@@ -19,8 +20,11 @@ if (el) {
       component = Profile;
       break;
     case 'riwayat-recycle':
-        component = RiwayatRecycle;
-        break;
+      component = RiwayatRecycle;
+      break;
+    case 'riwayat-recycle-admin':
+      component = RiwayatRecycleAdmin;
+      break;
     default:
       console.error('Unknown page component:', page);
       break;

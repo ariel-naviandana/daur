@@ -13,3 +13,7 @@ Route::get('/profile', function () {
 Route::get('/riwayat', function () {
     return view('riwayat-recycle');
 })->name('riwayat');
+
+Route::get('/riwayat-admin', function () {
+    return view('riwayat-recycle-admin');
+})->name('riwayat-admin');
