@@ -71,10 +71,11 @@
             </ul>
         </div>
 
-        <PopupDetailSampah
+        <PopupDetailRecycle
+            v-if="selectedItem"
             :isOpen="showPopup"
+            :item="selectedItem"
             @close="closePopup"
-            @add="handleAddItems"
         />
     </div>
 </template>
@@ -83,13 +84,22 @@
 import { ref, computed } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import RecycleCard from '../components/RecycleCard.vue'
-import PopupDetailSampah from '../components/PopupDetailSampah.vue'
+import PopupDetailRecycle from '../components/PopupDetailRecycle.vue'
 import { theme } from '@/config/theme'
 
 interface HistoryItem {
-    date: string;
-    status: string;
-    amount: number;
+    date: string
+    status: string
+    amount: number
+    items: {
+        type: string
+        name: string
+        weight: number
+        price: number
+    }[]
+    address: string
+    pickupTime: string
+    note: string
 }
 
 const selectedFilter = ref<string>('all')
@@ -98,11 +108,67 @@ const showPopup = ref(false)
 const selectedItem = ref<HistoryItem | null>(null)
 
 const history = ref<HistoryItem[]>([
-    { date: "Selasa, 18 Maret 2025", status: "Waiting", amount: 56000 },
-    { date: "Senin, 17 Maret 2025", status: "Success", amount: 105000 },
-    { date: "Minggu, 16 Maret 2025", status: "Success", amount: 60000 },
-    { date: "Sabtu, 15 Maret 2025", status: "Cancel", amount: 62000 },
-    { date: "Kamis, 14 Maret 2025", status: "Success", amount: 60000 },
+    {
+        date: "Selasa, 18 Maret 2025",
+        status: "Waiting",
+        amount: 45000,
+        items: [
+            { type: 'Koran', name: 'Koran', weight: 5, price: 15000 },
+            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 7, price: 15000 },
+            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 9, price: 15000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '12.00 WIB',
+        note: 'Di fakultas ilmu komputer, saya tunggu di dekat pintu masuk parkiran gedung f'
+    },
+    {
+        date: "Senin, 17 Maret 2025",
+        status: "Success",
+        amount: 105000,
+        items: [
+            { type: 'Koran', name: 'Koran', weight: 10, price: 30000 },
+            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
+            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '14.00 WIB',
+        note: 'Di fakultas ilmu komputer'
+    },
+    {
+        date: "Minggu, 16 Maret 2025",
+        status: "Success",
+        amount: 60000,
+        items: [
+            { type: 'Koran', name: 'Koran', weight: 8, price: 24000 },
+            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 12, price: 36000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '10.00 WIB',
+        note: 'Di gedung F'
+    },
+    {
+        date: "Sabtu, 15 Maret 2025",
+        status: "Cancel",
+        amount: 62000,
+        items: [
+            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 12, price: 36000 },
+            { type: 'Koran', name: 'Koran', weight: 8, price: 26000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '15.00 WIB',
+        note: 'Di depan gedung'
+    },
+    {
+        date: "Kamis, 14 Maret 2025",
+        status: "Success",
+        amount: 60000,
+        items: [
+            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 20, price: 60000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '09.00 WIB',
+        note: 'Di fakultas ilmu komputer'
+    }
 ])
 
 const filteredHistory = computed(() => {
@@ -129,11 +195,6 @@ const openPopup = (item: HistoryItem) => {
 const closePopup = () => {
     showPopup.value = false
     selectedItem.value = null
-}
-
-const handleAddItems = (items: { type: string, quantity: number }) => {
-    console.log('Added items:', items)
-    closePopup()
 }
 
 const layoutStyle = {
