@@ -2,7 +2,29 @@
     <div v-if="isOpen" :style="overlayStyle">
         <div :style="modalStyle">
             <div :style="headerStyle">
-                <div :style="dateStyle">{{ item.date }}</div>
+                <div :style="userInfoContainer">
+                    <div :style="userIconStyle">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="35"
+                            height="35"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="10" r="3"></circle>
+                            <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
+                        </svg>
+                    </div>
+                    <div :style="userTextContainer">
+                        <div :style="dateStyle">{{ item.date }}</div>
+                        <div :style="usernameStyle">{{ item.username }}</div>
+                    </div>
+                </div>
                 <button @click="closeModal" :style="closeButtonStyle">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -67,6 +89,11 @@
                 <h3 :style="sectionTitleStyle">Catatan</h3>
                 <p :style="addressStyle">{{ item.note }}</p>
             </div>
+
+            <div :style="actionButtonsContainer">
+                <button @click="handleReject" :style="rejectButtonStyle">Tolak</button>
+                <button @click="handleAccept" :style="acceptButtonStyle">Terima</button>
+            </div>
         </div>
     </div>
 </template>
@@ -84,6 +111,7 @@ interface WasteItem {
 
 interface RecycleDetail {
     date: string
+    username: string
     status: string
     items: WasteItem[]
     address: string
@@ -96,10 +124,18 @@ const props = defineProps<{
     item: RecycleDetail
 }>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'accept', 'reject'])
 
 const closeModal = () => {
     emit('close')
+}
+
+const handleAccept = () => {
+    emit('accept')
+}
+
+const handleReject = () => {
+    emit('reject')
 }
 
 const getTotalWeight = computed(() => {
@@ -145,9 +181,31 @@ const headerStyle = {
     marginBottom: '16px',
 }
 
+const userInfoContainer = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+}
+
+const userIconStyle = {
+    color: theme.colors.darkGrey,
+}
+
+const userTextContainer = {
+    display: 'flex',
+    flexDirection: 'column',
+}
+
 const dateStyle = {
     color: theme.colors.darkGrey,
+    fontSize: theme.fonts.size.sm,
+    marginBottom: '4px',
+}
+
+const usernameStyle = {
     fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.bold,
+    color: theme.colors.black,
 }
 
 const closeButtonStyle = {
@@ -239,7 +297,7 @@ const totalWeightStyle = {
 const weightValueStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
-    color: theme.colors.primary
+    color: theme.colors.primary,
 }
 
 const pickupStyle = {
@@ -281,5 +339,31 @@ const addressStyle = {
     color: theme.colors.darkGrey,
     margin: 0,
     lineHeight: '1.5',
+}
+
+const actionButtonsContainer = {
+    display: 'flex',
+    gap: '16px',
+    justifyContent: 'center',
+}
+
+const buttonBaseStyle = {
+    padding: '6px 28px',
+    borderRadius: '30px',
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.medium,
+    color: theme.colors.whiteElement,
+    cursor: 'pointer',
+    border: 'none',
+}
+
+const rejectButtonStyle = {
+    ...buttonBaseStyle,
+    backgroundColor: theme.colors.red,
+}
+
+const acceptButtonStyle = {
+    ...buttonBaseStyle,
+    backgroundColor: theme.colors.primary,
 }
 </script>

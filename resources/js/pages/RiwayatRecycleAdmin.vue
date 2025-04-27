@@ -94,9 +94,19 @@
                     v-for="(item, index) in filteredAndSearchedHistory"
                     :key="index"
                     :item="item"
+                    @showDetail="openPopup"
                 />
             </ul>
         </div>
+
+        <PopupDetailRecycleAdmin
+            v-if="selectedItem"
+            :isOpen="showPopup"
+            :item="selectedItem"
+            @close="closePopup"
+            @accept="closePopup"
+            @reject="closePopup"
+        />
     </div>
 </template>
 
@@ -104,25 +114,98 @@
 import { ref, computed } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import RecycleCardAdmin from '../components/RecycleCardAdmin.vue'
+import PopupDetailRecycleAdmin from '../components/PopupDetailRecycleAdmin.vue'
 import { theme } from '@/config/theme'
 
 interface HistoryItem {
-    date: string;
-    status: string;
-    amount: number;
-    username: string;
+    date: string
+    status: string
+    amount: number
+    username: string
+    items: {
+        type: string
+        name: string
+        weight: number
+        price: number
+    }[]
+    address: string
+    pickupTime: string
+    note: string
 }
 
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
 const searchQuery = ref('')
+const showPopup = ref(false)
+const selectedItem = ref<HistoryItem | null>(null)
 
 const history = ref<HistoryItem[]>([
-    { date: "Selasa, 18 Maret 2025", status: "Waiting", amount: 56000, username: "Ariel Naviandana" },
-    { date: "Senin, 17 Maret 2025", status: "Success", amount: 105000, username: "Rudy Tabootie" },
-    { date: "Minggu, 16 Maret 2025", status: "Success", amount: 60000, username: "Jamal" },
-    { date: "Sabtu, 15 Maret 2025", status: "Cancel", amount: 62000, username: "Rudy Tabootie" },
-    { date: "Kamis, 14 Maret 2025", status: "Success", amount: 60000, username: "Ariel Naviandana" },
+    {
+        date: "Selasa, 18 Maret 2025",
+        status: "Waiting",
+        amount: 45000,
+        username: "Ariel Naviandana",
+        items: [
+            { type: 'Koran', name: 'Koran', weight: 5, price: 15000 },
+            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 7, price: 15000 },
+            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 9, price: 15000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '12.00 WIB',
+        note: 'Di fakultas ilmu komputer, saya tunggu di dekat pintu masuk parkiran gedung f'
+    },
+    {
+        date: "Senin, 17 Maret 2025",
+        status: "Success",
+        amount: 105000,
+        username: "Rudy Tabootie",
+        items: [
+            { type: 'Koran', name: 'Koran', weight: 10, price: 30000 },
+            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
+            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '14.00 WIB',
+        note: 'Di fakultas ilmu komputer'
+    },
+    {
+        date: "Minggu, 16 Maret 2025",
+        status: "Success",
+        amount: 60000,
+        username: "Jamal",
+        items: [
+            { type: 'Koran', name: 'Koran', weight: 8, price: 24000 },
+            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 12, price: 36000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '10.00 WIB',
+        note: 'Di gedung F'
+    },
+    {
+        date: "Sabtu, 15 Maret 2025",
+        status: "Cancel",
+        amount: 62000,
+        username: "Rudy Tabootie",
+        items: [
+            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 12, price: 36000 },
+            { type: 'Koran', name: 'Koran', weight: 8, price: 26000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '15.00 WIB',
+        note: 'Di depan gedung'
+    },
+    {
+        date: "Kamis, 14 Maret 2025",
+        status: "Success",
+        amount: 60000,
+        username: "Ariel Naviandana",
+        items: [
+            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 20, price: 60000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '09.00 WIB',
+        note: 'Di fakultas ilmu komputer'
+    }
 ])
 
 const filteredAndSearchedHistory = computed(() => {
@@ -153,6 +236,16 @@ const filteredAndSearchedHistory = computed(() => {
 
     return filtered
 })
+
+const openPopup = (item: HistoryItem) => {
+    selectedItem.value = item
+    showPopup.value = true
+}
+
+const closePopup = () => {
+    showPopup.value = false
+    selectedItem.value = null
+}
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
