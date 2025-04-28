@@ -3,6 +3,7 @@ import { createApp } from 'vue';
 import Home from './pages/Home.vue';
 import Profile from './pages/Profile.vue';
 import RiwayatRecycle from './pages/RiwayatRecycle.vue';
+import Chat from './pages/Chat.vue';
 
 const el = document.getElementById('app');
 
@@ -21,6 +22,9 @@ if (el) {
     case 'riwayat-recycle':
         component = RiwayatRecycle;
         break;
+      case 'chat':
+          component = Chat;
+          break;
     default:
       console.error('Unknown page component:', page);
       break;
