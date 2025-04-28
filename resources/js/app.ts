@@ -2,6 +2,7 @@ import './bootstrap';
 import { createApp } from 'vue';
 import Home from './pages/Home.vue';
 import Profile from './pages/Profile.vue';
+import Recycle from './pages/Recycle.vue';
 import RiwayatRecycle from './pages/RiwayatRecycle.vue';
 import RiwayatRecycleAdmin from './pages/RiwayatRecycleAdmin.vue';
 
@@ -18,6 +19,9 @@ if (el) {
       break;
     case 'profile':
       component = Profile;
+      break;
+  case 'recycle':
+      component = Recycle;
       break;
     case 'riwayat-recycle':
       component = RiwayatRecycle;

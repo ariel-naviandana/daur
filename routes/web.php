@@ -10,6 +10,10 @@ Route::get('/profile', function () {
     return view('profile');
 })->name('profile');
 
+Route::get('/recycle', function () {
+    return view('recycle');
+})->name('recycle');
+
 Route::get('/riwayat', function () {
     return view('riwayat-recycle');
 })->name('riwayat');
