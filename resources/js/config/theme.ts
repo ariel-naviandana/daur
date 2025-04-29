@@ -5,7 +5,8 @@ export const theme = {
         whiteElement: '#ffffff',
         darkGrey: '#484848',
         yellow: '#ff9800',
-        red: '#f44336'
+        red: '#f44336',
+        blue: '#43a4f1',
     },
     fonts: {
         family: `'DM Sans', sans-serif`,

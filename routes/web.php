@@ -22,6 +22,6 @@ Route::get('/riwayat', function () {
     return view('riwayat-recycle');
 })->name('riwayat');
 
-Route::get('/riwayat-admin', function () {
-    return view('riwayat-recycle-admin');
-})->name('riwayat-admin');
+Route::get('/manajemen-recycle', function () {
+    return view('manajemen-recycle');
+})->name('manajemen-recycle');

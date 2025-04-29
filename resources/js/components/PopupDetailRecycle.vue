@@ -2,7 +2,30 @@
     <div v-if="isOpen" :style="overlayStyle">
         <div :style="modalStyle">
             <div :style="headerStyle">
-                <div :style="dateStyle">{{ item.date }}</div>
+                <div v-if="isAdmin" :style="userInfoContainer">
+                    <div :style="userIconStyle">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="35"
+                            height="35"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="10" r="3"></circle>
+                            <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
+                        </svg>
+                    </div>
+                    <div :style="userTextContainer">
+                        <div :style="dateStyle">{{ item.date }}</div>
+                        <div :style="usernameStyle">{{ item.username }}</div>
+                    </div>
+                </div>
+                <div v-else :style="dateStyle">{{ item.date }}</div>
                 <button @click="closeModal" :style="closeButtonStyle">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -13,7 +36,7 @@
 
             <div :style="titleContainer">
                 <h2 :style="titleStyle">Daftar Barang</h2>
-                <span :style="statusBadgeStyle">{{ item.status }}</span>
+                <span :style="[statusBadgeStyle, getStatusColor(item.status)]">{{ item.status }}</span>
             </div>
 
             <div :style="itemListStyle">
@@ -48,7 +71,7 @@
             </div>
 
             <div :style="pickupStyle">
-                <span :style="pickupBadgeStyle">Pick-up</span>
+                <span :style="pickupBadgeStyle">{{ item.mode }}</span>
             </div>
 
             <div :style="pickupDetailsContainer">
@@ -56,7 +79,6 @@
                     <h3 :style="sectionTitleStyle">Alamat Penjemputan</h3>
                     <p :style="addressStyle">{{ item.address }}</p>
                 </div>
-
                 <div :style="pickupDetailSection">
                     <h3 :style="sectionTitleStyle">Waktu Penjemputan</h3>
                     <p :style="addressStyle">{{ item.pickupTime }}</p>
@@ -66,6 +88,15 @@
             <div :style="addressContainerStyle">
                 <h3 :style="sectionTitleStyle">Catatan</h3>
                 <p :style="addressStyle">{{ item.note }}</p>
+            </div>
+
+            <div v-if="isAdmin && item.status === 'Waiting'" :style="actionButtonsContainer">
+                <button @click="handleReject" :style="rejectButtonStyle">Tolak</button>
+                <button @click="handleAccept" :style="acceptButtonStyle">Terima</button>
+            </div>
+
+            <div v-if="isAdmin && item.status === 'Process'" :style="actionButtonsContainer">
+                <button @click="handleDone" :style="acceptButtonStyle">Selesai</button>
             </div>
         </div>
     </div>
@@ -84,22 +115,39 @@ interface WasteItem {
 
 interface RecycleDetail {
     date: string
+    username?: string
     status: string
     items: WasteItem[]
     address: string
     pickupTime: string
     note: string
+    mode: string
 }
 
 const props = defineProps<{
     isOpen: boolean
     item: RecycleDetail
+    isAdmin?: boolean
 }>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'accept', 'reject', 'done'])
+
+const isAdmin = computed(() => props.isAdmin ?? false)
 
 const closeModal = () => {
     emit('close')
+}
+
+const handleAccept = () => {
+    emit('accept')
+}
+
+const handleDone = () => {
+    emit('done')
+}
+
+const handleReject = () => {
+    emit('reject')
 }
 
 const getTotalWeight = computed(() => {
@@ -114,6 +162,18 @@ const getIconStyle = (type: string) => ({
     color: type === 'Koran' ? '#FFA726' :
         type === 'Gelas Kaca' ? theme.colors.primary : '#2196F3',
 })
+
+const getStatusColor = (status: string) => {
+    if (status === 'Success') {
+        return { backgroundColor: theme.colors.primary }
+    } else if (status === 'Cancel') {
+        return { backgroundColor: theme.colors.red }
+    } else if (status === 'Process') {
+        return { backgroundColor: theme.colors.blue }
+    } else {
+        return { backgroundColor: theme.colors.yellow }
+    }
+}
 
 const overlayStyle = {
     position: 'fixed',
@@ -145,9 +205,30 @@ const headerStyle = {
     marginBottom: '16px',
 }
 
+const userInfoContainer = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+}
+
+const userIconStyle = {
+    color: theme.colors.darkGrey,
+}
+
+const userTextContainer = {
+    display: 'flex',
+    flexDirection: 'column',
+}
+
 const dateStyle = {
     color: theme.colors.darkGrey,
     fontSize: theme.fonts.size.base,
+}
+
+const usernameStyle = {
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.bold,
+    color: theme.colors.black,
 }
 
 const closeButtonStyle = {
@@ -173,7 +254,6 @@ const titleStyle = {
 
 const statusBadgeStyle = {
     padding: '3px 12px',
-    backgroundColor: theme.colors.yellow,
     color: theme.colors.whiteElement,
     borderRadius: '6px',
     fontSize: theme.fonts.size.base,
@@ -239,7 +319,7 @@ const totalWeightStyle = {
 const weightValueStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
-    color: theme.colors.primary
+    color: theme.colors.primary,
 }
 
 const pickupStyle = {
@@ -282,4 +362,36 @@ const addressStyle = {
     margin: 0,
     lineHeight: '1.5',
 }
+
+const actionButtonsContainer = {
+    display: 'flex',
+    gap: '16px',
+    justifyContent: 'center',
+}
+
+const buttonBaseStyle = {
+    padding: '6px 28px',
+    borderRadius: '30px',
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.medium,
+    color: theme.colors.whiteElement,
+    cursor: 'pointer',
+    border: 'none',
+}
+
+const rejectButtonStyle = {
+    ...buttonBaseStyle,
+    backgroundColor: theme.colors.red,
+}
+
+const acceptButtonStyle = {
+    ...buttonBaseStyle,
+    backgroundColor: theme.colors.primary,
+}
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+    display: none;
+}
+</style>

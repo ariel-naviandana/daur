@@ -5,7 +5,7 @@ import Profile from './pages/Profile.vue';
 import Chat from './pages/Chat.vue';
 import Recycle from './pages/Recycle.vue';
 import RiwayatRecycle from './pages/RiwayatRecycle.vue';
-import RiwayatRecycleAdmin from "./pages/RiwayatRecycleAdmin.vue";
+import ManajemenRecycle from "./pages/ManajemenRecycle.vue";
 
 const el = document.getElementById('app');
 
@@ -30,8 +30,8 @@ if (el) {
     case 'riwayat-recycle':
         component = RiwayatRecycle;
         break;
-    case 'riwayat-recycle-admin':
-        component = RiwayatRecycleAdmin;
+    case 'manajemen-recycle':
+        component = ManajemenRecycle;
         break;
     default:
       console.error('Unknown page component:', page);

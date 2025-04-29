@@ -1,7 +1,29 @@
 <template>
     <li :style="cardStyle">
         <div :style="containerStyle">
-            <div :style="columnStyle">
+            <div v-if="isAdmin" :style="profileColumnStyle">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="35"
+                    height="35"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    :style="iconStyle"
+                >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="10" r="3"></circle>
+                    <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
+                </svg>
+                <div :style="userInfoStyle">
+                    <p :style="usernameStyle">{{ item.username }}</p>
+                    <p :style="dateStyle">{{ item.date }}</p>
+                </div>
+            </div>
+            <div v-else :style="columnStyle">
                 <p :style="dateStyle">{{ item.date }}</p>
             </div>
 
@@ -43,10 +65,13 @@ interface HistoryItem {
     date: string
     status: string
     amount: number
+    username?: string
 }
 
-const props = defineProps<{ item: HistoryItem }>()
+const props = defineProps<{ item: HistoryItem; isAdmin?: boolean }>()
 defineEmits(['showDetail'])
+
+const isAdmin = computed(() => props.isAdmin ?? false)
 
 const cardStyle = {
     backgroundColor: theme.colors.whiteElement,
@@ -67,6 +92,28 @@ const containerStyle = {
     width: '100%',
 }
 
+const profileColumnStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+}
+
+const userInfoStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+}
+
+const usernameStyle = {
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.bold,
+    margin: 0,
+    color: theme.colors.darkGrey,
+}
+
+const iconStyle = {
+    color: theme.colors.grey,
+}
+
 const columnStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -78,6 +125,7 @@ const dateStyle = {
     margin: 0,
     textAlign: 'left',
     width: '100%',
+    color: theme.colors.grey,
 }
 
 const statusBadgeStyle = {
@@ -100,6 +148,7 @@ const statusBackgroundStyle = computed(() => {
     const status = props.item.status.toLowerCase()
     if (status === 'success') return { backgroundColor: theme.colors.primary }
     if (status === 'waiting') return { backgroundColor: theme.colors.yellow }
+    if (status === 'process') return { backgroundColor: theme.colors.blue }
     if (status === 'cancel') return { backgroundColor: theme.colors.red }
     return { backgroundColor: theme.colors.grey }
 })

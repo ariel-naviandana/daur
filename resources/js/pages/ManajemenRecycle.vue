@@ -23,13 +23,13 @@
                 </svg>
                 <h1 :style="headingStyle">Manajemen Recycle</h1>
             </div>
-
             <div class="filters">
                 <div :style="leftFilterStyle">
                     <select v-model="selectedFilter" :style="selectStyle">
                         <option value="all">Semua</option>
                         <option value="success">Success</option>
                         <option value="waiting">Waiting</option>
+                        <option value="process">Process</option>
                         <option value="cancel">Cancel</option>
                     </select>
                     <select v-model="selectedSort" :style="selectStyle">
@@ -41,7 +41,6 @@
                         <option value="alphabet-desc">Username (Z-A)</option>
                     </select>
                 </div>
-
                 <div :style="searchWrapperStyle">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +65,6 @@
                     />
                 </div>
             </div>
-
             <div v-if="filteredAndSearchedHistory.length === 0" :style="noResultsStyle">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -88,24 +86,25 @@
                     Coba sesuaikan filter atau kata kunci pencarian Anda
                 </p>
             </div>
-
             <ul v-else class="history-list">
-                <RecycleCardAdmin
+                <RecycleCard
                     v-for="(item, index) in filteredAndSearchedHistory"
                     :key="index"
                     :item="item"
                     @showDetail="openPopup"
+                    :is-admin="true"
                 />
             </ul>
         </div>
-
-        <PopupDetailRecycleAdmin
+        <PopupDetailRecycle
             v-if="selectedItem"
             :isOpen="showPopup"
             :item="selectedItem"
             @close="closePopup"
-            @accept="closePopup"
-            @reject="closePopup"
+            @accept="updateStatus('Process')"
+            @reject="updateStatus('Cancel')"
+            @done="updateStatus('Success')"
+            :is-admin="true"
         />
     </div>
 </template>
@@ -113,15 +112,16 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import Navbar from '../components/Navbar.vue'
-import RecycleCardAdmin from '../components/RecycleCardAdmin.vue'
-import PopupDetailRecycleAdmin from '../components/PopupDetailRecycleAdmin.vue'
 import { theme } from '@/config/theme'
+import RecycleCard from "../components/RecycleCard.vue";
+import PopupDetailRecycle from "../components/PopupDetailRecycle.vue";
 
 interface HistoryItem {
     date: string
     status: string
     amount: number
     username: string
+    mode: string
     items: {
         type: string
         name: string
@@ -145,6 +145,7 @@ const history = ref<HistoryItem[]>([
         status: "Waiting",
         amount: 45000,
         username: "Ariel Naviandana",
+        mode: "Pick-up",
         items: [
             { type: 'Koran', name: 'Koran', weight: 5, price: 15000 },
             { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 7, price: 15000 },
@@ -159,6 +160,7 @@ const history = ref<HistoryItem[]>([
         status: "Success",
         amount: 105000,
         username: "Rudy Tabootie",
+        mode: "Pick-up",
         items: [
             { type: 'Koran', name: 'Koran', weight: 10, price: 30000 },
             { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
@@ -170,22 +172,24 @@ const history = ref<HistoryItem[]>([
     },
     {
         date: "Minggu, 16 Maret 2025",
-        status: "Success",
-        amount: 60000,
+        status: "Process",
+        amount: 85000,
         username: "Jamal",
+        mode: "Pick-up",
         items: [
-            { type: 'Koran', name: 'Koran', weight: 8, price: 24000 },
-            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 12, price: 36000 }
+            { type: 'Karton', name: 'Karton Bekas', weight: 10, price: 50000 },
+            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 7, price: 35000 }
         ],
-        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
-        pickupTime: '10.00 WIB',
-        note: 'Di gedung F'
+        address: 'Jl. Raya Bandung, Kec. Sukajadi, Kota Bandung, Jawa Barat 40162',
+        pickupTime: '11.00 WIB',
+        note: 'Dekat pintu gerbang utama'
     },
     {
         date: "Sabtu, 15 Maret 2025",
         status: "Cancel",
         amount: 62000,
         username: "Rudy Tabootie",
+        mode: "Drop-off",
         items: [
             { type: 'Botol Plastik', name: 'Botol Plastik', weight: 12, price: 36000 },
             { type: 'Koran', name: 'Koran', weight: 8, price: 26000 }
@@ -195,32 +199,71 @@ const history = ref<HistoryItem[]>([
         note: 'Di depan gedung'
     },
     {
-        date: "Kamis, 14 Maret 2025",
-        status: "Success",
-        amount: 60000,
-        username: "Ariel Naviandana",
+        date: "Jumat, 14 Maret 2025",
+        status: "Process",
+        amount: 45000,
+        username: "Siti Rahmawati",
+        mode: "Pick-up",
         items: [
-            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 20, price: 60000 }
+            { type: 'Koran', name: 'Koran', weight: 5, price: 15000 },
+            { type: 'Karton', name: 'Karton Bekas', weight: 5, price: 30000 }
+        ],
+        address: 'Jl. Ahmad Yani, Kec. Gubeng, Surabaya, Jawa Timur 60281',
+        pickupTime: '16.00 WIB',
+        note: 'Dekat toko swalayan'
+    },
+    {
+        date: "Kamis, 13 Maret 2025",
+        status: "Success",
+        amount: 75000,
+        username: "Ariel Naviandana",
+        mode: "Drop-off",
+        items: [
+            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
+            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
         ],
         address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
-        pickupTime: '09.00 WIB',
+        pickupTime: '10.00 WIB',
         note: 'Di fakultas ilmu komputer'
+    },
+    {
+        date: "Rabu, 12 Maret 2025",
+        status: "Waiting",
+        amount: 30000,
+        username: "Budi Santoso",
+        mode: "Drop-off",
+        items: [
+            { type: 'Koran', name: 'Koran', weight: 10, price: 30000 }
+        ],
+        address: 'Jl. Diponegoro, Kec. Tegalsari, Surabaya, Jawa Timur 60264',
+        pickupTime: '09.00 WIB',
+        note: 'Di halaman depan rumah'
+    },
+    {
+        date: "Selasa, 11 Maret 2025",
+        status: "Cancel",
+        amount: 40000,
+        username: "Siti Rahmawati",
+        mode: "Pick-up",
+        items: [
+            { type: 'Karton', name: 'Karton Bekas', weight: 8, price: 40000 }
+        ],
+        address: 'Jl. Ahmad Yani, Kec. Gubeng, Surabaya, Jawa Timur 60281',
+        pickupTime: '14.00 WIB',
+        note: 'Dekat toko swalayan'
     }
 ])
 
 const filteredAndSearchedHistory = computed(() => {
     let filtered = history.value
-
     if (searchQuery.value)
         filtered = filtered.filter(item =>
             item.username.toLowerCase().includes(searchQuery.value.toLowerCase())
         )
-
     if (selectedFilter.value !== 'all')
         filtered = filtered.filter(item =>
             item.status.toLowerCase() === selectedFilter.value
         )
-
     if (selectedSort.value === 'latest')
         filtered = filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     else if (selectedSort.value === 'highest')
@@ -233,7 +276,6 @@ const filteredAndSearchedHistory = computed(() => {
         filtered = filtered.sort((a, b) => b.username.localeCompare(a.username))
     else
         filtered = filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
     return filtered
 })
 
@@ -245,6 +287,16 @@ const openPopup = (item: HistoryItem) => {
 const closePopup = () => {
     showPopup.value = false
     selectedItem.value = null
+}
+
+const updateStatus = (newStatus: string) => {
+    if (selectedItem.value) {
+        selectedItem.value.status = newStatus
+        history.value = history.value.map(item =>
+            item === selectedItem.value ? { ...item, status: newStatus } : item
+        )
+        closePopup()
+    }
 }
 
 const layoutStyle = {
@@ -295,6 +347,7 @@ const selectStyle = {
 }
 
 const searchWrapperStyle = {
+    marginLeft: '5px',
     display: 'flex',
     alignItems: 'center',
     backgroundColor: theme.colors.whiteElement,
@@ -370,5 +423,9 @@ input:focus {
 
 [style*="flex-direction: column"] {
     display: flex;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 </style>

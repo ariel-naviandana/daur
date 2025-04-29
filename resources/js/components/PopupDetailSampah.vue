@@ -264,3 +264,9 @@ const addButtonStyle = {
     transition: 'background-color 0.2s ease',
 }
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+    display: none;
+}
+</style>

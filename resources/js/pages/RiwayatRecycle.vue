@@ -29,6 +29,7 @@
                     <option value="all">Semua</option>
                     <option value="success">Success</option>
                     <option value="waiting">Waiting</option>
+                    <option value="process">Process</option>
                     <option value="cancel">Cancel</option>
                 </select>
                 <select v-model="selectedSort" :style="selectStyle">
@@ -67,6 +68,7 @@
                     :key="index"
                     :item="item"
                     @showDetail="openPopup"
+                    :is-admin="true"
                 />
             </ul>
         </div>
@@ -91,6 +93,7 @@ interface HistoryItem {
     date: string
     status: string
     amount: number
+    mode: string
     items: {
         type: string
         name: string
@@ -112,6 +115,7 @@ const history = ref<HistoryItem[]>([
         date: "Selasa, 18 Maret 2025",
         status: "Waiting",
         amount: 45000,
+        mode: "Pick-up",
         items: [
             { type: 'Koran', name: 'Koran', weight: 5, price: 15000 },
             { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 7, price: 15000 },
@@ -123,21 +127,22 @@ const history = ref<HistoryItem[]>([
     },
     {
         date: "Senin, 17 Maret 2025",
-        status: "Success",
-        amount: 105000,
+        status: "Process",
+        amount: 80000,
+        mode: "Pick-up",
         items: [
-            { type: 'Koran', name: 'Koran', weight: 10, price: 30000 },
-            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
-            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
+            { type: 'Karton', name: 'Karton Bekas', weight: 8, price: 40000 },
+            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 8, price: 40000 }
         ],
         address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
-        pickupTime: '14.00 WIB',
-        note: 'Di fakultas ilmu komputer'
+        pickupTime: '13.00 WIB',
+        note: 'Di samping kantin'
     },
     {
         date: "Minggu, 16 Maret 2025",
         status: "Success",
         amount: 60000,
+        mode: "Pick-up",
         items: [
             { type: 'Koran', name: 'Koran', weight: 8, price: 24000 },
             { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 12, price: 36000 }
@@ -150,6 +155,7 @@ const history = ref<HistoryItem[]>([
         date: "Sabtu, 15 Maret 2025",
         status: "Cancel",
         amount: 62000,
+        mode: "Drop-off",
         items: [
             { type: 'Botol Plastik', name: 'Botol Plastik', weight: 12, price: 36000 },
             { type: 'Koran', name: 'Koran', weight: 8, price: 26000 }
@@ -162,12 +168,38 @@ const history = ref<HistoryItem[]>([
         date: "Kamis, 14 Maret 2025",
         status: "Success",
         amount: 60000,
+        mode: "Drop-off",
         items: [
             { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 20, price: 60000 }
         ],
         address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
         pickupTime: '09.00 WIB',
         note: 'Di fakultas ilmu komputer'
+    },
+    {
+        date: "Rabu, 13 Maret 2025",
+        status: "Process",
+        amount: 90000,
+        mode: "Pick-up",
+        items: [
+            { type: 'Koran', name: 'Koran', weight: 10, price: 30000 },
+            { type: 'Karton', name: 'Karton Bekas', weight: 10, price: 60000 }
+        ],
+        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
+        pickupTime: '11.00 WIB',
+        note: 'Dekat area parkir'
+    },
+    {
+        date: "Selasa, 12 Maret 2025",
+        status: "Waiting",
+        amount: 30000,
+        mode: "Drop-off",
+        items: [
+            { type: 'Koran', name: 'Koran', weight: 10, price: 30000 }
+        ],
+        address: 'Jl. Diponegoro, Kec. Tegalsari, Surabaya, Jawa Timur 60264',
+        pickupTime: '09.00 WIB',
+        note: 'Di halaman depan rumah'
     }
 ])
 
@@ -280,5 +312,9 @@ const noResultsDescStyle = {
 
 [style*="flex-direction: column"] {
     display: flex;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 </style>
