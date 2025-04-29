@@ -55,7 +55,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="send-button" @click="router.push('/recycle')">Kirim Sampah</button>
+                <a href="/recycle" class="send-button">Kirim Sampah</a>
             </section>
 
             <!-- Jenis Sampah Section -->
@@ -212,6 +212,9 @@ const headingStyle = {
     border-radius: 30px;
     font-size: 24px;
     font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 .send-button:hover {
     background: #45a049;
