@@ -111,7 +111,7 @@ const usernameStyle = {
 }
 
 const iconStyle = {
-    color: theme.colors.grey,
+    color: theme.colors.darkGrey,
 }
 
 const columnStyle = {
@@ -125,7 +125,7 @@ const dateStyle = {
     margin: 0,
     textAlign: 'left',
     width: '100%',
-    color: theme.colors.grey,
+    color: (isAdmin.value ?? false) ? theme.colors.darkGrey : theme.colors.grey,
 }
 
 const statusBadgeStyle = {

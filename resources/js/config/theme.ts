@@ -4,6 +4,8 @@ export const theme = {
         whiteBg: '#fafafa',
         whiteElement: '#ffffff',
         darkGrey: '#484848',
+        lightGrey: '#E5E7EB',
+        grey: '#9F9F9F',
         yellow: '#ff9800',
         red: '#f44336',
         blue: '#43a4f1',

@@ -175,14 +175,14 @@ const cardStyle = {
     alignItems: 'center',
     padding: '16px',
     borderRadius: '12px',
-    border: `2px solid #E5E7EB`,
+    border: `2px solid ${theme.colors.lightGrey}`,
     cursor: 'pointer',
     transition: 'all 0.2s ease',
 }
 
 const activeCardStyle = {
     borderColor: theme.colors.primary,
-    backgroundColor: '#F0FDF4',
+    backgroundColor: theme.colors.whiteElement,
 }
 
 const imageContainerStyle = {

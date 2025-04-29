@@ -42,12 +42,11 @@
             <div :style="itemListStyle">
                 <div v-for="(waste, index) in item.items" :key="index" :style="itemStyle">
                     <div :style="itemLeftStyle">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" :style="getIconStyle(waste.type)">
-                            <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" stroke-width="2"/>
-                            <path d="M7 12H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M7 8H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M7 16H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
+                        <img
+                            :src="getWasteImage(waste.type)"
+                            alt="Item Image"
+                            :style="itemImageStyle"
+                        />
                         <div :style="itemTextStyle">
                             <div :style="itemNameStyle">{{ waste.name }}</div>
                             <div :style="itemWeightStyle">{{ waste.weight }} kg</div>
@@ -158,10 +157,22 @@ const getTotalPrice = computed(() => {
     return props.item.items.reduce((total, item) => total + item.price, 0)
 })
 
-const getIconStyle = (type: string) => ({
-    color: type === 'Koran' ? '#FFA726' :
-        type === 'Gelas Kaca' ? theme.colors.primary : '#2196F3',
-})
+const getWasteImage = (type: string): string => {
+    if (type === "kertas") {
+        return "/images/ic_jenis_kertas.svg"
+    } else if (type === "kardus") {
+        return "/images/ic_jenis_kardus.svg"
+    } else if (type === "plastik") {
+        return "/images/ic_jenis_botol_plastik.svg"
+    } else if (type === "kaca") {
+        return "/images/ic_jenis_botol_kaca.svg"
+    } else if (type === "aluminium") {
+        return "/images/ic_jenis_aluminium.svg"
+    } else if (type === "besi") {
+        return "/images/ic_jenis_besi.svg"
+    }
+    return "/public/images/ic_jenis_kertas.svg"
+}
 
 const getStatusColor = (status: string) => {
     if (status === 'Success') {
@@ -278,6 +289,12 @@ const itemLeftStyle = {
     gap: '12px',
 }
 
+const itemImageStyle = {
+    width: '24px',
+    height: '24px',
+    borderRadius: '4px',
+}
+
 const itemTextStyle = {
     display: 'flex',
     flexDirection: 'column',
@@ -303,8 +320,8 @@ const totalContainerStyle = {
     display: 'flex',
     justifyContent: 'space-between',
     padding: '16px 0',
-    borderTop: '1px solid #E5E7EB',
-    borderBottom: '1px solid #E5E7EB',
+    borderTop: `1px solid ${theme.colors.lightGrey}`,
+    borderBottom: `1px solid ${theme.colors.lightGrey}`,
     marginBottom: '24px',
 }
 

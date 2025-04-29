@@ -147,9 +147,9 @@ const history = ref<HistoryItem[]>([
         username: "Ariel Naviandana",
         mode: "Pick-up",
         items: [
-            { type: 'Koran', name: 'Koran', weight: 5, price: 15000 },
-            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 7, price: 15000 },
-            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 9, price: 15000 }
+            { type: 'kertas', name: 'Koran', weight: 5, price: 15000 },
+            { type: 'kaca', name: 'Gelas Kaca', weight: 7, price: 15000 },
+            { type: 'plastik', name: 'Botol Plastik', weight: 9, price: 15000 }
         ],
         address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
         pickupTime: '12.00 WIB',
@@ -162,9 +162,9 @@ const history = ref<HistoryItem[]>([
         username: "Rudy Tabootie",
         mode: "Pick-up",
         items: [
-            { type: 'Koran', name: 'Koran', weight: 10, price: 30000 },
-            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
-            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
+            { type: 'kertas', name: 'Koran', weight: 10, price: 30000 },
+            { type: 'kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
+            { type: 'plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
         ],
         address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
         pickupTime: '14.00 WIB',
@@ -177,8 +177,8 @@ const history = ref<HistoryItem[]>([
         username: "Jamal",
         mode: "Pick-up",
         items: [
-            { type: 'Karton', name: 'Karton Bekas', weight: 10, price: 50000 },
-            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 7, price: 35000 }
+            { type: 'kardus', name: 'Karton Bekas', weight: 10, price: 50000 },
+            { type: 'plastik', name: 'Botol Plastik', weight: 7, price: 35000 }
         ],
         address: 'Jl. Raya Bandung, Kec. Sukajadi, Kota Bandung, Jawa Barat 40162',
         pickupTime: '11.00 WIB',
@@ -191,8 +191,8 @@ const history = ref<HistoryItem[]>([
         username: "Rudy Tabootie",
         mode: "Drop-off",
         items: [
-            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 12, price: 36000 },
-            { type: 'Koran', name: 'Koran', weight: 8, price: 26000 }
+            { type: 'plastik', name: 'Botol Plastik', weight: 12, price: 36000 },
+            { type: 'kertas', name: 'Koran', weight: 8, price: 26000 }
         ],
         address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
         pickupTime: '15.00 WIB',
@@ -205,8 +205,8 @@ const history = ref<HistoryItem[]>([
         username: "Siti Rahmawati",
         mode: "Pick-up",
         items: [
-            { type: 'Koran', name: 'Koran', weight: 5, price: 15000 },
-            { type: 'Karton', name: 'Karton Bekas', weight: 5, price: 30000 }
+            { type: 'kertas', name: 'Koran', weight: 5, price: 15000 },
+            { type: 'kardus', name: 'Karton Bekas', weight: 5, price: 30000 }
         ],
         address: 'Jl. Ahmad Yani, Kec. Gubeng, Surabaya, Jawa Timur 60281',
         pickupTime: '16.00 WIB',
@@ -219,8 +219,8 @@ const history = ref<HistoryItem[]>([
         username: "Ariel Naviandana",
         mode: "Drop-off",
         items: [
-            { type: 'Gelas Kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
-            { type: 'Botol Plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
+            { type: 'kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
+            { type: 'plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
         ],
         address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
         pickupTime: '10.00 WIB',
@@ -233,7 +233,7 @@ const history = ref<HistoryItem[]>([
         username: "Budi Santoso",
         mode: "Drop-off",
         items: [
-            { type: 'Koran', name: 'Koran', weight: 10, price: 30000 }
+            { type: 'kertas', name: 'Koran', weight: 10, price: 30000 }
         ],
         address: 'Jl. Diponegoro, Kec. Tegalsari, Surabaya, Jawa Timur 60264',
         pickupTime: '09.00 WIB',
@@ -246,7 +246,7 @@ const history = ref<HistoryItem[]>([
         username: "Siti Rahmawati",
         mode: "Pick-up",
         items: [
-            { type: 'Karton', name: 'Karton Bekas', weight: 8, price: 40000 }
+            { type: 'kardus', name: 'Karton Bekas', weight: 8, price: 40000 }
         ],
         address: 'Jl. Ahmad Yani, Kec. Gubeng, Surabaya, Jawa Timur 60281',
         pickupTime: '14.00 WIB',
@@ -337,7 +337,7 @@ const selectStyle = {
     paddingRight: '36px',
     fontSize: theme.fonts.size.base,
     borderRadius: '6px',
-    border: `1px solid #ccc`,
+    border: `1px solid ${theme.colors.lightGrey}`,
     fontFamily: theme.fonts.family,
     appearance: 'none',
     backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
@@ -351,14 +351,14 @@ const searchWrapperStyle = {
     display: 'flex',
     alignItems: 'center',
     backgroundColor: theme.colors.whiteElement,
-    border: '1px solid #E5E7EB',
+    border: `1px solid ${theme.colors.lightGrey}`,
     borderRadius: '100px',
     padding: '8px 16px',
     width: '300px',
 }
 
 const searchIconStyle = {
-    color: '#9CA3AF',
+    color: theme.colors.lightGrey,
     marginRight: '12px',
 }
 
@@ -411,10 +411,6 @@ const noResultsDescStyle = {
 .history-list {
     list-style: none;
     padding: 0;
-}
-
-input::placeholder {
-    color: #9CA3AF;
 }
 
 input:focus {
