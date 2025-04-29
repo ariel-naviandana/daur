@@ -10,6 +10,10 @@ Route::get('/profile', function () {
     return view('profile');
 })->name('profile');
 
+Route::get('/chat', function () {
+    return view('chat');
+})->name('chat');
+
 Route::get('/recycle', function () {
     return view('recycle');
 })->name('recycle');
