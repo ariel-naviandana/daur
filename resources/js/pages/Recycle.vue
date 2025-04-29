@@ -63,7 +63,7 @@
                 <div :style="totalContainerStyle">
                     <div :style="totalRowStyle">
                         <span>Berat</span>
-                        <span>{{ totalWeight }} kg</span>
+                        <span :style="totalPriceStyle">{{ totalWeight }} kg</span>
                     </div>
                     <div :style="totalRowStyle">
                         <span>Total</span>
@@ -92,15 +92,29 @@
                     <div :style="formRowStyle">
                         <div :style="{ ...formGroupStyle, flex: 1.5 }">
                             <label :style="labelStyle">
-                                {{ isPickup ? 'Alamat Penjemputan' : 'Alamat Drop-off' }}
+                                {{ isPickup ? 'Alamat Penjemputan' : 'Pilih Alamat Drop-off' }}
                             </label>
+                          <div>
                             <input
+                                v-if="isPickup"
                                 v-model="address"
                                 type="text"
                                 :style="inputStyle"
-                                :placeholder="isPickup ? 'Masukkan alamat lengkap penjemputan' : 'Masukkan alamat lengkap drop-off'"
+                                placeholder="Masukkan alamat lengkap penjemputan"
                                 required
                             />
+                            <select
+                                v-else
+                                v-model="selectedDropOff"
+                                :style="selectStyle"
+                                required
+                            >
+                              <option disabled value="">Pilih alamat drop-off</option>
+                              <option v-for="(location, index) in dropOffLocations" :key="index" :value="location">
+                                {{ location }}
+                              </option>
+                            </select>
+                          </div>
                         </div>
 
                         <div :style="{ ...formGroupStyle, flex: 1 }">
@@ -167,6 +181,13 @@ const cartItems = ref([
   { name: 'Botol Plastik', weight: 9, price: 20000, icon: getIconPath('plastik') }
 ])
 
+const dropOffLocations = [
+  "Jalan Sudirman No. 10, Jakarta",
+  "Jalan Thamrin No. 15, Jakarta",
+  "Jalan Gatot Subroto No. 20, Jakarta"
+]
+
+const selectedDropOff = ref("")
 const isPickup = ref(true)
 const address = ref('')
 const pickupTime = ref('')
@@ -475,6 +496,21 @@ const minusButtonStyle = {
 const plusButtonStyle = {
     ...weightButtonStyle,
     backgroundColor: theme.colors.primary
+}
+
+const selectStyle = {
+  width: '100%',
+  padding: '8px 12px',
+  paddingRight: '36px',
+  fontSize: theme.fonts.size.base,
+  borderRadius: '6px',
+  border: `1px solid ${theme.colors.grey}`,
+  fontFamily: theme.fonts.family,
+  appearance: 'none',
+  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'right 8px center',
+  backgroundSize: '16px',
 }
 </script>
 
