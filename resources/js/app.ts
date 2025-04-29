@@ -2,9 +2,7 @@ import './bootstrap';
 import { createApp } from 'vue';
 import Home from './pages/Home.vue';
 import Profile from './pages/Profile.vue';
-import Recycle from './pages/Recycle.vue';
 import RiwayatRecycle from './pages/RiwayatRecycle.vue';
-import RiwayatRecycleAdmin from './pages/RiwayatRecycleAdmin.vue';
 
 const el = document.getElementById('app');
 
@@ -20,15 +18,9 @@ if (el) {
     case 'profile':
       component = Profile;
       break;
-  case 'recycle':
-      component = Recycle;
-      break;
     case 'riwayat-recycle':
-      component = RiwayatRecycle;
-      break;
-    case 'riwayat-recycle-admin':
-      component = RiwayatRecycleAdmin;
-      break;
+        component = RiwayatRecycle;
+        break;
     default:
       console.error('Unknown page component:', page);
       break;
