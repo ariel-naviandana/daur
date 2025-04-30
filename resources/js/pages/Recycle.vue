@@ -2,26 +2,7 @@
     <div :style="layoutStyle">
         <Navbar />
         <div :style="mainContentStyle">
-            <div :style="categoryListContainerStyle">
-                <button :style="navigationButtonStyle">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-
-                <div :style="categoryListStyle">
-                  <button v-for="category in categories" :key="category.id" :style="categoryItemStyle">
-                    <img :src="category.icon" :alt="category.name" :style="categoryIconStyle" />
-                    <span :style="categoryLabelStyle">{{ category.name }}</span>
-                  </button>
-                </div>
-
-                <button :style="navigationButtonStyle">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-            </div>
+            <CategoryList />
 
             <div :style="cartContainerStyle">
                 <h2 :style="sectionTitleStyle">
@@ -148,6 +129,7 @@
 import { ref, computed } from 'vue'
 import { theme } from '@/config/theme'
 import Navbar from '../components/Navbar.vue'
+import CategoryList from "../components/CategoryList.vue";
 
 const getIconPath = (type: string): string => {
   if (type === "kertas") {
@@ -165,15 +147,6 @@ const getIconPath = (type: string): string => {
   }
   return "/images/ic_jenis_kertas.svg";
 }
-
-const categories = [
-  { id: 1, name: 'Kertas', icon: getIconPath('kertas')   },
-  { id: 2, name: 'Plastik', icon: getIconPath('plastik') },
-  { id: 3, name: 'Kaca', icon: getIconPath('kaca') },
-  { id: 4, name: 'Besi', icon: getIconPath('besi') },
-  { id: 5, name: 'Aluminium', icon: getIconPath('aluminium') },
-  { id: 6, name: 'Kardus', icon: getIconPath('kardus') }
-]
 
 const cartItems = ref([
   { name: 'Koran', weight: 5, price: 15000, icon: getIconPath('kertas') },
@@ -424,68 +397,6 @@ const submitButtonStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.medium,
     cursor: 'pointer'
-}
-
-const categoryListContainerStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: '16px',
-    padding: '16px 0'
-}
-
-const navigationButtonStyle = {
-    width: '40px',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: 'none',
-    borderRadius: '50%',
-    backgroundColor: 'white',
-    color: theme.colors.darkGrey,
-    cursor: 'pointer',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-    flexShrink: 0
-}
-
-const categoryListStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    gap: '16px',
-    overflowX: 'auto',
-    padding: '8px 4px',
-    margin: '0 -4px'
-}
-
-const categoryItemStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    margin: '0 10px',
-    gap: '8px',
-    padding: '16px',
-    border: 'none',
-    background: 'white',
-    cursor: 'pointer',
-    borderRadius: '16px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-    minWidth: '100px'
-}
-
-const categoryIconStyle = {
-    width: '40px',
-    height: '40px',
-    borderRadius: '12px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-}
-
-const categoryLabelStyle = {
-    fontSize: '0.875rem',
-    color: theme.colors.darkGrey,
-    fontWeight: theme.fonts.weight.medium
 }
 
 const minusButtonStyle = {
