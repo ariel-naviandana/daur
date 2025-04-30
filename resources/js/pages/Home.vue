@@ -231,8 +231,8 @@ const trashTypesStyle = {
 }
 
 const smallCardStyle = {
-    width: '120px',
-    height: '120px',
+    width: '100px',
+    height: '100px',
     padding: '16px',
     borderRadius: '24px',
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
@@ -246,7 +246,7 @@ const smallCardStyle = {
 }
 
 const smallCardImgStyle = {
-    height: '50px',
+    height: '40px',
     marginTop: '14px',
     marginBottom: '6px',
 }
