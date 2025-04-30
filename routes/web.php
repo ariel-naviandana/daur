@@ -13,3 +13,16 @@ Route::get('/profile', function () {
 Route::get('/riwayat', function () {
     return view('riwayat-recycle');
 })->name('riwayat');
+
+Route::get('/artikel', function () {
+    return view('artikel');
+})->name('artikel');
+
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+
+Route::get('/register', function () {
+    return view('register');
+})->name('register');
+
