@@ -33,13 +33,12 @@
     }
   
    const imageStyle = {
-    width: '240px',
-    height: '160px',
+    width: '300px',
+    height: '180px',
     objectFit: 'cover',
     borderRadius: '8px'
     }
 
-  
   const contentStyle = {
     flex: 1
   }
