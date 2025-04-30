@@ -117,7 +117,7 @@ const titleCenterStyle = {
 
 const titleHeadingStyle = {
     marginBottom: '20px',
-    fontSize: theme.fonts.size.large,
+    fontSize: theme.fonts.size.heading,
     fontWeight: 'bold',
     textAlign: 'center'
 }
@@ -159,15 +159,14 @@ const missionParagraphStyle = {
 const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
-    gap: '60px',
+    gap: '50px',
     flexWrap: 'wrap'
 }
 
 const cardStyle = {
     position: 'relative',
-    width: '200px',
-    height: '200px',
-    padding: '20px',
+    width: '180px',
+    height: '180px',
     borderRadius: '30px',
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
     background: '#fff',
@@ -185,8 +184,8 @@ const cardBodyStyle = {
 }
 
 const cardImgStyle = {
-    height: '100px',
-    marginTop: '16px',
+    height: '90px',
+    marginTop: '30px',
     marginBottom: '10px',
 }
 

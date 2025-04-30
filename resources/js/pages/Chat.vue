@@ -1,7 +1,10 @@
 <template>
     <Navbar />
-    <div class="chat-page-wrapper">
-        <div class="chat-page">
+    <div :style="chatPageWrapper">
+      <div :style="chatHeader">
+        <h2 >Chat</h2>
+      </div>
+        <div :style="chatPage">
             <ChatList :banks="banks" :selectedBank="selectedBank" @select-bank="selectedBank = $event" />
             <ChatWindow :selectedBank="selectedBank" />
         </div>
@@ -13,6 +16,7 @@ import { ref } from 'vue';
 import ChatList from './ChatList.vue';
 import ChatWindow from './ChatWindow.vue';
 import Navbar from "@/components/Navbar.vue";
+import { theme } from '@/config/theme'
 
 const banks = ref([
     { id: 1, name: 'Bank Sampah Lowokwaru', avatar: 'https://i.pravatar.cc/40?img=1' },
@@ -25,6 +29,24 @@ const banks = ref([
 ]);
 
 const selectedBank = ref(null);
+
+const chatHeader = {
+  fontSize: theme.fonts.size.large,
+  fontWeight: theme.fonts.weight.bold,
+}
+
+const chatPageWrapper = {
+  width: '100%',
+  maxWidth: '1440px',
+  margin: '0 auto',
+  height: '90vh',
+}
+
+const chatPage = {
+  display: 'flex',
+  height: '896px',
+}
+
 </script>
 
 <style scoped>

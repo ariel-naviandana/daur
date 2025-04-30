@@ -5,6 +5,8 @@ import Profile from './pages/Profile.vue';
 import RiwayatRecycle from './pages/RiwayatRecycle.vue';
 import Chat from './pages/Chat.vue';
 import UserManagement from './pages/UserManagement.vue';
+import Recycle from "./pages/Recycle.vue";
+
 
 const el = document.getElementById('app');
 
@@ -29,6 +31,9 @@ if (el) {
     case 'admin-users':
         component = UserManagement;
         break;
+      case 'recycle':
+          component = Recycle;
+          break;
     default:
       console.error('Unknown page component:', page);
       break;

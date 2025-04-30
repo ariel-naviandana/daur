@@ -24,3 +24,6 @@ Route::get('/admin/users', function () {
     return view('admin-users');
 })->name('admin.users');
 
+Route::get('/recycle', function() {
+    return view('recycle');
+})->name('recycle');
