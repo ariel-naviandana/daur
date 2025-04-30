@@ -1,7 +1,11 @@
 <template>
     <Navbar />
-    <div class="chat-page-wrapper">
-        <div class="chat-page">
+    <div :style="chatPageWrapper">
+      <div :style="chatHeader">
+        <img :style="chatHeaderImg" src="/public/images/ic_chat.svg" alt="Chat">
+        <h2 >Chat</h2>
+      </div>
+        <div :style="chatPage">
             <ChatList :banks="banks" :selectedBank="selectedBank" @select-bank="selectedBank = $event" />
             <ChatWindow :selectedBank="selectedBank" />
         </div>
@@ -9,10 +13,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import ChatList from './ChatList.vue'
-import ChatWindow from './ChatWindow.vue'
-import Navbar from "@/components/Navbar.vue"
+import { ref } from 'vue';
+import ChatList from './ChatList.vue';
+import ChatWindow from './ChatWindow.vue';
+import Navbar from "@/components/Navbar.vue";
+import { theme } from '@/config/theme'
 
 const banks = ref([
     { id: 1, name: 'Bank Sampah Lowokwaru', avatar: 'https://i.pravatar.cc/40?img=1' },
@@ -22,9 +27,36 @@ const banks = ref([
     { id: 5, name: 'Bank Sampah Idjen', avatar: 'https://i.pravatar.cc/40?img=5' },
     { id: 6, name: 'Bank Sampah Sumbersari', avatar: 'https://i.pravatar.cc/40?img=6' },
     { id: 7, name: 'Bank Sampah Dieng', avatar: 'https://i.pravatar.cc/40?img=7' },
-])
+]);
 
-const selectedBank = ref(null)
+const selectedBank = ref(null);
+
+const chatHeader = {
+  fontSize: theme.fonts.size.subheading,
+  fontWeight: theme.fonts.weight.bold,
+  fontFamily: theme.fonts.family,
+  paddingLeft: '24px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+}
+
+const chatHeaderImg = {
+  height: '32px',
+}
+
+const chatPageWrapper = {
+  width: '100%',
+  maxWidth: '1200px',
+  margin: '0 auto',
+  height: '90vh',
+}
+
+const chatPage = {
+  display: 'flex',
+  height: '896px',
+}
+
 </script>
 
 <style scoped>
@@ -39,6 +71,5 @@ const selectedBank = ref(null)
 /* Halaman Chat */
 .chat-page {
     display: flex;
-    height: 896px;
 }
 </style>

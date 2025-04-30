@@ -1,5 +1,4 @@
 <template>
-    <div :style="layoutStyle">
     <Navbar />
     <div :style="mainContentStyle">
         <div class="home-page" :style="homePageStyle">
@@ -53,48 +52,22 @@
                         </div>
                     </div>
                 </div>
-                <button href="/recycle" class="send-button" :style="sendButtonStyle">Kirim Sampah</button>
+                <button class="send-button" :style="sendButtonStyle" @click="goToRecycle">Kirim Sampah</button>
             </section>
-
-            <section class="title_center" :style="titleCenterStyle">
-                <h2 :style="titleHeadingStyle">Jenis Sampah</h2>
-<!--                <div :style="trashTypesStyle">-->
-<!--                    <div class="small_card" :style="smallCardStyle">-->
-<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_kertas.svg" alt="Kertas" />-->
-<!--                        <div :style="labelStyle">Kertas</div>-->
-<!--                    </div>-->
-<!--                    <div class="small_card" :style="smallCardStyle">-->
-<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_botol_plastik.svg" alt="Plastik" />-->
-<!--                        <div :style="labelStyle">Plastik</div>-->
-<!--                    </div>-->
-<!--                    <div class="small_card" :style="smallCardStyle">-->
-<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_botol_kaca.svg" alt="Kaca" />-->
-<!--                        <div :style="labelStyle">Kaca</div>-->
-<!--                    </div>-->
-<!--                    <div class="small_card" :style="smallCardStyle">-->
-<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_besi.svg" alt="Besi" />-->
-<!--                        <div :style="labelStyle">Besi</div>-->
-<!--                    </div>-->
-<!--                    <div class="small_card" :style="smallCardStyle">-->
-<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_aluminium.svg" alt="Aluminium" />-->
-<!--                        <div :style="labelStyle">Aluminium</div>-->
-<!--                    </div>-->
-<!--                    <div class="small_card" :style="smallCardStyle">-->
-<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_kardus.svg" alt="Kardus" />-->
-<!--                        <div :style="labelStyle">Kardus</div>-->
-<!--                    </div>-->
-<!--                </div>-->
-            </section>
-            <CategoryList />
+            <h2 :style="titleHeadingStyle">Jenis Sampah</h2>
+            <CategoryList @category-clicked="openPopup"/>
         </div>
-    </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
 import { theme } from '@/config/theme'
-import CategoryList from "../components/CategoryList.vue";
+import CategoryList from "@/components/CategoryList.vue";
+
+const goToRecycle = () => {
+    window.location.href = '/recycle';
+};
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -109,19 +82,13 @@ const mainContentStyle = {
     overflowX: 'hidden',
 }
 
-const homePageStyle = {
-    maxWidth: '1440px',
-    margin: '0 auto'
-}
-
 const titleCenterStyle = {
     textAlign: 'center',
     padding: '40px'
 }
 
 const titleHeadingStyle = {
-    marginBottom: '20px',
-    fontSize: theme.fonts.size.large,
+    fontSize: theme.fonts.size.heading,
     fontWeight: 'bold',
     textAlign: 'center'
 }
@@ -133,12 +100,14 @@ const heroImgStyle = {
 
 const missionStyle = {
     display: 'flex',
-    padding: '50px',
+    paddingTop: '50px',
+    paddingLeft: '50px',
+    paddingRight: '50px',
     alignItems: 'center'
 }
 
 const missionImgStyle = {
-    width: '140vh',
+    width: '150vh',
     borderRadius: '10px'
 }
 
@@ -148,31 +117,31 @@ const missionTextStyle = {
 
 const missionHeadingStyle = {
     marginLeft: '40px',
-    fontSize: theme.fonts.size.large,
+    fontSize: theme.fonts.size.heading,
     color: '#222222',
     fontWeight: 'bold'
 }
 
 const missionParagraphStyle = {
-    marginTop: '40px',
+    marginTop: '10px',
     marginLeft: '40px',
     fontSize: theme.fonts.size.medium,
     color: '#222222'
 }
 
 const containerStyle = {
+    marginTop: '20px',
     display: 'flex',
     justifyContent: 'center',
-    gap: '60px',
+    gap: '50px',
     flexWrap: 'wrap'
 }
 
 const cardStyle = {
     position: 'relative',
-    width: '200px',
-    height: '200px',
-    padding: '20px',
-    borderRadius: '30px',
+    width: '160px',
+    height: '160px',
+    borderRadius: '20px',
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
     background: '#fff',
     textAlign: 'center',
@@ -189,22 +158,22 @@ const cardBodyStyle = {
 }
 
 const cardImgStyle = {
-    height: '100px',
-    marginTop: '16px',
-    marginBottom: '10px',
+    height: '80px',
+    marginTop: '26px',
+    marginBottom: '6px',
 }
 
 const badgeStyle = {
     position: 'absolute',
     top: '0',
     left: '0',
-    width: '50px',
-    height: '50px',
+    width: '40px',
+    height: '40px',
     background: '#4CAF50',
     color: 'white',
-    borderTopLeftRadius: '30px',
-    borderBottomRightRadius: '30px',
-    fontSize: theme.fonts.size.subheading,
+    borderTopLeftRadius: '20px',
+    borderBottomRightRadius: '20px',
+    fontSize: theme.fonts.size.medium,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
@@ -217,15 +186,17 @@ const labelStyle = {
 }
 
 const sendButtonStyle = {
-    padding: '12px 80px',
+    padding: '10px 60px',
     borderRadius: '30px',
     border: 'none',
-    marginTop: '34px',
+    marginTop: '24px',
     backgroundColor: theme.colors.primary,
-    fontSize: theme.fonts.size.medium,
+    fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.semibold,
     color: theme.colors.whiteElement,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    position: 'relative',
+    zIndex: 10,
 }
 
 const trashTypesStyle = {
@@ -236,8 +207,8 @@ const trashTypesStyle = {
 }
 
 const smallCardStyle = {
-    width: '120px',
-    height: '120px',
+    width: '100px',
+    height: '100px',
     padding: '16px',
     borderRadius: '24px',
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
@@ -251,7 +222,7 @@ const smallCardStyle = {
 }
 
 const smallCardImgStyle = {
-    height: '50px',
+    height: '40px',
     marginTop: '14px',
     marginBottom: '6px',
 }

@@ -48,7 +48,7 @@ function selectBank(bank) {
 <style scoped>
 /* List Chat */
 .chat-list {
-    width: 550px;
+    width: 350px;
     border: 1px solid #ccc;
     padding: 1rem;
 }
@@ -64,31 +64,31 @@ function selectBank(bank) {
     position: absolute;
     top: 50%;
     left: 20px;
-    transform: translateY(-10%);
-    width: 24px;
-    height: 24px;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
     pointer-events: none;
 }
 .search-input {
-    width: 500px;
-    height: 60px;
-    padding-left: 54px;
+    width: 300px;
+    height: 40px;
+    padding-left: 40px;
     border: 1px solid #888888;
     border-radius: 30px;
-    font-size: 24px;
+    font-size: 16px;
     outline: none;
 }
 
 /* List Bank */
 .bank-list {
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
 .bank-item {
     display: flex;
     align-items: center;
-    padding: 1rem;
+    padding: 0.5rem;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 16px;
     font-weight: 500;
 }
 .bank-item.active {
@@ -96,8 +96,8 @@ function selectBank(bank) {
     border-radius: 10px;
 }
 .avatar {
-    width: 60px;
-    height: 60px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     margin-right: 1rem;
 }
