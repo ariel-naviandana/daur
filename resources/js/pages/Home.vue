@@ -1,4 +1,5 @@
 <template>
+    <div :style="layoutStyle">
     <Navbar />
     <div :style="mainContentStyle">
         <div class="home-page" :style="homePageStyle">
@@ -58,12 +59,21 @@
             <CategoryList @category-clicked="openPopup"/>
         </div>
     </div>
+        <PopupDetailSampah
+            :isOpen="isPopupOpen"
+            :selectedCategory="selectedCategory"
+            @close="closePopup"
+            @add="handleAddItem"
+        />
+    </div>
 </template>
 
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
 import { theme } from '@/config/theme'
 import CategoryList from "@/components/CategoryList.vue";
+import {ref} from "vue";
+import PopupDetailSampah from "@/components/PopupDetailSampah.vue";
 
 const goToRecycle = () => {
     window.location.href = '/recycle';
@@ -232,6 +242,23 @@ const labelJenisStyle = {
     fontWeight: 500,
     color: '#222222',
     marginTop: '16px'
+}
+
+const isPopupOpen = ref(false)
+const selectedCategory = ref<{ id: number; name: string; icon: string } | null>(null)
+
+const openPopup = (category: { id: number; name: string; icon: string }) => {
+    selectedCategory.value = category
+    isPopupOpen.value = true
+}
+
+const closePopup = () => {
+    isPopupOpen.value = false
+}
+
+const handleAddItem = (item: { type: string; quantity: number; pricePerKg: number }) => {
+    window.location.href = '/recycle'
+    closePopup()
 }
 </script>
 

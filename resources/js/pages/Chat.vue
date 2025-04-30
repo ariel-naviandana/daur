@@ -1,10 +1,10 @@
 <template>
     <Navbar />
     <div :style="chatPageWrapper">
-      <div :style="chatHeader">
-        <img :style="chatHeaderImg" src="/public/images/ic_chat.svg" alt="Chat">
-        <h2 >Chat</h2>
-      </div>
+        <div :style="chatHeader">
+            <img :style="chatHeaderImg" src="/public/images/ic_chat.svg" alt="Chat">
+            <h2 >Chat</h2>
+        </div>
         <div :style="chatPage">
             <ChatList :banks="banks" :selectedBank="selectedBank" @select-bank="selectedBank = $event" />
             <ChatWindow :selectedBank="selectedBank" />
@@ -32,29 +32,30 @@ const banks = ref([
 const selectedBank = ref(null);
 
 const chatHeader = {
-  fontSize: theme.fonts.size.subheading,
-  fontWeight: theme.fonts.weight.bold,
-  fontFamily: theme.fonts.family,
-  paddingLeft: '24px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '10px',
+    fontSize: theme.fonts.size.subheading,
+    fontWeight: theme.fonts.weight.bold,
+    fontFamily: theme.fonts.family,
+    paddingLeft: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
 }
 
 const chatHeaderImg = {
-  height: '32px',
+    height: '32px',
 }
 
 const chatPageWrapper = {
-  width: '100%',
-  maxWidth: '1200px',
-  margin: '0 auto',
-  height: '90vh',
+    width: '100%',
+    maxWidth: '1200px',
+    margin: '0 auto',
+    height: '80vh',
 }
 
 const chatPage = {
-  display: 'flex',
-  height: '896px',
+    display: 'flex',
+    minHeight: '80vh',
+    // height: '896px',
 }
 
 </script>
