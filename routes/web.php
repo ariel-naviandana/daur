@@ -25,3 +25,9 @@ Route::get('/riwayat', function () {
 Route::get('/manajemen-recycle', function () {
     return view('manajemen-recycle');
 })->name('manajemen-recycle');
+
+Route::get('/users', [UserController::class, 'getAll']);
+
+Route::get('/admin/users', function () {
+    return view('admin-users');
+})->name('admin.users');

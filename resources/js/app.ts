@@ -1,45 +1,49 @@
-import './bootstrap';
-import { createApp } from 'vue';
-import Home from './pages/Home.vue';
-import Profile from './pages/Profile.vue';
-import Chat from './pages/Chat.vue';
-import Recycle from './pages/Recycle.vue';
-import RiwayatRecycle from './pages/RiwayatRecycle.vue';
-import ManajemenRecycle from "./pages/ManajemenRecycle.vue";
+import './bootstrap'
+import { createApp } from 'vue'
+import Home from './pages/Home.vue'
+import Profile from './pages/Profile.vue'
+import Chat from './pages/Chat.vue'
+import Recycle from './pages/Recycle.vue'
+import RiwayatRecycle from './pages/RiwayatRecycle.vue'
+import ManajemenRecycle from "./pages/ManajemenRecycle.vue"
+import UserManagement from "./pages/UserManagement.vue"
 
-const el = document.getElementById('app');
+const el = document.getElementById('app')
 
 if (el) {
-  const page = el.dataset.page;
+  const page = el.dataset.page
 
-  let component;
+  let component
 
   switch (page) {
     case 'home':
-      component = Home;
-      break;
+      component = Home
+      break
     case 'profile':
-      component = Profile;
-      break;
+      component = Profile
+      break
     case 'chat':
-      component = Chat;
-      break;
+      component = Chat
+      break
     case 'recycle':
-      component = Recycle;
-      break;
+      component = Recycle
+      break
     case 'riwayat-recycle':
-        component = RiwayatRecycle;
-        break;
+        component = RiwayatRecycle
+        break
     case 'manajemen-recycle':
-        component = ManajemenRecycle;
-        break;
+        component = ManajemenRecycle
+        break
+    case 'admin-users':
+        component = UserManagement
+        break
     default:
-      console.error('Unknown page component:', page);
-      break;
+      console.error('Unknown page component:', page)
+      break
   }
 
   if (component) {
-    createApp(component).mount('#app');
-    console.log(`Mounted ${page} component`);
+    createApp(component).mount('#app')
+    console.log(`Mounted ${page} component`)
   }
 }

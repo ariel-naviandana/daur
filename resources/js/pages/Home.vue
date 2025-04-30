@@ -1,4 +1,5 @@
 <template>
+    <div :style="layoutStyle">
     <Navbar />
     <div :style="mainContentStyle">
         <div class="home-page" :style="homePageStyle">
@@ -57,40 +58,43 @@
 
             <section class="title_center" :style="titleCenterStyle">
                 <h2 :style="titleHeadingStyle">Jenis Sampah</h2>
-                <div :style="trashTypesStyle">
-                    <div class="small_card" :style="smallCardStyle">
-                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_kertas.svg" alt="Kertas" />
-                        <div :style="labelStyle">Kertas</div>
-                    </div>
-                    <div class="small_card" :style="smallCardStyle">
-                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_botol_plastik.svg" alt="Plastik" />
-                        <div :style="labelStyle">Plastik</div>
-                    </div>
-                    <div class="small_card" :style="smallCardStyle">
-                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_botol_kaca.svg" alt="Kaca" />
-                        <div :style="labelStyle">Kaca</div>
-                    </div>
-                    <div class="small_card" :style="smallCardStyle">
-                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_besi.svg" alt="Besi" />
-                        <div :style="labelStyle">Besi</div>
-                    </div>
-                    <div class="small_card" :style="smallCardStyle">
-                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_aluminium.svg" alt="Aluminium" />
-                        <div :style="labelStyle">Aluminium</div>
-                    </div>
-                    <div class="small_card" :style="smallCardStyle">
-                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_kardus.svg" alt="Kardus" />
-                        <div :style="labelStyle">Kardus</div>
-                    </div>
-                </div>
+<!--                <div :style="trashTypesStyle">-->
+<!--                    <div class="small_card" :style="smallCardStyle">-->
+<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_kertas.svg" alt="Kertas" />-->
+<!--                        <div :style="labelStyle">Kertas</div>-->
+<!--                    </div>-->
+<!--                    <div class="small_card" :style="smallCardStyle">-->
+<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_botol_plastik.svg" alt="Plastik" />-->
+<!--                        <div :style="labelStyle">Plastik</div>-->
+<!--                    </div>-->
+<!--                    <div class="small_card" :style="smallCardStyle">-->
+<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_botol_kaca.svg" alt="Kaca" />-->
+<!--                        <div :style="labelStyle">Kaca</div>-->
+<!--                    </div>-->
+<!--                    <div class="small_card" :style="smallCardStyle">-->
+<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_besi.svg" alt="Besi" />-->
+<!--                        <div :style="labelStyle">Besi</div>-->
+<!--                    </div>-->
+<!--                    <div class="small_card" :style="smallCardStyle">-->
+<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_aluminium.svg" alt="Aluminium" />-->
+<!--                        <div :style="labelStyle">Aluminium</div>-->
+<!--                    </div>-->
+<!--                    <div class="small_card" :style="smallCardStyle">-->
+<!--                        <img :style="smallCardImgStyle" src="/public/images/ic_jenis_kardus.svg" alt="Kardus" />-->
+<!--                        <div :style="labelStyle">Kardus</div>-->
+<!--                    </div>-->
+<!--                </div>-->
             </section>
+            <CategoryList />
         </div>
+    </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
 import { theme } from '@/config/theme'
+import CategoryList from "../components/CategoryList.vue";
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
