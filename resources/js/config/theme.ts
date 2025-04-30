@@ -4,8 +4,10 @@ export const theme = {
         whiteBg: '#fafafa',
         whiteElement: '#ffffff',
         darkGrey: '#484848',
+        lightGrey: '#9F9F9F',
         yellow: '#ff9800',
-        red: '#f44336'
+        red: '#f44336',
+        green: '#4CAF50',
     },
     fonts: {
         family: `'DM Sans', sans-serif`,

@@ -21,24 +21,24 @@
   
   const cardStyle = {
     display: 'flex',
+    flexDirection: 'row',
     width: '100%',
-    maxWidth: '800px', 
-    height: '300px',
     backgroundColor: '#fff',
-    borderRadius: '16px',
-    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+    borderRadius: '12px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
     padding: '12px',
-    margin: '0 auto 24px auto', 
-    alignItems: 'center',
-    gap: '16px'
-  }
+    gap: '16px',
+    height: 'auto',
+    alignItems: 'flex-start',
+    }
   
-  const imageStyle = {
-    width: '320px',
-    height: '220px',
+   const imageStyle = {
+    width: '240px',
+    height: '160px',
     objectFit: 'cover',
     borderRadius: '8px'
-  }
+    }
+
   
   const contentStyle = {
     flex: 1
@@ -53,13 +53,19 @@
   const descStyle = {
     fontSize: theme.fonts.size.small,
     color: theme.colors.grey,
-    marginBottom: '6px'
-  }
-  
+    marginBottom: '6px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: 3,
+    WebkitBoxOrient: 'vertical'
+    }
+
   const dateStyle = {
     color: theme.colors.green,
     fontSize: theme.fonts.size.small,
-    fontWeight: theme.fonts.weight.medium
+    fontWeight: theme.fonts.weight.medium,
+    marginTop: '22px'
   }
   </script>
   

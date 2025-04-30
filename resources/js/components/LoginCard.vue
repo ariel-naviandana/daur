@@ -2,25 +2,48 @@
     <div :style="containerStyle">
       <div :style="cardStyle">
         <img src="../../../public/images/logo-daur.png" alt="DAUR Logo" :style="logoStyle" />
-        <h2 :style="titleStyle">Masuk</h2>
+        <h2 :style="titleStyle">Selamat Datang</h2>
         <p :style="subtitleStyle">masuk akun Anda</p>
   
         <!-- Form Login -->
-        <form :style="formStyle">
-          <label>Email</label>
-          <input type="email" placeholder="Masukkan email" />
-          <label>Kata sandi</label>
-          <input type="password" placeholder="Masukkan kata sandi" />
-
-          <button type="submit">Masuk</button>
+        <form :style="formStyle" @submit.prevent="handleLogin">
+            <label>Email</label>
+            <input type="email" v-model="email" placeholder="Masukkan email" />
+            <label>Kata sandi</label>
+            <input type="password" v-model="password" placeholder="Masukkan kata sandi" />
+            
+            <button type="submit">Masuk</button>
         </form>
   
-        <p :style="footerStyle">Belum memiliki akun? <a href="#" style="color: #4CAF50">Daftar</a></p>
+        <p :style="footerStyle">Belum memiliki akun? <a href="/register" style="color: #4CAF50">Daftar</a></p>
       </div>
     </div>
   </template>
   
   <script lang="ts" setup>
+  
+  import { ref } from 'vue'
+
+    const email = ref('')
+    const password = ref('')
+
+    function handleLogin() {
+    const storedUser = localStorage.getItem('user')
+    if (!storedUser) {
+        alert('Pengguna belum terdaftar!')
+        return
+    }
+
+    const user = JSON.parse(storedUser)
+
+    if (user.email === email.value && user.password === password.value) {
+        alert('Login berhasil!')
+        window.location.href = '/' 
+    } else {
+        alert('Email atau kata sandi salah!')
+    }
+}
+
   const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -95,7 +118,7 @@
     color: white;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 8px;
+    margin-top: 20px;
   }
   
   button:hover {
