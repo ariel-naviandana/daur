@@ -69,7 +69,7 @@
                     <button :style="{ ...pickupButtonStyle, backgroundColor: !isPickup ? theme.colors.primary : 'white', color: !isPickup ? 'white' : theme.colors.darkGrey }" @click="isPickup = false">Drop-off</button>
                 </div>
 
-                <form @submit.prevent="handleSubmit" :style="formStyle">
+                <form @submit.prevent="openConfirmBookingPopup" :style="formStyle">
                     <div :style="formRowStyle">
                         <div :style="{ ...formGroupStyle, flex: 1.5 }">
                             <label :style="labelStyle">
@@ -135,6 +135,16 @@
             @confirm="confirmDelete"
             @close="closeConfirmPopup"
         />
+        <PopupConfirm
+            v-if="isConfirmBookingOpen"
+            :is-open="isConfirmBookingOpen"
+            title="Konfirmasi Booking"
+            message="Apakah Anda yakin ingin melanjutkan booking ini?"
+            confirmText="Ya"
+            cancelText="Batal"
+            @confirm="redirectToRiwayat"
+            @close="closeConfirmBookingPopup"
+        />
     </div>
 </template>
 
@@ -145,6 +155,33 @@ import Navbar from '../components/Navbar.vue'
 import CategoryList from "../components/CategoryList.vue"
 import PopupDetailSampah from '../components/PopupDetailSampah.vue'
 import PopupDelete from "../components/PopupDelete.vue"
+import PopupConfirm from "../components/PopupConfirm.vue"
+
+const isConfirmBookingOpen = ref(false)
+
+const openConfirmBookingPopup = () => {
+    if (validateForm()) {
+        isConfirmBookingOpen.value = true
+    } else {
+        alert("Harap isi semua input yang diperlukan sebelum melanjutkan.")
+    }
+}
+
+const closeConfirmBookingPopup = () => {
+    isConfirmBookingOpen.value = false
+}
+
+const validateForm = () => {
+    if (isPickup.value) {
+        return address.value.trim() !== "" && pickupTime.value.trim() !== ""
+    } else {
+        return selectedDropOff.value.trim() !== "" && pickupTime.value.trim() !== ""
+    }
+}
+
+const redirectToRiwayat = () => {
+    window.location.href = '/riwayat'
+}
 
 const getIconPath = (type: string): string => {
   if (type === "kertas") {
@@ -251,18 +288,6 @@ const updateWeight = (index: number, change: number, price: number) => {
     }
 }
 
-const handleSubmit = () => {
-    console.log({
-        items: cartItems.value,
-        totalWeight: totalWeight.value,
-        totalPrice: totalPrice.value,
-        isPickup: isPickup.value,
-        address: address.value,
-        pickupTime: pickupTime.value,
-        note: note.value
-    })
-}
-
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
     minHeight: '100vh',
@@ -270,7 +295,7 @@ const layoutStyle = {
 }
 
 const mainContentStyle = {
-    // maxWidth: '1200px',
+    maxWidth: '1200px',
     margin: '0 auto',
     padding: '24px'
 }

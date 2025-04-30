@@ -236,6 +236,8 @@ const layoutStyle = {
 }
 
 const contentStyle = {
+    maxWidth: '1200px',
+    margin: '0 auto',
     color: theme.colors.darkGrey,
 }
 
