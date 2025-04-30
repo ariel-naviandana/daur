@@ -2,6 +2,7 @@
     <Navbar />
     <div :style="chatPageWrapper">
       <div :style="chatHeader">
+        <img :style="chatHeaderImg" src="/public/images/ic_chat.svg" alt="Chat">
         <h2 >Chat</h2>
       </div>
         <div :style="chatPage">
@@ -31,13 +32,22 @@ const banks = ref([
 const selectedBank = ref(null);
 
 const chatHeader = {
-  fontSize: theme.fonts.size.large,
+  fontSize: theme.fonts.size.subheading,
   fontWeight: theme.fonts.weight.bold,
+  fontFamily: theme.fonts.family,
+  paddingLeft: '24px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+}
+
+const chatHeaderImg = {
+  height: '32px',
 }
 
 const chatPageWrapper = {
   width: '100%',
-  maxWidth: '1440px',
+  maxWidth: '1200px',
   margin: '0 auto',
   height: '90vh',
 }
@@ -61,6 +71,5 @@ const chatPage = {
 /* Halaman Chat */
 .chat-page {
     display: flex;
-    height: 896px;
 }
 </style>
