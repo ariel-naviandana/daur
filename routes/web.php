@@ -17,3 +17,10 @@ Route::get('/riwayat', function () {
 Route::get('/chat', function() {
     return view('chat');
 })->name('chat');
+
+Route::get('/users', [UserController::class, 'getAll']);
+
+Route::get('/admin/users', function () {
+    return view('admin-users');
+})->name('admin.users');
+

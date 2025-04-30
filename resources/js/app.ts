@@ -4,6 +4,7 @@ import Home from './pages/Home.vue';
 import Profile from './pages/Profile.vue';
 import RiwayatRecycle from './pages/RiwayatRecycle.vue';
 import Chat from './pages/Chat.vue';
+import UserManagement from './pages/UserManagement.vue';
 
 const el = document.getElementById('app');
 
@@ -22,9 +23,12 @@ if (el) {
     case 'riwayat-recycle':
         component = RiwayatRecycle;
         break;
-      case 'chat':
-          component = Chat;
-          break;
+    case 'chat':
+        component = Chat;
+        break;
+    case 'admin-users':
+        component = UserManagement;
+        break;
     default:
       console.error('Unknown page component:', page);
       break;
