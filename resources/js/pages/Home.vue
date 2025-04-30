@@ -52,7 +52,7 @@
                         </div>
                     </div>
                 </div>
-                <button href="/recycle" class="send-button" :style="sendButtonStyle">Kirim Sampah</button>
+                <button class="send-button" :style="sendButtonStyle" @click="goToRecycle">Kirim Sampah</button>
             </section>
 
             <section class="title_center" :style="titleCenterStyle">
@@ -91,6 +91,10 @@
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
 import { theme } from '@/config/theme'
+
+const goToRecycle = () => {
+    window.location.href = '/recycle';
+};
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -134,7 +138,7 @@ const missionStyle = {
 }
 
 const missionImgStyle = {
-    width: '140vh',
+    width: '150vh',
     borderRadius: '10px'
 }
 
@@ -150,7 +154,7 @@ const missionHeadingStyle = {
 }
 
 const missionParagraphStyle = {
-    marginTop: '40px',
+    marginTop: '10px',
     marginLeft: '40px',
     fontSize: theme.fonts.size.medium,
     color: '#222222'
@@ -220,7 +224,9 @@ const sendButtonStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.semibold,
     color: theme.colors.whiteElement,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    position: 'relative',
+    zIndex: 10,
 }
 
 const trashTypesStyle = {
