@@ -7,7 +7,11 @@
         </button>
 
         <div ref="categoryListRef" :style="categoryListStyle">
-            <button v-for="category in categories" :key="category.id" :style="categoryItemStyle">
+            <button
+                v-for="category in categories"
+                :key="category.id"
+                :style="categoryItemStyle"
+                @click="selectCategory(category)">
                 <img :src="category.icon" :alt="category.name" :style="categoryIconStyle" />
                 <span :style="categoryLabelStyle">{{ category.name }}</span>
             </button>
@@ -27,19 +31,19 @@ import { theme } from '@/config/theme'
 
 const getIconPath = (type: string): string => {
     if (type === "kertas") {
-        return "/images/ic_jenis_kertas.svg";
+        return "/images/ic_jenis_kertas.svg"
     } else if (type === "plastik") {
-        return "/images/ic_jenis_botol_plastik.svg";
+        return "/images/ic_jenis_botol_plastik.svg"
     } else if (type === "kaca") {
-        return "/images/ic_jenis_botol_kaca.svg";
+        return "/images/ic_jenis_botol_kaca.svg"
     } else if (type === "besi") {
-        return "/images/ic_jenis_besi.svg";
+        return "/images/ic_jenis_besi.svg"
     } else if (type === "aluminium") {
-        return "/images/ic_jenis_aluminium.svg";
+        return "/images/ic_jenis_aluminium.svg"
     } else if (type === "kardus") {
-        return "/images/ic_jenis_kardus.svg";
+        return "/images/ic_jenis_kardus.svg"
     }
-    return "/images/ic_jenis_kertas.svg";
+    return "/images/ic_jenis_kertas.svg"
 }
 
 const categories = [
@@ -63,12 +67,18 @@ const categoryListRef = ref<HTMLElement | null>(null)
 
 const scrollCategoryList = (direction: 'left' | 'right') => {
     if (categoryListRef.value) {
-        const scrollAmount = categoryListRef.value.clientWidth;
+        const scrollAmount = categoryListRef.value.clientWidth
         categoryListRef.value.scrollBy({
             left: direction === 'left' ? -scrollAmount : scrollAmount,
             behavior: 'smooth'
-        });
+        })
     }
+}
+
+const emit = defineEmits(['category-clicked'])
+
+const selectCategory = (category: { id: number; name: string; icon: string }) => {
+    emit('category-clicked', category)
 }
 
 const categoryListContainerStyle = {
@@ -122,7 +132,6 @@ const categoryItemStyle = {
 const categoryIconStyle = {
     width: '40px',
     height: '40px',
-    borderRadius: '12px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'

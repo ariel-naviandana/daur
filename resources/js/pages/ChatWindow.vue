@@ -28,19 +28,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 const props = defineProps({
     selectedBank: Object,
-});
+})
 
 const messages = ref([
     { from: 'me', text: 'Halo Kak, saya mau bertanya mengenai panduan penggunaan aplikasi DAUR', time: '12.28 pm' },
     { from: 'them', text: 'Halo, Kak Radit. Terima kasih sudah menghubungi kami...', time: '12.32 pm' },
     { from: 'me', text: 'Baik, Terima kasih!', time: '12.36 pm' },
-]);
+])
 
-const newMessage = ref('');
+const newMessage = ref('')
 
 function sendMessage() {
     if (newMessage.value.trim() !== '') {
@@ -48,8 +48,8 @@ function sendMessage() {
             from: 'me',
             text: newMessage.value,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        });
-        newMessage.value = '';
+        })
+        newMessage.value = ''
     }
 }
 </script>

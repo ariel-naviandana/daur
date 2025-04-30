@@ -19,6 +19,7 @@ export const theme = {
             regular: 400,
         },
         size: {
+            small: '14px',
             base: '16px',
             medium: '20px',
             subheading: '24px',

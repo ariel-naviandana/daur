@@ -113,8 +113,8 @@
 import { ref, computed } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import { theme } from '@/config/theme'
-import RecycleCard from "../components/RecycleCard.vue";
-import PopupDetailRecycle from "../components/PopupDetailRecycle.vue";
+import RecycleCard from "../components/RecycleCard.vue"
+import PopupDetailRecycle from "../components/PopupDetailRecycle.vue"
 
 interface HistoryItem {
     date: string

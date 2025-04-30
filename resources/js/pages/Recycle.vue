@@ -2,7 +2,7 @@
     <div :style="layoutStyle">
         <Navbar />
         <div :style="mainContentStyle">
-            <CategoryList />
+            <CategoryList @category-clicked="openPopup"/>
 
             <div :style="cartContainerStyle">
                 <h2 :style="sectionTitleStyle">
@@ -23,13 +23,13 @@
                         <div :style="itemDetailsStyle">
                           <span :style="itemNameStyle">{{ item.name }}</span>
                           <div :style="weightContainerStyle">
-                            <button :style="minusButtonStyle" @click="updateWeight(index, -1)">
+                            <button :style="minusButtonStyle" @click="updateWeight(index, -1, item.pricePerKg)">
                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                               </svg>
                             </button>
                             <div :style="weightBadgeStyle">{{ item.weight }} kg</div>
-                            <button :style="plusButtonStyle" @click="updateWeight(index, 1)">
+                            <button :style="plusButtonStyle" @click="updateWeight(index, 1, item.pricePerKg)">
                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                               </svg>
@@ -122,6 +122,19 @@
                 </form>
             </div>
         </div>
+        <PopupDetailSampah
+            :isOpen="isPopupOpen"
+            :selectedCategory="selectedCategory"
+            @close="closePopup"
+            @add="handleAddItem"
+        />
+        <PopupDelete
+            v-if="isConfirmDeleteOpen"
+            :is-open="isConfirmDeleteOpen"
+            :item-name="itemToDelete?.name || ''"
+            @confirm="confirmDelete"
+            @close="closeConfirmPopup"
+        />
     </div>
 </template>
 
@@ -129,29 +142,31 @@
 import { ref, computed } from 'vue'
 import { theme } from '@/config/theme'
 import Navbar from '../components/Navbar.vue'
-import CategoryList from "../components/CategoryList.vue";
+import CategoryList from "../components/CategoryList.vue"
+import PopupDetailSampah from '../components/PopupDetailSampah.vue'
+import PopupDelete from "../components/PopupDelete.vue"
 
 const getIconPath = (type: string): string => {
   if (type === "kertas") {
-    return "/images/ic_jenis_kertas.svg";
+    return "/images/ic_jenis_kertas.svg"
   } else if (type === "plastik") {
-    return "/images/ic_jenis_botol_plastik.svg";
+    return "/images/ic_jenis_botol_plastik.svg"
   } else if (type === "kaca") {
-    return "/images/ic_jenis_botol_kaca.svg";
+    return "/images/ic_jenis_botol_kaca.svg"
   } else if (type === "besi") {
-    return "/images/ic_jenis_besi.svg";
+    return "/images/ic_jenis_besi.svg"
   } else if (type === "aluminium") {
-    return "/images/ic_jenis_aluminium.svg";
+    return "/images/ic_jenis_aluminium.svg"
   } else if (type === "kardus") {
-    return "/images/ic_jenis_kardus.svg";
+    return "/images/ic_jenis_kardus.svg"
   }
-  return "/images/ic_jenis_kertas.svg";
+  return "/images/ic_jenis_kertas.svg"
 }
 
 const cartItems = ref([
-  { name: 'Koran', weight: 5, price: 15000, icon: getIconPath('kertas') },
-  { name: 'Gelas Kaca', weight: 7, price: 21000, icon: getIconPath('kaca') },
-  { name: 'Botol Plastik', weight: 9, price: 20000, icon: getIconPath('plastik') }
+  { name: 'Koran', weight: 5, price: 25000, icon: getIconPath('kertas'), pricePerKg: 5000 },
+  { name: 'Gelas Kaca', weight: 7, price: 70000, icon: getIconPath('kaca'), pricePerKg: 10000 },
+  { name: 'Botol Plastik', weight: 9, price: 27000, icon: getIconPath('plastik'), pricePerKg: 3000 }
 ])
 
 const dropOffLocations = [
@@ -166,14 +181,73 @@ const address = ref('')
 const pickupTime = ref('')
 const note = ref('')
 
+const isPopupOpen = ref(false)
+const selectedCategory = ref<{ id: number; name: string; icon: string } | null>(null)
+
+const openPopup = (category: { id: number; name: string; icon: string }) => {
+    selectedCategory.value = category
+    isPopupOpen.value = true
+}
+
+const closePopup = () => {
+    isPopupOpen.value = false
+}
+
+const handleAddItem = (item: { type: string; quantity: number; pricePerKg: number }) => {
+    const existingItem = cartItems.value.find(cartItem => cartItem.name === item.type)
+
+    if (existingItem) {
+        existingItem.weight += item.quantity
+        existingItem.price = existingItem.weight * item.pricePerKg
+    } else {
+        cartItems.value.push({
+            name: item.type,
+            weight: item.quantity,
+            price: item.quantity * item.pricePerKg,
+            pricePerKg: item.pricePerKg,
+            icon: selectedCategory.value?.icon || ''
+        })
+    }
+
+    console.log('Item ditambahkan ke keranjang:', cartItems.value)
+    closePopup()
+}
+
 const totalWeight = computed(() => cartItems.value.reduce((sum, item) => sum + item.weight, 0))
 const totalPrice = computed(() => cartItems.value.reduce((sum, item) => sum + item.price, 0))
 
-const updateWeight = (index: number, change: number) => {
+const isConfirmDeleteOpen = ref(false)
+const itemToDelete = ref<{ name: string; weight: number; price: number; icon: string } | null>(null)
+
+const handleMinusClick = (index: number, price: number) => {
+    const item = cartItems.value[index]
+    if (item.weight === 1) {
+        itemToDelete.value = item
+        isConfirmDeleteOpen.value = true
+    } else {
+        updateWeight(index, -1, price)
+    }
+}
+
+const confirmDelete = () => {
+    if (itemToDelete.value) {
+        cartItems.value = cartItems.value.filter(item => item !== itemToDelete.value)
+        closeConfirmPopup()
+    }
+}
+
+const closeConfirmPopup = () => {
+    isConfirmDeleteOpen.value = false
+    itemToDelete.value = null
+}
+
+const updateWeight = (index: number, change: number, price: number) => {
     const newWeight = cartItems.value[index].weight + change
     if (newWeight > 0) {
         cartItems.value[index].weight = newWeight
-        cartItems.value[index].price = newWeight * 3000
+        cartItems.value[index].price = newWeight * price
+    } else {
+        handleMinusClick(index, price)
     }
 }
 
@@ -196,7 +270,7 @@ const layoutStyle = {
 }
 
 const mainContentStyle = {
-    maxWidth: '1200px',
+    // maxWidth: '1200px',
     margin: '0 auto',
     padding: '24px'
 }
@@ -249,7 +323,6 @@ const itemIconStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '8px',
 }
 
 const itemDetailsStyle = {
@@ -271,7 +344,7 @@ const weightContainerStyle = {
 
 const weightBadgeStyle = {
     padding: '4px 8px',
-    fontSize: theme.fonts.size.small,
+    fontSize: theme.fonts.size.base,
     color: theme.colors.darkGrey,
     minWidth: '50px',
     textAlign: 'center'
@@ -389,8 +462,10 @@ const textareaStyle = {
 }
 
 const submitButtonStyle = {
-    padding: '12px',
-    borderRadius: '8px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    padding: '12px 24px',
+    borderRadius: '24px',
     border: 'none',
     backgroundColor: theme.colors.primary,
     color: 'white',

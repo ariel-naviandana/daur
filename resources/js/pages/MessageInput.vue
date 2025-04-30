@@ -17,15 +17,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const emit = defineEmits(['send']);
-const message = ref('');
+const emit = defineEmits(['send'])
+const message = ref('')
 
 function emitMessage() {
     if (message.value.trim() !== '') {
-        emit('send', message.value);
-        message.value = ''; // Kosongkan input setelah kirim
+        emit('send', message.value)
+        message.value = '' // Kosongkan input setelah kirim
     }
 }
 </script>

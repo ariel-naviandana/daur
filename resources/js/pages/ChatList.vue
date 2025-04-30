@@ -24,24 +24,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed } from 'vue'
 
 const props = defineProps({
     banks: Array,
     selectedBank: Object,
-});
-const emits = defineEmits(['select-bank']);
+})
+const emits = defineEmits(['select-bank'])
 
-const searchQuery = ref('');
+const searchQuery = ref('')
 
 const filteredBanks = computed(() => {
     return props.banks.filter(bank =>
         bank.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
-});
+    )
+})
 
 function selectBank(bank) {
-    emits('select-bank', bank);
+    emits('select-bank', bank)
 }
 </script>
 
