@@ -1,33 +1,34 @@
 <template>
     <div :style="containerStyle">
-      <div :style="cardStyle">
-        <img src="../../../public/images/logo-daur.png" alt="DAUR Logo" :style="logoStyle" />
-        <h2 :style="titleStyle">Selamat Datang</h2>
-        <p :style="subtitleStyle">masuk akun Anda</p>
+        <div :style="cardStyle">
+            <img src="/public/images/logo-daur.png" alt="DAUR Logo" :style="logoStyle" />
+            <h2 :style="titleStyle">Selamat Datang</h2>
+            <p :style="subtitleStyle">masuk akun Anda</p>
 
-        <!-- Form Login -->
-        <form :style="formStyle" @submit.prevent="handleLogin">
-            <label>Email</label>
-            <input type="email" v-model="email" placeholder="Masukkan email" />
-            <label>Kata sandi</label>
-            <input type="password" v-model="password" placeholder="Masukkan kata sandi" />
+            <!-- Form Login -->
+            <form :style="formStyle" @submit.prevent="handleLogin">
+                <label>Email</label>
+                <input type="email" v-model="email" placeholder="Masukkan email" />
+                <label>Kata sandi</label>
+                <input type="password" v-model="password" placeholder="Masukkan kata sandi" />
 
-            <button type="submit">Masuk</button>
-        </form>
+                <a href="/forgot-password" style="color: #4CAF50; text-align: right; display: block; font-size: 14px; font-weight: normal">Lupa kata sandi?</a>
 
-        <p :style="footerStyle">Belum memiliki akun? <a href="/register" style="color: #4CAF50">Daftar</a></p>
-      </div>
+                <button type="submit">Masuk</button>
+            </form>
+
+            <p :style="footerStyle">Belum memiliki akun? <a href="/register" style="color: #4CAF50">Daftar</a></p>
+        </div>
     </div>
-  </template>
+</template>
 
-  <script lang="ts" setup>
+<script lang="ts" setup>
+import { ref } from 'vue'
 
-  import { ref } from 'vue'
+const email = ref('')
+const password = ref('')
 
-    const email = ref('')
-    const password = ref('')
-
-    function handleLogin() {
+function handleLogin() {
     const storedUser = localStorage.getItem('user')
     if (!storedUser) {
         alert('Pengguna belum terdaftar!')
@@ -47,73 +48,77 @@
     }
 }
 
-  const containerStyle = {
+const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
+    minHeight: '100vh',
     backgroundColor: '#f9f9f9',
     fontFamily: 'sans-serif',
-  }
+    padding: '24px',
+    overflowY: 'auto',
+}
 
-  const cardStyle = {
-    width: '680px',
+
+const cardStyle = {
+    width: '620px',
     backgroundColor: '#fff',
-    borderRadius: '24px',
+    borderRadius: '16px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    padding: '48px 40px',
+    padding: '32px 24px',
     boxSizing: 'border-box',
     textAlign: 'center',
     maxWidth: '90%',
-    margin: '0 auto',
-    }
+    marginTop: '40px',
+    marginBottom: '40px',
+}
 
-  const logoStyle = {
-    height: '40px',
-    marginBottom: '20px',
+const logoStyle = {
+    height: '48px',
+    marginBottom: '16px',
     display: 'block',
     marginLeft: 'auto',
     marginRight: 'auto',
-  }
+}
 
-  const titleStyle = {
-    fontSize: '28px',
+const titleStyle = {
+    fontSize: '24px',
     fontWeight: 'bold',
-    marginBottom: '4px',
+    marginBottom: '8px',
     color: '#222',
-  }
+}
 
-  const subtitleStyle = {
+const subtitleStyle = {
     color: '#888',
     fontSize: '14px',
-    marginBottom: '32px',
-  }
+    marginBottom: '24px',
+}
 
-  const formStyle = {
+const formStyle = {
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px',
+    gap: '12px',
     textAlign: 'left',
     fontWeight: 'bold',
-  }
+}
 
-  const footerStyle = {
-    marginTop: '32px',
+const footerStyle = {
+    marginTop: '24px',
     fontSize: '14px',
     color: '#999',
-  }
-  </script>
+}
+</script>
 
-  <style scoped>
-  input {
+<style scoped>
+input {
     padding: 12px 16px;
     border: none;
     border-radius: 24px;
     background-color: #f0f0f0;
     font-size: 14px;
-  }
+}
 
-  button {
+button {
     padding: 14px;
     border: none;
     border-radius: 24px;
@@ -122,9 +127,9 @@
     font-size: 16px;
     cursor: pointer;
     margin-top: 20px;
-  }
+}
 
-  button:hover {
+button:hover {
     background-color: #43a047;
-  }
-  </style>
+}
+</style>

@@ -3,7 +3,7 @@
          :style="{ backgroundColor: theme.colors.whiteElement }">
          <div class="flex items-start gap-3">
             <img
-                src="../../../public/images/trash.png"
+                src="/public/images/trash.png"
                 alt="User"
                 class="w-10 h-10 object-cover rounded-full mt-1"
             />
