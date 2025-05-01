@@ -11,7 +11,9 @@ import Saldo from "./pages/Saldo.vue"
 import Artikel from "./pages/Artikel.vue"
 import Login from "./pages/Login.vue"
 import Register from "./pages/Register.vue"
-import HomeAdmin from "./pages/HomeAdmin.vue";
+import HomeAdmin from "./pages/HomeAdmin.vue"
+import ManajemenSaldo from "./pages/ManajemenSaldo.vue"
+import ManajemenArtikel from "./pages/ManajemenArtikel.vue"
 
 const el = document.getElementById('app')
 
@@ -56,6 +58,12 @@ if (el) {
         break
     case 'home-admin':
         component = HomeAdmin
+        break
+    case 'manajemen-artikel':
+        component = ManajemenArtikel
+        break
+    case 'manajemen-saldo':
+        component = ManajemenSaldo
         break
     default:
       console.error('Unknown page component:', page)

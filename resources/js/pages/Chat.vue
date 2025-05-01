@@ -13,10 +13,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import ChatList from '../components/ChatList.vue';
-import ChatWindow from '../components/ChatWindow.vue';
-import Navbar from "@/components/Navbar.vue";
+import { ref } from 'vue'
+import ChatList from '../components/ChatList.vue'
+import ChatWindow from '../components/ChatWindow.vue'
+import Navbar from "@/components/Navbar.vue"
 import { theme } from '@/config/theme'
 
 const banks = ref([
@@ -27,9 +27,9 @@ const banks = ref([
     { id: 5, name: 'Bank Sampah Idjen', avatar: 'https://i.pravatar.cc/40?img=5' },
     { id: 6, name: 'Bank Sampah Sumbersari', avatar: 'https://i.pravatar.cc/40?img=6' },
     { id: 7, name: 'Bank Sampah Dieng', avatar: 'https://i.pravatar.cc/40?img=7' },
-]);
+])
 
-const selectedBank = ref(null);
+const selectedBank = ref(null)
 
 const chatHeader = {
     fontSize: theme.fonts.size.subheading,

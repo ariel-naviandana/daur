@@ -179,33 +179,33 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { theme } from '@/config/theme';
-import Navbar from "@/components/Navbar.vue";
-import { onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue'
+import { theme } from '@/config/theme'
+import Navbar from "@/components/Navbar.vue"
+import { onMounted, onUnmounted } from 'vue'
 
-const dropdownRefs = {};
+const dropdownRefs = {}
 
 const handleClickOutside = (event) => {
-    const openDropdown = dropdownOpenId.value;
-    const dropdownEl = dropdownRefs[openDropdown];
+    const openDropdown = dropdownOpenId.value
+    const dropdownEl = dropdownRefs[openDropdown]
 
     if (dropdownEl && !dropdownEl.contains(event.target)) {
-        dropdownOpenId.value = null;
+        dropdownOpenId.value = null
     }
-};
+}
 
 onMounted(() => {
-    document.addEventListener('click', handleClickOutside);
-});
+    document.addEventListener('click', handleClickOutside)
+})
 
 onUnmounted(() => {
-    document.removeEventListener('click', handleClickOutside);
-});
+    document.removeEventListener('click', handleClickOutside)
+})
 
 // State untuk filter & pencarian
-const search = ref('');
-const sort = ref('name_asc');
+const search = ref('')
+const sort = ref('name_asc')
 
 // Data dummy user
 const users = ref([
@@ -236,24 +236,24 @@ const users = ref([
         email: 'citra.lestari@example.com',
         address: 'Jl. Gajayana No. 12, Malang',
     },
-]);
+])
 
 // Filter dan sortir
 const filteredUsers = computed(() => {
     let result = users.value.filter(user =>
         user.name.toLowerCase().includes(search.value.toLowerCase())
-    );
+    )
 
     if (sort.value === 'name_asc') {
-        result.sort((a, b) => a.name.localeCompare(b.name));
+        result.sort((a, b) => a.name.localeCompare(b.name))
     } else if (sort.value === 'name_desc') {
-        result.sort((a, b) => b.name.localeCompare(a.name));
+        result.sort((a, b) => b.name.localeCompare(a.name))
     }
 
-    return result;
-});
+    return result
+})
 
-const selectedUser = ref(null);
+const selectedUser = ref(null)
 
 const openUserPopup = (user) => {
     selectedUser.value = user
@@ -263,25 +263,25 @@ const closePopup = () => {
     selectedUser.value = null
 }
 
-const dropdownOpenId = ref(null);
+const dropdownOpenId = ref(null)
 
 const toggleDropdown = (userId) => {
-    dropdownOpenId.value = dropdownOpenId.value === userId ? null : userId;
-};
+    dropdownOpenId.value = dropdownOpenId.value === userId ? null : userId
+}
 
 const handleAction = (action, user) => {
     if (action === 'lihat') {
-        openUserPopup(user);
+        openUserPopup(user)
     } else if (action === 'edit') {
-        alert(`Edit user: ${user.name}`);
+        alert(`Edit user: ${user.name}`)
     } else if (action === 'hapus') {
-        const confirmed = confirm(`Hapus user ${user.name}?`);
+        const confirmed = confirm(`Hapus user ${user.name}?`)
         if (confirmed) {
-            users.value = users.value.filter(u => u.id !== user.id);
+            users.value = users.value.filter(u => u.id !== user.id)
         }
     }
-    dropdownOpenId.value = null;
-};
+    dropdownOpenId.value = null
+}
 
 const btn_menu = {
     backgroundColor: theme.colors.primary,

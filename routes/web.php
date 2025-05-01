@@ -51,3 +51,11 @@ Route::get('/register', function () {
 Route::get('/admin', function () {
     return view('home-admin');
 })->name('home-admin');
+
+Route::get('/admin/artikel', function () {
+    return view('manajemen-artikel');
+})->name('manajemen-artikel');
+
+Route::get('/admin/saldo', function () {
+    return view('manajemen-saldo');
+})->name('manajemen-saldo');
