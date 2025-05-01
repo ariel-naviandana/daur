@@ -83,11 +83,25 @@
                     :key="user.id"
                     class="bg-white p-4 shadow rounded-lg flex justify-between items-center mb-4"
                 >
-                    <div>
+                    <!-- Avatar -->
+                    <div class="w-10 h-10 rounded-full overflow-hidden border-none">
+                        <!-- Cek apakah ada profileImage, jika ada tampilkan gambar profil -->
+                        <img v-if="user.profileImage" :src="user.profileImage" alt="Profile" class="w-full h-full object-cover" />
+                        <!-- Jika tidak ada, tampilkan avatar default -->
+                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" :style="iconStyle">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="10" r="3"></circle>
+                            <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
+                        </svg>
+                    </div>
+
+                    <div class="flex-grow ml-4">
                         <p class="font-semibold">{{ user.name }}</p>
                         <p class="text-sm text-gray-500">{{ user.email }}</p>
                     </div>
-                    <div class="relative">
+
+                    <!-- Dropdown Menu -->
+                    <div class="relative" :ref="el => dropdownRefs[user.id] = el">
                         <button @click="toggleDropdown(user.id)" class="btn_menu" :style="btn_menu">
                             Menu
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -97,9 +111,9 @@
 
                         <div v-if="dropdownOpenId === user.id" class="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-10">
                             <ul class="text-sm text-gray-700">
-                                <li><button @click="handleAction('lihat', user)" class="w-full text-left px-4 py-2 hover:bg-gray-100">Lihat Detail</button></li>
-                                <li><button @click="handleAction('edit', user)" class="w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button></li>
-                                <li><button @click="handleAction('hapus', user)" class="w-full text-left px-4 py-2 hover:bg-red-100 text-red-600">Hapus</button></li>
+                                <li><button @click="handleAction('lihat', user)" :style="btn_dropdown" class="hover:bg-gray-100">Lihat Detail</button></li>
+                                <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="hover:bg-gray-100">Edit</button></li>
+                                <li><button @click="handleAction('hapus', user)" :style="btn_dropdown" class="hover:bg-red-100 text-red-600">Hapus</button></li>
                             </ul>
                         </div>
                     </div>
@@ -120,12 +134,12 @@
 
                 <div class="flex items-start gap-4 mb-4">
                     <div>
-                        <div class="w-10 h-10 rounded-full border-2 border-gray-400 flex items-center justify-center text-gray-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"
-                                 viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10" />
-                                <circle cx="12" cy="10" r="3" />
-                                <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5" />
+                        <div class="w-10 h-10 rounded-full overflow-hidden border-none">
+                            <img v-if="selectedUser.profileImage" :src="selectedUser.profileImage" alt="Profile" class="w-full h-full object-cover" />
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" :style="iconStyle">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="10" r="3"></circle>
+                                <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
                             </svg>
                         </div>
                     </div>
@@ -165,31 +179,34 @@
     </div>
 </template>
 
-
 <script setup>
 import { ref, computed } from 'vue';
 import { theme } from '@/config/theme';
 import Navbar from "@/components/Navbar.vue";
+import { onMounted, onUnmounted } from 'vue';
 
-const primaryColor = theme.colors.primary;
+const dropdownRefs = {};
+
+const handleClickOutside = (event) => {
+    const openDropdown = dropdownOpenId.value;
+    const dropdownEl = dropdownRefs[openDropdown];
+
+    if (dropdownEl && !dropdownEl.contains(event.target)) {
+        dropdownOpenId.value = null;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 
 // State untuk filter & pencarian
 const search = ref('');
 const sort = ref('name_asc');
-
-const btn_menu = {
-    backgroundColor: theme.colors.primary,
-    color: theme.colors.whiteElement,
-    fontWeight: theme.fonts.weight.semibold,
-    borderRadius: '8px',
-    display: 'flex',
-    alignItems: 'center',
-    height: '32px',
-    width: '120px',
-    justifyContent: 'end',
-    gap: '18px',
-    paddingRight: '8px',
-}
 
 // Data dummy user
 const users = ref([
@@ -200,6 +217,7 @@ const users = ref([
         address: 'Jl. Mawar No. 10, Malang',
         saldo: 25000,
         totalSampah: 15,
+        profileImage: 'https://i.pravatar.cc/100?img=3' // contoh avatar URL
     },
     {
         id: 2,
@@ -265,6 +283,30 @@ const handleAction = (action, user) => {
     }
     dropdownOpenId.value = null;
 };
+
+const btn_menu = {
+    backgroundColor: theme.colors.primary,
+    color: theme.colors.whiteElement,
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.medium,
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    height: '32px',
+    width: '120px',
+    justifyContent: 'end',
+    gap: '18px',
+    paddingRight: '8px',
+}
+
+const btn_dropdown = {
+    fontFamily: theme.fonts.family,
+    fontWeight: theme.fonts.weight.regular,
+    width: '100%',
+    textAlign: 'left',
+    padding: '0.5rem 1rem', // py-2 px-4
+    transition: 'background-color 0.2s',
+}
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -377,11 +419,6 @@ const noResultsDescStyle = {
     margin-bottom: 24px;
 }
 
-.history-list {
-    list-style: none;
-    padding: 0;
-}
-
 input:focus {
     outline: none;
 }
@@ -393,4 +430,4 @@ input:focus {
 ::-webkit-scrollbar {
     display: none;
 }
-</style>/
+</style>
