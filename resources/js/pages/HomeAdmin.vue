@@ -50,7 +50,6 @@
 
   const contentStyle = {
     color: theme.colors.darkGrey,
-    paddingInline: '150px',
     paddingTop: '24px',
     maxWidth: '1200px',
     margin: '0 auto',

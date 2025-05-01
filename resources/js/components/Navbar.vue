@@ -75,7 +75,7 @@
             </button>
             <ul class="flex flex-col gap-6">
                 <li>
-                    <a :href="isAdmin ? '/admin/' : '/'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin' : '/')">Home</a>
+                    <a :href="isAdmin ? '/admin' : '/'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin' : '/')">Home</a>
                 </li>
                 <li>
                     <a @click="redirectIfNotLoggedIn(isAdmin ? '/admin/recycle' : '/recycle')" :style="linkStyle(isAdmin ? '/admin/recycle' : '/recycle')" role="button">Recycle</a>

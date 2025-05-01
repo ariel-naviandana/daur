@@ -2,7 +2,7 @@
     <div :style="layoutStyle">
     <Navbar />
     <div :style="mainContentStyle">
-        <div class="home-page" :style="homePageStyle">
+        <div class="home-page">
             <section class="hero">
                 <img src="/public/images/hero-image.png" alt="Hero Image" :style="heroImgStyle" />
             </section>
