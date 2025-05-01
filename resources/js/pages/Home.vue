@@ -2,7 +2,7 @@
     <div :style="layoutStyle">
         <Navbar />
         <div :style="mainContentStyle">
-            <div class="home-page" :style="homePageStyle">
+            <div class="home-page">
                 <section class="hero">
                     <img src="/public/images/hero-image.png" alt="Hero Image" :style="heroImgStyle" />
                 </section>
@@ -71,13 +71,13 @@
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
 import { theme } from '@/config/theme'
-import CategoryList from "@/components/CategoryList.vue";
-import {ref} from "vue";
-import PopupDetailSampah from "@/components/PopupDetailSampah.vue";
+import CategoryList from "@/components/CategoryList.vue"
+import {ref} from "vue"
+import PopupDetailSampah from "@/components/PopupDetailSampah.vue"
 
 const goToRecycle = () => {
-    window.location.href = '/recycle';
-};
+    window.location.href = '/recycle'
+}
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
