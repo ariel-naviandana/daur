@@ -1,17 +1,25 @@
 <template>
     <div class="flex justify-between items-center rounded-lg p-4 shadow-sm mb-2"
          :style="{ backgroundColor: theme.colors.whiteElement }">
-      <div>
-        <p :style="nameStyle">{{ name }}</p>
-        <p :style="dateStyle">{{ date }}</p>
-      </div>
-      <div class="flex items-center gap-4">
-        <p :style="materialStyle">{{ material }}</p>
-        <p :style="weightStyle">{{ weight }}</p>
-        <span :style="[statusBadgeStyle, statusBackgroundStyle]">
-          {{ status }}
-        </span>
-      </div>
+         <div class="flex items-start gap-3">
+            <img
+                src="../../../public/images/trash.png"
+                alt="User"
+                class="w-10 h-10 object-cover rounded-full mt-1"
+            />
+            <div>
+                <p :style="nameStyle">{{ name }}</p>
+                <p :style="dateStyle">{{ date }}</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <p :style="materialStyle">{{ material }}</p>
+            <p :style="weightStyle">{{ weight }}</p>
+                <span :style="[statusBadgeStyle, statusBackgroundStyle]">
+                {{ status }}
+                </span>
+        </div>
     </div>
   </template>
   
