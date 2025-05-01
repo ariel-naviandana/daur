@@ -82,6 +82,9 @@ const cardStyle = {
     fontFamily: theme.fonts.family,
     color: theme.colors.darkGrey,
     listStyle: 'none',
+    width: '100%',
+    minHeight: '120px',
+
 }
 
 const containerStyle = {
