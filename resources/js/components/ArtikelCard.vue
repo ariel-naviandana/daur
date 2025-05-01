@@ -8,7 +8,7 @@
       </div>
     </div>
   </template>
-  
+
   <script lang="ts" setup>
   defineProps({
     title: String,
@@ -16,9 +16,9 @@
     date: String,
     image: String
   })
-  
+
   import { theme } from '@/config/theme'
-  
+
   const cardStyle = {
     display: 'flex',
     flexDirection: 'row',
@@ -31,7 +31,7 @@
     height: 'auto',
     alignItems: 'flex-start',
     }
-  
+
    const imageStyle = {
     width: '300px',
     height: '180px',
@@ -42,13 +42,13 @@
   const contentStyle = {
     flex: 1
   }
-  
+
   const titleStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
     marginBottom: '6px'
   }
-  
+
   const descStyle = {
     fontSize: theme.fonts.size.small,
     color: theme.colors.grey,
@@ -61,12 +61,12 @@
     }
 
   const dateStyle = {
-    color: theme.colors.green,
+    color: theme.colors.primary,
     fontSize: theme.fonts.size.small,
     fontWeight: theme.fonts.weight.medium,
     marginTop: '22px'
   }
   </script>
-  
+
   <style scoped>
   </style>

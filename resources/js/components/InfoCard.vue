@@ -16,13 +16,13 @@ import { theme } from '@/config/theme'
 defineProps<{ title: string; value: string }>()
 
 const labelStyle = {
-  color: theme.colors.lightGrey,
+  color: theme.colors.grey,
   fontSize: theme.fonts.size.medium,
   fontWeight: theme.fonts.weight.semibold,
 }
 
 const valueStyle = {
-  color: theme.colors.green,
+  color: theme.colors.primary,
   fontSize: theme.fonts.size.heading,
   fontWeight: theme.fonts.weight.bold,
 }

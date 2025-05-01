@@ -68,7 +68,7 @@
                     :key="index"
                     :item="item"
                     @showDetail="openPopup"
-                    :is-admin="true"
+                    :is-admin="false"
                 />
             </ul>
         </div>

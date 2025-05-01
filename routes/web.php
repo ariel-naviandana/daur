@@ -22,7 +22,7 @@ Route::get('/riwayat', function () {
     return view('riwayat-recycle');
 })->name('riwayat');
 
-Route::get('/manajemen-recycle', function () {
+Route::get('/admin/recycle', function () {
     return view('manajemen-recycle');
 })->name('manajemen-recycle');
 
@@ -47,3 +47,7 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('register');
 })->name('register');
+
+Route::get('/admin', function () {
+    return view('home-admin');
+})->name('home-admin');

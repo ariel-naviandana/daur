@@ -2,12 +2,14 @@
     <div :style="layoutStyle">
         <div :style="upperSection">
             <!-- Tombol Kembali -->
+            <a href="/profile">
             <div :style="backButtonStyle">
                 <img src="/public/images/back-btn.svg" alt="">
                 <button @click="">
                     Kembali ke profile
                 </button>
             </div>
+            </a>
 
             <!-- Nama User -->
             <h1 :style="userNameStyle">Rudy Tabootie</h1>

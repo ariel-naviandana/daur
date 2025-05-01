@@ -82,9 +82,6 @@ const cardStyle = {
     fontFamily: theme.fonts.family,
     color: theme.colors.darkGrey,
     listStyle: 'none',
-    width: '100%',
-    minHeight: '120px',
-
 }
 
 const containerStyle = {
@@ -128,7 +125,7 @@ const dateStyle = {
     margin: 0,
     textAlign: 'left',
     width: '100%',
-    color: (isAdmin.value ?? false) ? theme.colors.darkGrey : theme.colors.grey,
+    color: (isAdmin.value ?? false) ? theme.colors.grey : theme.colors.darkGrey,
 }
 
 const statusBadgeStyle = {

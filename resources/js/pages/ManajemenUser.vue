@@ -66,7 +66,6 @@
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    :style="noResultsIconStyle"
                 >
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -390,11 +389,6 @@ const noResultsStyle = {
     justifyContent: 'center',
     padding: '48px 0',
     textAlign: 'center',
-}
-
-const noResultsIconStyle = {
-    color: theme.colors.grey,
-    marginBottom: '16px',
 }
 
 const noResultsTextStyle = {

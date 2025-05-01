@@ -22,11 +22,11 @@
         </div>
     </div>
   </template>
-  
+
   <script setup lang="ts">
   import { computed } from 'vue'
   import { theme } from '@/config/theme'
-  
+
   const props = defineProps<{
     name: string
     date: string
@@ -34,29 +34,29 @@
     weight: string
     status: string
   }>()
-  
+
   const nameStyle = {
     fontWeight: theme.fonts.weight.semibold,
     fontSize: theme.fonts.size.medium,
     color: theme.colors.darkGrey,
   }
-  
+
   const dateStyle = {
     fontSize: theme.fonts.size.base,
-    color: theme.colors.lightGrey,
+    color: theme.colors.grey,
   }
-  
+
   const materialStyle = {
     fontSize: theme.fonts.size.base,
     color: theme.colors.darkGrey,
   }
-  
+
   const weightStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.bold,
-    color: theme.colors.green,
+    color: theme.colors.primary,
   }
-  
+
   const statusBadgeStyle = {
     display: 'inline-flex',
     alignItems: 'center',
@@ -72,7 +72,7 @@
     textAlign: 'center',
     lineHeight: '16px',
   }
-  
+
   const statusBackgroundStyle = computed(() => {
     const statusLower = props.status.toLowerCase()
     if (statusLower === 'sukses') return { backgroundColor: theme.colors.primary }
@@ -81,4 +81,3 @@
     return { backgroundColor: theme.colors.lightGrey }
   })
   </script>
-  

@@ -1,7 +1,7 @@
 <template>
     <div class="message-input-wrapper">
         <button class="icon-button">
-            <img src="/public/images/camera-icon.svg" alt="Camera" />
+            <img src="/images/camera-icon.svg" alt="Camera" />
         </button>
         <input
             type="text"
@@ -11,7 +11,7 @@
             @keyup.enter="emitMessage"
         />
         <button class="icon-button" @click="emitMessage">
-            <img src="/public/images/send-icon.svg" alt="Send" />
+            <img src="/images/send-icon.svg" alt="Send" />
         </button>
     </div>
 </template>

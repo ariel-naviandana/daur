@@ -14,8 +14,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import ChatList from './ChatList.vue';
-import ChatWindow from './ChatWindow.vue';
+import ChatList from '../components/ChatList.vue';
+import ChatWindow from '../components/ChatWindow.vue';
 import Navbar from "@/components/Navbar.vue";
 import { theme } from '@/config/theme'
 

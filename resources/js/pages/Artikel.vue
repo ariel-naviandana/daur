@@ -10,8 +10,8 @@
             placeholder="Cari judul artikel..."
           />
           <hr :style="dividerStyle" />
-          <h3 :style="sectionTitle">Artikel terbaru</h3>
-  
+          <h3 v-if="searchQuery.toString() === ''" :style="sectionTitle">Artikel terbaru</h3>
+
           <div :style="cardWrapperStyle">
             <div
               v-for="(artikel, index) in filteredArtikelList"
@@ -28,11 +28,32 @@
               />
             </div>
           </div>
+
+            <div v-if="filteredArtikelList.length === 0" :style="noResultsStyle">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <p :style="noResultsTextStyle">Tidak ada hasil yang ditemukan</p>
+                <p :style="noResultsDescStyle">
+                    Coba sesuaikan filter atau kata kunci pencarian Anda
+                </p>
+            </div>
         </template>
-  
+
         <template v-else>
           <div style="max-width: 800px; margin: 0 auto">
-            <button @click="selectedArtikel = null" style="margin-bottom: 20px">Kembali</button>
+            <button @click="selectedArtikel = null" style="margin-bottom: 20px; color: white; background-color: #4CAF50; padding: 6px 28px; border-radius: 24px">Kembali</button>
             <h1 :style="headingStyle">{{ selectedArtikel.title }}</h1>
             <p :style="dateStyle">{{ selectedArtikel.date }}</p>
             <img :src="selectedArtikel.image" :style="detailImageStyle" />
@@ -50,22 +71,22 @@
       </div>
     </div>
   </template>
-  
+
     <script lang="ts" setup>
     import Navbar from '../components/Navbar.vue'
     import ArtikelCard from '../components/ArtikelCard.vue'
     import { ref } from 'vue'
     import { theme } from '@/config/theme'
     import { computed } from 'vue'
-    
+
     const selectedArtikel = ref(null)
     const searchQuery = ref('')
 
-    
+
     function selectArtikel(artikel: any) {
         selectedArtikel.value = artikel
     }
-    
+
     const filteredArtikelList = computed(() =>
         artikelList.filter(artikel =>
             artikel.title.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -109,13 +130,13 @@
         maxWidth: '900px',
         margin: '24px auto 30px auto',
         padding: '12px 20px',
-        borderRadius: '9999px', 
+        borderRadius: '9999px',
         border: '1px solid #ccc',
         outline: 'none',
         fontSize: theme.fonts.size.small,
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     }
-    
+
     const detailImageStyle = {
         width: '100%',
         maxHeight: '400px',
@@ -123,29 +144,51 @@
         borderRadius: '12px',
         marginBottom: '16px',
     }
-    
+
     const paragraphStyle = {
         marginBottom: '16px',
         lineHeight: '1.6',
     }
-    
+
     const dateStyle = {
-        color: theme.colors.green,
+        color: theme.colors.primary,
         fontSize: theme.fonts.size.small,
         marginBottom: '30px',
-        marginTop: '15px', 
+        marginTop: '15px',
         textAlign: 'center',
     }
-    
+
     const infoStyle = {
         marginTop: '32px',
-        color: theme.colors.lightGrey,
+        color: theme.colors.grey,
         fontSize: theme.fonts.size.small,
         borderTop: '1px solid #ccc',
         paddingTop: '12px',
         lineHeight: '1.5',
     }
-    
+
+    const noResultsStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '48px 0',
+        textAlign: 'center',
+    }
+
+    const noResultsTextStyle = {
+        fontSize: theme.fonts.size.base,
+        fontWeight: theme.fonts.weight.bold,
+        color: theme.colors.darkGrey,
+        margin: '0 0 8px 0',
+    }
+
+    const noResultsDescStyle = {
+        fontSize: theme.fonts.size.sm,
+        color: theme.colors.grey,
+        margin: 0,
+    }
+
     // Dummy artikel list (dengan konten lengkap)
     const artikelList = [
         {
@@ -232,7 +275,12 @@
         copyright: '© 2025 GreenTech Bandung',
         sumber: 'kompas.com',
         },
-        
+
     ]
     </script>
-    
+<style scoped>
+button:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+</style>

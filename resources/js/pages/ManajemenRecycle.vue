@@ -383,11 +383,6 @@ const noResultsStyle = {
     textAlign: 'center',
 }
 
-const noResultsIconStyle = {
-    color: theme.colors.grey,
-    marginBottom: '16px',
-}
-
 const noResultsTextStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.bold,

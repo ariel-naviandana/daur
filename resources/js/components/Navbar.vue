@@ -17,38 +17,49 @@
 
             <ul class="hidden md:flex gap-8">
                 <li>
-                    <a href="/" :style="linkStyle('/')">Home</a>
+                    <a :href="isAdmin ? '/admin' : '/'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin' : '/')">Home</a>
                 </li>
                 <li>
-                    <a href="/recycle" :style="linkStyle('/recycle')">Recycle</a>
+                    <a @click="redirectIfNotLoggedIn(isAdmin ? '/admin/recycle' : '/recycle')" :style="linkStyle(isAdmin ? '/admin/recycle' : '/recycle')" role="button">Recycle</a>
                 </li>
                 <li>
-                    <a href="/artikel" :style="linkStyle('/artikel')">Artikel</a>
+                    <a :href="isAdmin ? '/admin/artikel' : '/artikel'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin/artikel' : '/artikel')">Artikel</a>
                 </li>
                 <li>
-                    <a href="/chat" :style="linkStyle('/chat')">Chat</a>
+                    <a @click="redirectIfNotLoggedIn('/chat')" :style="linkStyle('/chat')" role="button">Chat</a>
+                </li>
+                <li v-if="isAdmin">
+                    <a href="/admin/users" :style="linkStyle('/admin/users')">User</a>
+                </li>
+                <li v-if="isAdmin">
+                    <a href="/admin/saldo" :style="linkStyle('/admin/saldo')">Saldo</a>
                 </li>
             </ul>
 
             <div class="hidden md:block">
-                <a href="/profile" :style="profileLinkStyle">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="35"
-                        height="35"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        :style="iconStyle"
-                    >
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <circle cx="12" cy="10" r="3"></circle>
-                        <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
-                    </svg>
-                </a>
+                <template v-if="!loggedInUser">
+                    <a href="/login" style="color: white; font-weight: bold; background-color: #4CAF50; padding: 6px 28px; border-radius: 24px">Login</a>
+                </template>
+                <template v-else>
+                    <a href="/profile" :style="profileLinkStyle">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="35"
+                            height="35"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            :style="iconStyle"
+                        >
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="10" r="3"></circle>
+                            <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
+                        </svg>
+                    </a>
+                </template>
             </div>
         </div>
 
@@ -63,18 +74,32 @@
                 </svg>
             </button>
             <ul class="flex flex-col gap-6">
-                <li><a href="/" @click="closeSidebar" :style="linkStyle('/')">Home</a></li>
-                <li><a href="/recycle" @click="closeSidebar" :style="linkStyle('/recycle')">Recycle</a></li>
-                <li><a href="/artikel" @click="closeSidebar" :style="linkStyle('/artikel')">Artikel</a></li>
-                <li><a href="/chat" @click="closeSidebar" :style="linkStyle('/chat')">Chat</a></li>
-                <li><a href="/profile" @click="closeSidebar" :style="linkStyle('/profile')">Profil</a></li>
+                <li>
+                    <a :href="isAdmin ? '/admin/' : '/'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin' : '/')">Home</a>
+                </li>
+                <li>
+                    <a @click="redirectIfNotLoggedIn(isAdmin ? '/admin/recycle' : '/recycle')" :style="linkStyle(isAdmin ? '/admin/recycle' : '/recycle')" role="button">Recycle</a>
+                </li>
+                <li><a :href="isAdmin ? '/admin/artikel' : '/artikel'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin/artikel' : '/artikel')">Artikel</a></li>
+                <li>
+                    <a @click="redirectIfNotLoggedIn('/chat')" :style="linkStyle('/chat')" role="button">Chat</a>
+                </li>
+                <li v-if="isAdmin">
+                    <a href="/admin/users" :style="linkStyle('/admin/users')">User</a>
+                </li>
+                <li v-if="isAdmin">
+                    <a href="/admin/saldo" :style="linkStyle('/admin/saldo')">Saldo</a>
+                </li>
+                <li>
+                    <a href="/profile" @click="closeSidebar" :style="linkStyle('/profile')">Profil</a>
+                </li>
             </ul>
         </div>
     </nav>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { theme } from '@/config/theme'
 
 const sidebarOpen = ref(false)
@@ -83,6 +108,19 @@ const toggleSidebar = () => {
 }
 const closeSidebar = () => {
     sidebarOpen.value = false
+}
+
+const loggedInUser = JSON.parse(localStorage.getItem('user') || 'null')
+
+const isAdmin = computed(() => loggedInUser?.email === 'admin@gmail.com')
+
+function redirectIfNotLoggedIn(path: string) {
+    if (!loggedInUser) {
+        alert('Anda harus login untuk mengakses fitur ini!')
+        window.location.href = '/login'
+    } else {
+        window.location.href = path
+    }
 }
 
 function linkStyle(path: string) {
@@ -120,5 +158,9 @@ const profileLinkStyle = {
 <style scoped>
 a:hover {
     text-decoration: underline;
+}
+
+a[role="button"] {
+    cursor: pointer;
 }
 </style>
