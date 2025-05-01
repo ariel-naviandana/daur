@@ -35,3 +35,15 @@ Route::get('/admin/users', function () {
 Route::get('/saldo', function () {
     return view('saldo');
 })->name('saldo');
+
+Route::get('/artikel', function () {
+    return view('artikel');
+})->name('artikel');
+
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+
+Route::get('/register', function () {
+    return view('register');
+})->name('register');
