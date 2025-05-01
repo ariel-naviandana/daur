@@ -35,7 +35,8 @@ const chatHeader = {
     fontSize: theme.fonts.size.subheading,
     fontWeight: theme.fonts.weight.bold,
     fontFamily: theme.fonts.family,
-    paddingLeft: '24px',
+    paddingLeft: '20px',
+    paddingBottom: '10px',
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
@@ -55,22 +56,9 @@ const chatPageWrapper = {
 const chatPage = {
     display: 'flex',
     minHeight: '80vh',
-    // height: '896px',
 }
-
 </script>
 
 <style scoped>
-/* Chat Wrapper */
-.chat-page-wrapper {
-    width: 100%;
-    max-width: 1440px;
-    margin: 0 auto;
-    height: 90vh;
-}
 
-/* Halaman Chat */
-.chat-page {
-    display: flex;
-}
 </style>
