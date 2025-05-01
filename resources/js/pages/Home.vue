@@ -1,64 +1,64 @@
 <template>
     <div :style="layoutStyle">
-    <Navbar />
-    <div :style="mainContentStyle">
-        <div class="home-page">
-            <section class="hero">
-                <img src="/public/images/hero-image.png" alt="Hero Image" :style="heroImgStyle" />
-            </section>
+        <Navbar />
+        <div :style="mainContentStyle">
+            <div class="home-page" :style="homePageStyle">
+                <section class="hero">
+                    <img src="/public/images/hero-image.png" alt="Hero Image" :style="heroImgStyle" />
+                </section>
 
-            <section class="mission" :style="missionStyle">
-                <div class="mission-img">
-                    <img src="/public/images/recycle-image.png" alt="Recycle" :style="missionImgStyle" />
-                </div>
-                <div class="mission-text" :style="missionTextStyle">
-                    <h2 :style="missionHeadingStyle">Meningkatkan Kesadaran, Mewujudkan Perubahan</h2>
-                    <p :style="missionParagraphStyle">
-                        Misi kami adalah meningkatkan kesadaran akan pentingnya daur ulang dan menyediakan solusi mudah bagi
-                        masyarakat untuk mendaur ulang sampah dengan benar. Dengan teknologi dan inovasi, kami menghadirkan cara baru
-                        dalam pengelolaan limbah.
-                    </p>
-                </div>
-            </section>
+                <section class="mission" :style="missionStyle">
+                    <div class="mission-img">
+                        <img src="/public/images/recycle-image.png" alt="Recycle" :style="missionImgStyle" />
+                    </div>
+                    <div class="mission-text" :style="missionTextStyle">
+                        <h2 :style="missionHeadingStyle">Meningkatkan Kesadaran, Mewujudkan Perubahan</h2>
+                        <p :style="missionParagraphStyle">
+                            Misi kami adalah meningkatkan kesadaran akan pentingnya daur ulang dan menyediakan solusi mudah bagi
+                            masyarakat untuk mendaur ulang sampah dengan benar. Dengan teknologi dan inovasi, kami menghadirkan cara baru
+                            dalam pengelolaan limbah.
+                        </p>
+                    </div>
+                </section>
 
-            <section class="title_center" :style="titleCenterStyle">
-                <h2 :style="titleHeadingStyle">Cara Mengikuti</h2>
-                <div :style="containerStyle">
-                    <div class="card" :style="cardStyle">
-                        <div class="badge" :style="badgeStyle">1</div>
-                        <div class="card-body" :style="cardBodyStyle">
-                            <img :style="cardImgStyle" src="/public/images/langkah1.svg" alt="Pilih dan Kemas" />
-                            <div class="label" :style="labelStyle">Pilah dan Kemas</div>
+                <section class="title_center" :style="titleCenterStyle">
+                    <h2 :style="titleHeadingStyle">Cara Mengikuti</h2>
+                    <div :style="containerStyle">
+                        <div class="card" :style="cardStyle">
+                            <div class="badge" :style="badgeStyle">1</div>
+                            <div class="card-body" :style="cardBodyStyle">
+                                <img :style="cardImgStyle" src="/public/images/langkah1.svg" alt="Pilih dan Kemas" />
+                                <div class="label" :style="labelStyle">Pilah dan Kemas</div>
+                            </div>
+                        </div>
+                        <div class="card" :style="cardStyle">
+                            <div class="badge" :style="badgeStyle">2</div>
+                            <div class="card-body" :style="cardBodyStyle">
+                                <img :style="cardImgStyle" src="/public/images/langkah2.svg" alt="Buat Transaksi" />
+                                <div class="label" :style="labelStyle">Buat Transaksi</div>
+                            </div>
+                        </div>
+                        <div class="card" :style="cardStyle">
+                            <div class="badge" :style="badgeStyle">3</div>
+                            <div class="card-body" :style="cardBodyStyle">
+                                <img :style="cardImgStyle" src="/public/images/langkah3.svg" alt="Kirim Sampah" />
+                                <div class="label" :style="labelStyle">Kirim Sampah</div>
+                            </div>
+                        </div>
+                        <div class="card" :style="cardStyle">
+                            <div class="badge" :style="badgeStyle">4</div>
+                            <div class="card-body" :style="cardBodyStyle">
+                                <img :style="cardImgStyle" src="/public/images/langkah4.svg" alt="Sampah Terkelola" />
+                                <div class="label" :style="labelStyle">Sampah Terkelola</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card" :style="cardStyle">
-                        <div class="badge" :style="badgeStyle">2</div>
-                        <div class="card-body" :style="cardBodyStyle">
-                            <img :style="cardImgStyle" src="/public/images/langkah2.svg" alt="Buat Transaksi" />
-                            <div class="label" :style="labelStyle">Buat Transaksi</div>
-                        </div>
-                    </div>
-                    <div class="card" :style="cardStyle">
-                        <div class="badge" :style="badgeStyle">3</div>
-                        <div class="card-body" :style="cardBodyStyle">
-                            <img :style="cardImgStyle" src="/public/images/langkah3.svg" alt="Kirim Sampah" />
-                            <div class="label" :style="labelStyle">Kirim Sampah</div>
-                        </div>
-                    </div>
-                    <div class="card" :style="cardStyle">
-                        <div class="badge" :style="badgeStyle">4</div>
-                        <div class="card-body" :style="cardBodyStyle">
-                            <img :style="cardImgStyle" src="/public/images/langkah4.svg" alt="Sampah Terkelola" />
-                            <div class="label" :style="labelStyle">Sampah Terkelola</div>
-                        </div>
-                    </div>
-                </div>
-                <button class="send-button" :style="sendButtonStyle" @click="goToRecycle">Kirim Sampah</button>
-            </section>
-            <h2 :style="titleHeadingStyle">Jenis Sampah</h2>
-            <CategoryList @category-clicked="openPopup"/>
+                    <button class="send-button" :style="sendButtonStyle" @click="goToRecycle">Kirim Sampah</button>
+                </section>
+                <h2 :style="titleHeadingStyle">Jenis Sampah</h2>
+                <CategoryList @category-clicked="openPopup"/>
+            </div>
         </div>
-    </div>
         <PopupDetailSampah
             :isOpen="isPopupOpen"
             :selectedCategory="selectedCategory"
@@ -71,18 +71,19 @@
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
 import { theme } from '@/config/theme'
-import CategoryList from "@/components/CategoryList.vue"
-import {ref} from "vue"
-import PopupDetailSampah from "@/components/PopupDetailSampah.vue"
+import CategoryList from "@/components/CategoryList.vue";
+import {ref} from "vue";
+import PopupDetailSampah from "@/components/PopupDetailSampah.vue";
 
 const goToRecycle = () => {
-    window.location.href = '/recycle'
-}
+    window.location.href = '/recycle';
+};
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
     minHeight: '100vh',
     fontFamily: theme.fonts.family,
+    overflowX: 'hidden',
 }
 
 const mainContentStyle = {
@@ -104,8 +105,10 @@ const titleHeadingStyle = {
 }
 
 const heroImgStyle = {
-    width: '1440px',
-    height: 'auto'
+    width: '100%',
+    maxWidth: '100%',
+    height: 'auto',
+    display: 'block',
 }
 
 const missionStyle = {

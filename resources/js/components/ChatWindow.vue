@@ -1,43 +1,65 @@
 <template>
-    <div class="chat-window" v-if="selectedBank">
-        <div class="chat-header">
-            <img :src="selectedBank.avatar" alt="avatar" class="avatar" />
+    <div v-if="selectedBank" :style="chatWindow">
+        <div :style="chatHeader">
+            <img :src="selectedBank.avatar" alt="avatar" :style="avatar" />
             <h2>{{ selectedBank.name }}</h2>
         </div>
-        <div class="chat-messages">
-            <div v-for="(message, index) in messages" :key="index" class="message-wrapper" :class="message.from">
-                <div :class="['message', message.from]">
+        <div :style="chatMessages">
+            <div
+                v-for="(message, index) in messages"
+                :key="index"
+                :style="[messageWrapper, style.message.from === 'me' ? messageWrapperMe : {}]"
+            >
+                <div
+                    :style="[
+                        style.message,
+                        message.from === 'me' ? style.messageMe : style.messageThem
+                    ]"
+                >
                     <p>{{ message.text }}</p>
                 </div>
-                <small class="message-time">{{ message.time }}</small>
+                <small
+                    :style="[
+                        style.messageTime,
+                        message.from === 'me' ? { textAlign: 'right', alignSelf: 'flex-end', marginRight: '14px' } : { textAlign: 'left', alignSelf: 'flex-start', marginLeft: '14px' }
+                    ]"
+                >
+                    {{ message.time }}
+                </small>
             </div>
         </div>
-        <div class="chat-input">
-            <button class="icon-button">
-                <img src="/public/images/camera-icon.svg" alt="Camera" />
+        <div :style="chatInput">
+            <button :style="iconButton">
+                <img src="/public/images/camera-icon.svg" alt="Camera" :style="iconImg" />
             </button>
-            <input v-model="newMessage" placeholder="Tulis Pesan" @keyup.enter="sendMessage" />
-            <button class="icon-button" @click="sendMessage">
-                <img src="/public/images/send-icon.svg" alt="Send" />
+            <input
+                v-model="newMessage"
+                placeholder="Tulis Pesan"
+                @keyup.enter="sendMessage"
+                :style="input"
+            />
+            <button :style="iconButton" @click="sendMessage">
+                <img src="/public/images/send-icon.svg" alt="Send" :style="iconImg" />
             </button>
         </div>
     </div>
-    <div v-else class="empty-state">
+    <div v-else :style="emptyState">
         <p>Pilih bank sampah untuk mulai chatting</p>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import {theme} from "@/config/theme.js";
 
 const props = defineProps({
     selectedBank: Object,
 })
 
 const messages = ref([
-    { from: 'me', text: 'Halo Kak, saya mau bertanya mengenai panduan penggunaan aplikasi DAUR', time: '12.28 pm' },
-    { from: 'them', text: 'Halo, Kak Radit. Terima kasih sudah menghubungi kami...', time: '12.32 pm' },
-    { from: 'me', text: 'Baik, Terima kasih!', time: '12.36 pm' },
+    { from: 'me', text: 'Halo Kak, saya mau bertanya mengenai panduan penggunaan aplikasi DAUR', time: '12.28 PM' },
+    { from: 'them', text: 'Halo, Kak Radit. Terima kasih sudah menghubungi kami...', time: '12.32 PM' },
+    { from: 'me', text: 'Baik, Terima kasih!', time: '12.36 PM' },
 ])
 
 const newMessage = ref('')
@@ -52,116 +74,112 @@ function sendMessage() {
         newMessage.value = ''
     }
 }
+
+
+const chatWindow = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    borderTop: '1px solid #ccc',
+    borderBottom: '1px solid #ccc',
+    borderRight: '1px solid #ccc',
+}
+const chatHeader = {
+    display: 'flex',
+    height: '60px',
+    alignItems: 'center',
+    padding: '20px',
+    borderBottom: '1px solid #ccc',
+}
+const avatar = {
+    width: '36px',
+    height: '36px',
+    borderRadius: '50%',
+    marginRight: '1rem',
+}
+const chatMessages = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '1rem',
+    overflowY: 'auto',
+    backgroundColor: '#fafafa',
+}
+const messageWrapper = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginBottom: '1rem',
+}
+const messageWrapperMe = {
+    alignItems: 'flex-end',
+}
+const style = {
+    message: {
+        display: 'inline-block',
+        maxWidth: '60%',
+        paddingLeft: '14px',
+        paddingRight: '14px',
+        paddingTop: '10px',
+        paddingBottom: '10px',
+        borderRadius: '14px',
+        wordWrap: 'break-word',
+        fontSize: theme.fonts.size.base,
+    },
+    messageTime: {
+        marginTop: '4px',
+        fontSize: '12px',
+        marginRight: '20px',
+        marginLeft: '20px',
+        color: '#888888',
+    },
+    messageMe: {
+        alignSelf: 'flex-end',
+        backgroundColor: '#a3d4a5',
+    },
+    messageThem: {
+        alignSelf: 'flex-start',
+        backgroundColor: '#eeeeee',
+    }
+}
+
+const chatInput = {
+    display: 'flex',
+    padding: '1rem',
+}
+const input = {
+    flex: 1,
+    marginLeft: '10px',
+    marginRight: '10px',
+    paddingLeft: '20px',
+    borderRadius: '30px',
+    border: 'none',
+    backgroundColor: '#fafafa',
+    fontSize: '20px',
+    height: '50px',
+}
+const iconButton = {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+}
+const iconImg = {
+    width: '40px',
+    height: '40px',
+}
+
+const emptyState = {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+}
+
 </script>
 
 <style scoped>
-/* Chat Window */
-.chat-window {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-}
 
-/* Chat Header */
-.chat-header {
-    display: flex;
-    height: 60px;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid #ccc;
-}
-
-/* Avatar Header */
-.avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 1rem;
-}
-
-/* Chat Messages */
-.chat-messages {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    overflow-y: auto;
-    background-color: #fafafa;
-}
-.message-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-}
-.message-wrapper.me {
-    align-items: flex-end;
-}
-.message {
-    display: inline-block;
-    max-width: 70%;
-    padding-left: 24px;
-    padding-right: 24px;
-    border-radius: 30px;
-    word-wrap: break-word;
-    font-size: 20px;
-}
-.message.me {
-    align-self: flex-end;
-    align-items: flex-end;
-    background-color: #a3d4a5;
-}
-.message.them {
-    align-self: flex-start;
-    background-color: #eeeeee;
-}
-.message-time {
-    margin-top: 4px;
-    font-size: 12px;
-    margin-right: 20px;
-    margin-left: 20px;
-    color: #888888;
-}
-
-/* Chat Input */
-.chat-input {
-    display: flex;
-    padding: 1rem;
-}
-.chat-input input {
-    flex: 1;
-    margin-left: 10px;
-    margin-right: 10px;
-    padding-left: 20px;
-    border-radius: 30px;
-    border: none;
-    background-color: #fafafa;
-    font-size: 20px;
-    height: 50px;
-}
-
-/* Input Button */
-.icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.icon-button img {
-    width: 40px;
-    height: 40px;
-}
-
-/* Belum memilih chat */
-.empty-state {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 </style>

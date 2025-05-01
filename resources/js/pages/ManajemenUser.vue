@@ -311,6 +311,7 @@ const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
     minHeight: '100vh',
     fontFamily: theme.fonts.family,
+    overflowX: 'hidden',
 }
 
 const contentStyle = {
