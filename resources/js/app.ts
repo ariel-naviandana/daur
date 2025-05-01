@@ -6,7 +6,7 @@ import Chat from './pages/Chat.vue'
 import Recycle from './pages/Recycle.vue'
 import RiwayatRecycle from './pages/RiwayatRecycle.vue'
 import ManajemenRecycle from "./pages/ManajemenRecycle.vue"
-import UserManagement from "./pages/UserManagement.vue"
+import UserManagement from "./pages/ManajemenUser.vue"
 import Saldo from "./pages/Saldo.vue"
 import Artikel from "./pages/Artikel.vue"
 import Login from "./pages/Login.vue"
