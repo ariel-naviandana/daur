@@ -6,8 +6,7 @@ import RiwayatRecycle from './pages/RiwayatRecycle.vue';
 import Artikel from './pages/Artikel.vue';
 import Login from './pages/Login.vue';
 import Register from './pages/Register.vue';
-
-
+import HomeAdmin from './pages/HomeAdmin.vue';
 
 const el = document.getElementById('app');
 
@@ -34,6 +33,9 @@ if (el) {
       break;
     case 'register':
       component = Register;
+      break;
+    case 'home-admin':
+      component = HomeAdmin;
       break;
     default:
       console.error('Unknown page component:', page);

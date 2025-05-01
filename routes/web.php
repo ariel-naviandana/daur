@@ -26,3 +26,6 @@ Route::get('/register', function () {
     return view('register');
 })->name('register');
 
+Route::get('/home-admin', function () {
+    return view('home-admin');
+})->name('home-admin');
