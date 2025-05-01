@@ -31,3 +31,7 @@ Route::get('/users', [UserController::class, 'getAll']);
 Route::get('/admin/users', function () {
     return view('admin-users');
 })->name('admin.users');
+
+Route::get('/saldo', function () {
+    return view('saldo');
+})->name('saldo');

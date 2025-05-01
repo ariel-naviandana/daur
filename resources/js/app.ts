@@ -7,6 +7,7 @@ import Recycle from './pages/Recycle.vue'
 import RiwayatRecycle from './pages/RiwayatRecycle.vue'
 import ManajemenRecycle from "./pages/ManajemenRecycle.vue"
 import UserManagement from "./pages/UserManagement.vue"
+import Saldo from "./pages/Saldo.vue"
 
 const el = document.getElementById('app')
 
@@ -36,6 +37,9 @@ if (el) {
         break
     case 'admin-users':
         component = UserManagement
+        break
+    case "saldo":
+        component = Saldo
         break
     default:
       console.error('Unknown page component:', page)
