@@ -15,7 +15,7 @@
             </template>
             </InfoCard>
 
-            <InfoCard title="Total Sampah" value="87">
+            <InfoCard title="Total Sampah" value="87 Kg">
             <template #icon>
                 <img src="../../../public/images/trash.png" alt="Report Icon" class="w-8 h-8" />
             </template>
