@@ -152,7 +152,7 @@
       background: 'none',
       border: 'none',
       cursor: 'pointer',
-      color: theme.colors.green,
+      color: theme.colors.primary,
       fontWeight: theme.fonts.weight.medium,
       fontSize: theme.fonts.size.small,
       marginBottom: '20px',
@@ -164,7 +164,7 @@
       alignItems: 'center',
       justifyContent: 'center',
       textAlign: 'center',
-      color: theme.colors.lightGrey,
+      color: theme.colors.grey,
       padding: '40px 20px',
       maxWidth: '600px',
       margin: '0 auto',
@@ -209,7 +209,7 @@
     }
 
     const dateStyle = {
-        color: theme.colors.green,
+        color: theme.colors.primary,
         fontSize: theme.fonts.size.small,
         marginBottom: '30px',
         marginTop: '15px',
@@ -218,7 +218,7 @@
 
     const infoStyle = {
         marginTop: '32px',
-        color: theme.colors.lightGrey,
+        color: theme.colors.grey,
         fontSize: theme.fonts.size.small,
         borderTop: '1px solid #ccc',
         paddingTop: '12px',
