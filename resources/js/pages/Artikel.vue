@@ -53,7 +53,28 @@
       </template>
           <template v-else>
             <div style="max-width: 800px; margin: 0 auto">
-              <button @click="selectedArtikel = null" style="margin-bottom: 20px">Kembali</button>
+              <button 
+                @click="selectedArtikel = null" 
+                :style="backButtonStyle"
+                aria-label="Kembali"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  stroke-width="2" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round"
+                  style="margin-right: 8px"
+                >
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                <span>Kembali</span>
+              </button>
+
               <h1 :style="headingStyle">{{ selectedArtikel.title }}</h1>
               <p :style="dateStyle">{{ selectedArtikel.date }}</p>
               <img :src="selectedArtikel.image" :style="detailImageStyle" />
@@ -124,25 +145,42 @@
         boxSizing: 'border-box',
     }
 
+    const backButtonStyle = {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer',
+      color: theme.colors.green,
+      fontWeight: theme.fonts.weight.medium,
+      fontSize: theme.fonts.size.small,
+      marginBottom: '20px',
+    }
+
     const noResultsStyle = {
-  textAlign: 'center',
-  color: theme.colors.lightGrey,
-  padding: '40px 20px',
-  maxWidth: '600px',
-  margin: '0 auto',
-}
-const noResultsIconStyle = {
-  marginBottom: '16px',
-  color: '#ccc',
-}
-const noResultsTextStyle = {
-  fontWeight: theme.fonts.weight.bold,
-  fontSize: '18px',
-  marginBottom: '8px',
-}
-const noResultsDescStyle = {
-  fontSize: '14px',
-}
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center',
+      color: theme.colors.lightGrey,
+      padding: '40px 20px',
+      maxWidth: '600px',
+      margin: '0 auto',
+    }
+    const noResultsIconStyle = {
+      marginBottom: '16px',
+      color: '#ccc',
+    }
+    const noResultsTextStyle = {
+      fontWeight: theme.fonts.weight.bold,
+      fontSize: '18px',
+      marginBottom: '8px',
+    }
+    const noResultsDescStyle = {
+      fontSize: '14px',
+    }
 
     const searchBarStyle = {
         display: 'block',
@@ -213,7 +251,7 @@ const noResultsDescStyle = {
         {
         title: 'Mengapa Daur Ulang Itu Penting? Peran Setiap Individu dalam Menjaga Bumi',
         date: '12 April 2025',
-        image: '/images/image.png',
+        image: '/images/artikel2.jpg',
         content: [
             'Malang - Daur ulang bukan hanya tentang mengelola sampah, tetapi juga tentang menjaga bumi untuk generasi mendatang. Dalam beberapa tahun terakhir, kesadaran masyarakat tentang pentingnya mendaur ulang sampah semakin meningkat. Namun, masih banyak yang belum sepenuhnya memahami manfaat dan urgensinya.',
             'Daur ulang dapat mengurangi beban Tempat Pembuangan Akhir (TPA), menghemat sumber daya alam, dan mengurangi emisi gas rumah kaca. "Sampah yang terbuang begitu saja dapat menjadi masalah besar bagi lingkungan kita. Dengan mendaur ulang, kita memberi sampah kesempatan kedua untuk digunakan kembali," kata Siti Fatimah, seorang aktivis lingkungan.',
@@ -229,7 +267,7 @@ const noResultsDescStyle = {
         {
         title: 'Aplikasi Daur Ulang Digital: Solusi Mengurangi Sampah Plastik di Perkotaan',
         date: '15 Januari 2025',
-        image: '/images/image.png',
+        image: '/images/Artikel3.png',
         content: [
             'Jakarta (ANTARA) - Aplikasi daur ulang digital kini menjadi solusi modern untuk mengatasi sampah plastik yang terus menumpuk di perkotaan. Melalui aplikasi ini, masyarakat dapat dengan mudah melaporkan dan menjadwalkan pengambilan sampah plastik untuk didaur ulang.',
             'Menurut riset dari Lembaga Pengelolaan Sampah Jakarta, sekitar 60% sampah plastik yang dihasilkan di ibu kota tidak terkelola dengan baik. Aplikasi ini bertujuan untuk meningkatkan kesadaran dan partisipasi masyarakat dalam mendaur ulang sampah.',
@@ -245,7 +283,7 @@ const noResultsDescStyle = {
         {
         title: 'Daur Ulang untuk Masa Depan: Bagaimana Proses Ini Menyelamatkan Sumber Daya Alam',
         date: '22 April 2025',
-        image: '/images/image.png',
+        image: '/images/artikel4.jpg',
         content: [
             'Bandung (ANTARA) - Sumber daya alam yang terbatas dan terus menipis menjadi alasan utama mengapa daur ulang harus diprioritaskan. Setiap hari, manusia menghasilkan jutaan ton sampah yang bisa didaur ulang, namun hanya sebagian kecil dari sampah tersebut yang terkelola dengan baik.',
             '"Sumber daya alam seperti logam, plastik, dan kertas yang kita gunakan setiap hari sebenarnya dapat diolah kembali menjadi produk baru, yang berarti kita tidak perlu lagi menambang atau memproduksi bahan baru dari alam," ujar Dr. Andrianto, pakar pengelolaan sampah.',
@@ -261,7 +299,7 @@ const noResultsDescStyle = {
         {
         title: 'Mendaur Ulang untuk Mengurangi Sampah Plastik: Sebuah Langkah Kecil untuk Dampak Besar',
         date: '20 Desember 2024',
-        image: '/images/image.png',
+        image: '/images/artikel5.jpg',
         content: [
             'Jakarta (ANTARA) - Sampah plastik adalah salah satu masalah lingkungan terbesar yang dihadapi dunia saat ini. Setiap tahun, milyaran ton plastik berakhir di lautan dan TPA, yang membutuhkan waktu ratusan tahun untuk terurai secara alami.',
             'Namun, ada cara untuk mengurangi dampak plastik terhadap lingkungan, yaitu dengan mendaur ulang. "Mendaur ulang plastik membantu mengurangi jumlah sampah plastik yang mencemari lingkungan, sekaligus mengurangi ketergantungan kita pada produksi plastik baru," jelas Rina Putri, pengelola bank sampah di Jakarta.',
