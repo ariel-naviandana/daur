@@ -142,6 +142,8 @@ const navStyle = {
     color: theme.colors.darkGrey,
     padding: '1rem 2rem',
     fontFamily: theme.fonts.family,
+    position: 'fixed',
+    width: '100%',
 }
 
 const iconStyle = {
