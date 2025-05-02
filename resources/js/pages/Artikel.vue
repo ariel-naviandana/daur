@@ -9,10 +9,10 @@
             :style="searchBarStyle"
             placeholder="Cari judul artikel..."
           />
-          <hr :style="dividerStyle" />
-          <h3 :style="sectionTitle">Artikel terbaru</h3>
-  
+          <hr :style="dividerStyle" />  
           <div :style="cardWrapperStyle">
+          <template v-if="filteredArtikelList.length > 0">
+            <h3 :style="sectionTitle">Artikel terbaru</h3>
             <div
               v-for="(artikel, index) in filteredArtikelList"
               :key="index"
@@ -27,29 +27,50 @@
                 :image="artikel.image"
               />
             </div>
-          </div>
-        </template>
-  
-        <template v-else>
-          <div style="max-width: 800px; margin: 0 auto">
-            <button @click="selectedArtikel = null" style="margin-bottom: 20px">Kembali</button>
-            <h1 :style="headingStyle">{{ selectedArtikel.title }}</h1>
-            <p :style="dateStyle">{{ selectedArtikel.date }}</p>
-            <img :src="selectedArtikel.image" :style="detailImageStyle" />
-            <div v-for="(paragraph, index) in selectedArtikel.content" :key="index" :style="paragraphStyle">
-              {{ paragraph }}
+          </template>
+          <template v-else>
+            <div :style="noResultsStyle">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                :style="noResultsIconStyle"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <p :style="noResultsTextStyle">Tidak ada hasil yang ditemukan</p>
+              <p :style="noResultsDescStyle">Coba sesuaikan kata kunci pencarian Anda</p>
             </div>
-            <div :style="infoStyle">
-              <p>Pewarta: {{ selectedArtikel.pewarta }}</p>
-              <p>Editor: {{ selectedArtikel.editor }}</p>
-              <p>Copyright: {{ selectedArtikel.copyright }}</p>
-              <p>Sumber: {{ selectedArtikel.sumber }}</p>
+          </template>
+        </div>    
+      </template>
+          <template v-else>
+            <div style="max-width: 800px; margin: 0 auto">
+              <button @click="selectedArtikel = null" style="margin-bottom: 20px">Kembali</button>
+              <h1 :style="headingStyle">{{ selectedArtikel.title }}</h1>
+              <p :style="dateStyle">{{ selectedArtikel.date }}</p>
+              <img :src="selectedArtikel.image" :style="detailImageStyle" />
+              <div v-for="(paragraph, index) in selectedArtikel.content" :key="index" :style="paragraphStyle">
+                {{ paragraph }}
+              </div>
+              <div :style="infoStyle">
+                <p>Pewarta: {{ selectedArtikel.pewarta }}</p>
+                <p>Editor: {{ selectedArtikel.editor }}</p>
+                <p>Copyright: {{ selectedArtikel.copyright }}</p>
+                <p>Sumber: {{ selectedArtikel.sumber }}</p>
+              </div>
             </div>
-          </div>
-        </template>
+          </template>
+        </div>
       </div>
-    </div>
-  </template>
+    </template>
   
     <script lang="ts" setup>
     import Navbar from '../components/Navbar.vue'
@@ -102,6 +123,26 @@
         paddingRight: '16px',
         boxSizing: 'border-box',
     }
+
+    const noResultsStyle = {
+  textAlign: 'center',
+  color: theme.colors.lightGrey,
+  padding: '40px 20px',
+  maxWidth: '600px',
+  margin: '0 auto',
+}
+const noResultsIconStyle = {
+  marginBottom: '16px',
+  color: '#ccc',
+}
+const noResultsTextStyle = {
+  fontWeight: theme.fonts.weight.bold,
+  fontSize: '18px',
+  marginBottom: '8px',
+}
+const noResultsDescStyle = {
+  fontSize: '14px',
+}
 
     const searchBarStyle = {
         display: 'block',
