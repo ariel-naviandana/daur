@@ -70,6 +70,7 @@
                 </div>
 
                 <form @submit.prevent="openConfirmBookingPopup" :style="formStyle">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.4490029217627!2d112.61110207401013!3d-7.952464992072013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78827f2d620975%3A0xf19b7459bbee5ed5!2sUniversitas%20Brawijaya!5e0!3m2!1sid!2sid!4v1746149712107!5m2!1sid!2sid" width="400" height="300" style="width:100%" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     <div :style="formRowStyle">
                         <div :style="{ ...formGroupStyle, flex: 1.5 }">
                             <label :style="labelStyle">
