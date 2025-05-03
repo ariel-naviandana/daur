@@ -223,3 +223,9 @@ const saveButtonStyle = {
     cursor: 'pointer',
 }
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+    display: none;
+}
+</style>

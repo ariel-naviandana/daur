@@ -182,3 +182,9 @@ const previewImageStyle = {
     borderRadius: '6px',
 }
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+    display: none;
+}
+</style>
