@@ -3,7 +3,7 @@
         <div :style="modalStyle">
             <h3 :style="titleStyle">Konfirmasi Hapus</h3>
             <p :style="messageStyle">
-                Apakah Anda yakin ingin menghapus item <strong>{{ itemName }}</strong> dari keranjang?
+                Apakah Anda yakin ingin menghapus item <strong>{{ itemName }}</strong>?
             </p>
             <div :style="buttonContainerStyle">
                 <button @click="onClose" :style="cancelButtonStyle">Batal</button>
