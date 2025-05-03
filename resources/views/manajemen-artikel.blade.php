@@ -1,6 +1,6 @@
 @extends('master')
 
-@section('title', 'Manajemen Artikel Page')
+@section('title', 'Manajemen Artikel')
 @section('page', 'manajemen-artikel')
 
 @section('content')
