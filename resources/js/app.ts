@@ -14,6 +14,7 @@ import Register from "./pages/Register.vue"
 import HomeAdmin from "./pages/HomeAdmin.vue"
 import ManajemenSaldo from "./pages/ManajemenSaldo.vue"
 import ManajemenArtikel from "./pages/ManajemenArtikel.vue"
+import ManajemenSampah from "./pages/ManajemenSampah.vue";
 
 const el = document.getElementById('app')
 
@@ -40,6 +41,9 @@ if (el) {
         break
     case 'manajemen-recycle':
         component = ManajemenRecycle
+        break
+    case 'manajemen-sampah':
+        component = ManajemenSampah
         break
     case 'admin-users':
         component = UserManagement
