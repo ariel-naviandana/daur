@@ -253,7 +253,7 @@ const noResultsTextStyle = {
 }
 
 const noResultsDescStyle = {
-    fontSize: theme.fonts.size.sm,
+    fontSize: theme.fonts.size.base,
     color: theme.colors.grey,
     margin: 0,
 }

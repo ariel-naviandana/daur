@@ -1,7 +1,7 @@
 <template>
     <div :style="overlayStyle">
         <div :style="popupStyle">
-            <h2 :style="titleStyle">{{ wasteType ? 'Edit Jenis Sampah' : 'Tambah Jenis Sampah' }}</h2>
+            <h2 :style="titleStyle">{{ wasteType?.id ? 'Edit Jenis Sampah' : 'Tambah Jenis Sampah' }}</h2>
             <form @submit.prevent="save">
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Nama Jenis Sampah</label>
@@ -51,23 +51,16 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import axios from 'axios'
-import { theme } from '../config/theme'
 import { WasteType } from '../interfaces/WasteType'
+import { Category } from '../interfaces/Category'
+import { theme } from '../config/theme'
 
-const categories = ref([
-    { id: 1, name: 'Kertas', image: '/images/ic_jenis_kertas.svg' },
-    { id: 2, name: 'Plastik', image: '/images/ic_jenis_botol_plastik.svg' },
-    { id: 3, name: 'Kaca', image: '/images/ic_jenis_botol_kaca.svg' },
-    { id: 4, name: 'Besi', image: '/images/ic_jenis_besi.svg' },
-    { id: 5, name: 'Aluminium', image: '/images/ic_jenis_aluminium.svg' },
-])
-
-const props = defineProps<{ wasteType?: WasteType | null }>()
-const emit = defineEmits(['close', 'save'])
+const props = defineProps<{ wasteType?: WasteType | null; categories: Category[] }>()
+const emit = defineEmits(['close', 'saved'])
 
 const form = ref<WasteType>({
     id: 0,
-    category_id: categories.value[0]?.id || 0,
+    category_id: props.categories[0]?.id || 0,
     name: '',
     unit: '',
     price_per_unit: 0,
@@ -81,7 +74,7 @@ watch(
     (newVal) => {
         form.value = newVal
             ? { ...newVal }
-            : { id: 0, category_id: categories.value[0]?.id || 0, name: '', unit: '', price_per_unit: 0, image: '' }
+            : { id: 0, category_id: props.categories[0]?.id || 0, name: '', unit: '', price_per_unit: 0, image: '' }
         previewImage.value = newVal?.image || null
     },
     { immediate: true }
@@ -122,8 +115,18 @@ const uploadToCloudinary = async (file: File) => {
     }
 }
 
-const save = () => {
-    emit('save', form.value)
+const save = async () => {
+    try {
+        if (form.value.id) {
+            await axios.put(`/waste-types/${form.value.id}`, form.value)
+        } else {
+            await axios.post('/waste-types', form.value)
+        }
+        emit('saved')
+        emit('close')
+    } catch (error) {
+        console.error('Error saving waste type:', error)
+    }
 }
 
 const overlayStyle = {

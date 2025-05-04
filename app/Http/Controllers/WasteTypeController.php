@@ -16,7 +16,7 @@ class WasteTypeController extends Controller
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string',
             'unit' => 'required|string',
-            'price' => 'required|numeric',
+            'price_per_unit' => 'required|numeric',
             'image' => 'nullable|string',
         ]);
 

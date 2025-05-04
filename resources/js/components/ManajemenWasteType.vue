@@ -78,8 +78,9 @@
         <WasteTypeFormPopup
             v-if="showFormPopup"
             :wasteType="selectedWasteType"
+            :categories="categories"
             @close="closeFormPopup"
-            @save="handleSave"
+            @saved="fetchWasteTypes"
         />
 
         <PopupDelete
@@ -93,7 +94,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import WasteTypeCard from './WasteTypeCard.vue'
 import WasteTypeFormPopup from './PopupFormWasteType.vue'
 import PopupDelete from './PopupDelete.vue'
@@ -102,49 +104,47 @@ import { Category } from '../interfaces/Category'
 import { theme } from '../config/theme'
 
 const selectedWasteType = ref<WasteType | null>(null)
-const wasteTypes = ref<WasteType[]>([
-    {
-        id: 1,
-        category_id: 1,
-        name: 'Kertas Koran',
-        unit: 'kg',
-        price_per_unit: 2000,
-        image: '/images/ic_jenis_kertas.svg',
-    },
-    {
-        id: 2,
-        category_id: 2,
-        name: 'Botol Plastik',
-        unit: 'kg',
-        price_per_unit: 1500,
-        image: '/images/ic_jenis_botol_plastik.svg',
-    },
-])
-
-const categories = ref<Category[]>([
-    { id: 1, name: 'Kertas', image: '' },
-    { id: 2, name: 'Plastik', image: '' },
-])
-
+const wasteTypes = ref<WasteType[]>([])
+const categories = ref<Category[]>([])
 const selectedSort = ref<string>('alphabet-asc')
 const selectedCategoryFilter = ref<number | ''>('')
 const searchQuery = ref<string>('')
 const showFormPopup = ref(false)
 const showDeletePopup = ref(false)
 
+const fetchWasteTypes = async () => {
+    try {
+        const { data } = await axios.get('/waste-types')
+        wasteTypes.value = data
+    } catch (error) {
+        console.error('Error fetching waste types:', error)
+    }
+}
+
+const fetchCategories = async () => {
+    try {
+        const { data } = await axios.get('/categories')
+        categories.value = data
+    } catch (error) {
+        console.error('Error fetching categories:', error)
+    }
+}
+
+onMounted(async () => {
+    await fetchWasteTypes()
+    await fetchCategories()
+})
+
 const filteredAndSortedWasteTypes = computed(() => {
     let filtered = wasteTypes.value
-
     if (selectedCategoryFilter.value) {
         filtered = filtered.filter(wasteType => wasteType.category_id === selectedCategoryFilter.value)
     }
-
     if (searchQuery.value) {
         filtered = filtered.filter(wasteType =>
             wasteType.name.toLowerCase().includes(searchQuery.value.toLowerCase())
         )
     }
-
     if (selectedSort.value === 'alphabet-asc') {
         filtered = filtered.sort((a, b) => a.name.localeCompare(b.name))
     } else if (selectedSort.value === 'alphabet-desc') {
@@ -154,7 +154,6 @@ const filteredAndSortedWasteTypes = computed(() => {
     } else if (selectedSort.value === 'price-desc') {
         filtered = filtered.sort((a, b) => b.price_per_unit - a.price_per_unit)
     }
-
     return filtered
 })
 
@@ -181,20 +180,18 @@ const closeDeletePopup = () => {
     showDeletePopup.value = false
 }
 
-const handleSave = (wasteType: WasteType) => {
-    if (wasteType.id) {
-        const index = wasteTypes.value.findIndex((w: WasteType) => w.id === wasteType.id)
-        if (index !== -1) wasteTypes.value[index] = wasteType
-    } else {
-        wasteType.id = Date.now()
-        wasteTypes.value.push(wasteType)
+const handleDelete = async () => {
+    try {
+        if (selectedWasteType.value) {
+            await axios.delete(`/waste-types/${selectedWasteType.value.id}`)
+            wasteTypes.value = wasteTypes.value.filter(
+                (w: WasteType) => w.id !== selectedWasteType.value?.id
+            )
+        }
+        closeDeletePopup()
+    } catch (error) {
+        console.error('Error deleting waste type:', error)
     }
-    closeFormPopup()
-}
-
-const handleDelete = () => {
-    wasteTypes.value = wasteTypes.value.filter((w: WasteType) => w.id !== selectedWasteType.value?.id)
-    closeDeletePopup()
 }
 
 const headerWithFiltersStyle = {
@@ -291,7 +288,7 @@ const noResultsTextStyle = {
 }
 
 const noResultsDescStyle = {
-    fontSize: theme.fonts.size.sm,
+    fontSize: theme.fonts.size.base,
     color: theme.colors.grey,
     margin: 0,
 }
