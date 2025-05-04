@@ -66,12 +66,14 @@ Route::delete('/waste-types/{id}', [WasteTypeController::class, 'destroy']);
 Route::get('/recycle-transactions', [RecycleTransactionController::class, 'index']);
 Route::post('/recycle-transactions', [RecycleTransactionController::class, 'store']);
 Route::get('/recycle-transactions/{id}', [RecycleTransactionController::class, 'show']);
+Route::get('/recycle-transactions/user/{userId}', [RecycleTransactionController::class, 'getByUser']);
 Route::put('/recycle-transactions/{id}', [RecycleTransactionController::class, 'update']);
 Route::delete('/recycle-transactions/{id}', [RecycleTransactionController::class, 'destroy']);
 
 Route::get('/recycle-transaction-items', [RecycleTransactionItemController::class, 'index']);
 Route::post('/recycle-transaction-items', [RecycleTransactionItemController::class, 'store']);
 Route::get('/recycle-transaction-items/{id}', [RecycleTransactionItemController::class, 'show']);
+Route::get('/recycle-transaction-items/transaction/{transactionId}', [RecycleTransactionItemController::class, 'getByTransaction']);
 Route::put('/recycle-transaction-items/{id}', [RecycleTransactionItemController::class, 'update']);
 Route::delete('/recycle-transaction-items/{id}', [RecycleTransactionItemController::class, 'destroy']);
 

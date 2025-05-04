@@ -19,23 +19,24 @@
                     <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
                 </svg>
                 <div :style="userInfoStyle">
-                    <p :style="usernameStyle">{{ item.username }}</p>
-                    <p :style="dateStyle">{{ item.date }}</p>
+                    <p :style="usernameStyle">{{ item.user_id }}</p>
+                    <p :style="dateStyle">{{ formattedDate }}</p>
                 </div>
             </div>
+
             <div v-else :style="columnStyle">
-                <p :style="dateStyle">{{ item.date }}</p>
+                <p :style="dateStyle">{{ formattedDate }}</p>
             </div>
 
             <div :style="columnStyle">
                 <span :style="[statusBadgeStyle, statusBackgroundStyle]">
-                    {{ item.status }}
+                    {{ capitalizedStatus }}
                 </span>
             </div>
 
             <div :style="[columnStyle, { justifyContent: 'flex-end' }]">
                 <p :style="amountStyle">
-                    Rp{{ item.amount.toLocaleString('id-ID') }}
+                    Rp{{ item.total_amount.toLocaleString('id-ID') }}
                 </p>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -60,18 +61,27 @@
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue'
 import { theme } from '@/config/theme'
+import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 
-interface HistoryItem {
-    date: string
-    status: string
-    amount: number
-    username?: string
-}
-
-const props = defineProps<{ item: HistoryItem; isAdmin?: boolean }>()
+const props = defineProps<{ item: RecycleTransaction; isAdmin?: boolean }>()
 defineEmits(['showDetail'])
 
 const isAdmin = computed(() => props.isAdmin ?? false)
+
+const formattedDate = computed(() => {
+    const date = new Date(props.item.appointment_time)
+    return date.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    })
+})
+
+const capitalizedStatus = computed(() => {
+    const status = props.item.status
+    return status.charAt(0).toUpperCase() + status.slice(1)
+})
 
 const cardStyle = {
     backgroundColor: theme.colors.whiteElement,
@@ -125,7 +135,7 @@ const dateStyle = {
     margin: 0,
     textAlign: 'left',
     width: '100%',
-    color: (isAdmin.value ?? false) ? theme.colors.grey : theme.colors.darkGrey,
+    color: isAdmin.value ? theme.colors.grey : theme.colors.darkGrey,
 }
 
 const statusBadgeStyle = {

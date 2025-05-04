@@ -21,11 +21,11 @@
                         </svg>
                     </div>
                     <div :style="userTextContainer">
-                        <div :style="dateStyle">{{ item.date }}</div>
-                        <div :style="usernameStyle">{{ item.username }}</div>
+                        <div :style="dateStyle">{{ formattedDate }}</div>
+                        <div :style="usernameStyle">{{ (user ? user.name : "Loading...") }}</div>
                     </div>
                 </div>
-                <div v-else :style="dateStyle">{{ item.date }}</div>
+                <div v-else :style="dateStyle">{{ formattedDate }}</div>
                 <button @click="closeModal" :style="closeButtonStyle">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -36,51 +36,49 @@
 
             <div :style="titleContainer">
                 <h2 :style="titleStyle">Daftar Barang</h2>
-                <span :style="[statusBadgeStyle, getStatusColor(item.status)]">{{ item.status }}</span>
+                <span :style="[statusBadgeStyle, getStatusColor(item.status)]">{{ item.status.charAt(0).toUpperCase() + item.status.slice(1) }}</span>
             </div>
 
             <div :style="itemListStyle">
-                <div v-for="(waste, index) in item.items" :key="index" :style="itemStyle">
+                <div v-for="(waste, index) in (recycleItems ? recycleItems : [])" :key="index" :style="itemStyle">
                     <div :style="itemLeftStyle">
                         <img
-                            :src="getWasteImage(waste.type)"
+                            :src="getWasteTypeImage(index)"
                             alt="Item Image"
                             :style="itemImageStyle"
                         />
                         <div :style="itemTextStyle">
-                            <div :style="itemNameStyle">{{ waste.name }}</div>
-                            <div :style="itemWeightStyle">{{ waste.weight }} kg</div>
+                            <div :style="itemNameStyle">{{ getWasteTypeName(index) }}</div>
+                            <div :style="itemWeightStyle">{{ waste.quantity }} {{ getWasteTypeUnit(index) }}</div>
                         </div>
                     </div>
-                    <div :style="priceStyle">Rp{{ waste.price.toLocaleString('id-ID') }}</div>
+                    <div :style="priceStyle">Rp{{ waste.sub_total.toLocaleString('id-ID') }}</div>
                 </div>
             </div>
 
             <div :style="totalContainerStyle">
                 <div :style="totalWeightStyle">
-                    <span>Berat</span>
-                    <span :style="weightValueStyle">{{ getTotalWeight }} kg</span>
-                </div>
-                <div :style="totalWeightStyle">
                     <span>Total</span>
                     <span :style="[weightValueStyle, { color: theme.colors.primary }]">
-                        Rp{{ getTotalPrice.toLocaleString('id-ID') }}
+                        Rp{{ item.total_amount.toLocaleString('id-ID') }}
                     </span>
                 </div>
             </div>
 
             <div :style="pickupStyle">
-                <span :style="pickupBadgeStyle">{{ item.mode }}</span>
+                <span :style="pickupBadgeStyle">{{ formatMethod(item.method) }}</span>
             </div>
 
             <div :style="pickupDetailsContainer">
                 <div :style="pickupDetailSection">
-                    <h3 :style="sectionTitleStyle">Alamat Penjemputan</h3>
-                    <p :style="addressStyle">{{ item.address }}</p>
+                    <h3 :style="sectionTitleStyle">{{ item.method == "pickup" ? "Alamat Penjemputan" : "Alamat Drop-off" }}</h3>
+                    <p :style="addressStyle">
+                        {{ item.method == "pickup" ? item.pickup_address : (bank ? bank.address : "Loading...") }}
+                    </p>
                 </div>
                 <div :style="pickupDetailSection">
-                    <h3 :style="sectionTitleStyle">Waktu Penjemputan</h3>
-                    <p :style="addressStyle">{{ item.pickupTime }}</p>
+                    <h3 :style="sectionTitleStyle">{{ item.method == "pickup" ? "Waktu Penjemputan" : "Waktu Drop-off" }}</h3>
+                    <p :style="addressStyle">{{ formattedTime }}</p>
                 </div>
             </div>
 
@@ -102,32 +100,74 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import { theme } from '@/config/theme'
-
-interface WasteItem {
-    type: string
-    name: string
-    weight: number
-    price: number
-}
-
-interface RecycleDetail {
-    date: string
-    username?: string
-    status: string
-    items: WasteItem[]
-    address: string
-    pickupTime: string
-    note: string
-    mode: string
-}
+import {RecycleTransactionItem} from "@/interfaces/RecycleTransactionItem"
+import axios from "axios"
+import {User} from "@/interfaces/User"
+import {Bank} from "@/interfaces/Bank"
+import {WasteType} from "@/interfaces/WasteType"
 
 const props = defineProps<{
     isOpen: boolean
-    item: RecycleDetail
+    item: RecycleTransactionItem
     isAdmin?: boolean
 }>()
+
+const bank = ref<Bank | null>(null)
+const user = ref<User | null>(null)
+
+const recycleItems = ref<RecycleTransactionItem[]>([])
+const wasteTypes = ref<WasteType[]>([])
+
+const fetchWasteTypes = async () => {
+    try {
+        const { data } = await axios.get('/waste-types')
+        wasteTypes.value = data.map((wasteType: WasteType) => ({
+            ...wasteType
+        }))
+    } catch (error) {
+        console.error('Error fetching waste types:', error)
+    }
+}
+
+const fetchRecycleItems = async () => {
+    try {
+        const { data } = await axios.get('/recycle-transaction-items/transaction/' + props.item.id)
+        recycleItems.value = data.map((recycleItem: RecycleTransactionItem) => ({
+            ...recycleItem
+        }))
+    } catch (error) {
+        console.error('Error fetching recycle items:', error)
+    }
+}
+
+const fetchBank = async () => {
+    try {
+        const { data } = await axios.get('/banks/' + props.item.bank_id)
+        bank.value = data
+    } catch (error) {
+        console.error('Error fetching bank:', error)
+    }
+}
+
+const fetchUser = async () => {
+    try {
+        const { data } = await axios.get('/users/' + props.item.user_id)
+        user.value = data.map((user: User) => ({
+            ...user
+        }))
+    } catch (error) {
+        console.error('Error fetching user:', error)
+    }
+}
+
+onMounted(() => {
+    fetchWasteTypes()
+    fetchRecycleItems()
+    fetchBank()
+    fetchUser()
+})
 
 const emit = defineEmits(['close', 'accept', 'reject', 'done'])
 
@@ -149,30 +189,24 @@ const handleReject = () => {
     emit('reject')
 }
 
-const getTotalWeight = computed(() => {
-    return props.item.items.reduce((total, item) => total + item.weight, 0)
+const formattedDate = computed(() => {
+    const date = new Date(props.item.appointment_time)
+    return date.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    })
 })
 
-const getTotalPrice = computed(() => {
-    return props.item.items.reduce((total, item) => total + item.price, 0)
+const formattedTime = computed(() => {
+    const date = new Date(props.item.appointment_time)
+    return date.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    }).replace(/\./g, ':')
 })
-
-const getWasteImage = (type: string): string => {
-    if (type === "kertas") {
-        return "/images/ic_jenis_kertas.svg"
-    } else if (type === "kardus") {
-        return "/images/ic_jenis_kardus.svg"
-    } else if (type === "plastik") {
-        return "/images/ic_jenis_botol_plastik.svg"
-    } else if (type === "kaca") {
-        return "/images/ic_jenis_botol_kaca.svg"
-    } else if (type === "aluminium") {
-        return "/images/ic_jenis_aluminium.svg"
-    } else if (type === "besi") {
-        return "/images/ic_jenis_besi.svg"
-    }
-    return "/public/images/ic_jenis_kertas.svg"
-}
 
 const getStatusColor = (status: string) => {
     if (status === 'Success') {
@@ -184,6 +218,31 @@ const getStatusColor = (status: string) => {
     } else {
         return { backgroundColor: theme.colors.yellow }
     }
+}
+
+const formatMethod = (method: string) => {
+    if (method === 'pickup') {
+        return 'Pick-up'
+    } else if (method === 'dropoff') {
+        return 'Drop-off'
+    } else {
+        return method
+    }
+}
+
+const getWasteTypeName = (index: number) => {
+    const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === recycleItems.value[index].waste_type_id)
+    return wasteType ? wasteType.name : ''
+}
+
+const getWasteTypeImage = (index: number) => {
+    const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === recycleItems.value[index].waste_type_id)
+    return wasteType ? wasteType.image : ''
+}
+
+const getWasteTypeUnit = (index: number) => {
+    const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === recycleItems.value[index].waste_type_id)
+    return wasteType ? wasteType.unit : ''
 }
 
 const overlayStyle = {
@@ -312,7 +371,7 @@ const itemWeightStyle = {
 
 const priceStyle = {
     fontSize: theme.fonts.size.base,
-    color: theme.colors.black,
+    color: theme.colors.primary,
     fontWeight: theme.fonts.weight.medium,
 }
 

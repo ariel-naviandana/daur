@@ -43,6 +43,12 @@ class RecycleTransactionController extends Controller
         return RecycleTransaction::with(['user', 'items', 'bank'])->findOrFail($id);
     }
 
+    public function getByUser($userId) {
+        return RecycleTransaction::with('user')
+            ->where('user_id', $userId)
+            ->get();
+    }
+
     public function update(Request $request, $id) {
         $trx = RecycleTransaction::findOrFail($id);
         $trx->update($request->all());

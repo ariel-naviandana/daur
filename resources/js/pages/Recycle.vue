@@ -204,6 +204,7 @@ const submitTransaction = async () => {
             appointment_time: formattedAppointmentTime,
             method: isPickup.value ? 'pickup' : 'dropoff',
             status: 'waiting',
+            note: note.value,
             total_weight: null,
             total_amount: totalPrice.value,
             created_at: new Date().toISOString(),
@@ -337,7 +338,6 @@ const getWasteTypeUnit = (index: number) => {
     const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === cartItems.value[index].waste_type_id)
     return wasteType ? wasteType.unit : ''
 }
-
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
