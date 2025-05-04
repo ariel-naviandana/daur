@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\RecycleTransaction;
+use App\Models\RecycleTransactionItem;
 use Illuminate\Http\Request;
 
 class RecycleTransactionController extends Controller
@@ -14,16 +15,28 @@ class RecycleTransactionController extends Controller
     public function store(Request $request) {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'waste_type_id' => 'required|exists:waste_types,id',
             'bank_id' => 'nullable|exists:banks,id',
             'method' => 'required|in:pickup,dropoff',
-            'address' => 'nullable|string',
+            'pickup_address' => 'nullable|string',
+            'appointment_time' => 'nullable|date|date_format:Y-m-d H:i:s',
+            'note' => 'nullable|string',
             'status' => 'required|in:waiting,process,cancel,success',
-            'weight' => 'required|numeric',
-            'total_price' => 'required|numeric',
+            'total_quantity' => 'nullable|numeric',
+            'total_amount' => 'required|numeric',
+            'items' => 'required|array',
+            'items.*.waste_type_id' => 'required|exists:waste_types,id',
+            'items.*.quantity' => 'required|numeric',
+            'items.*.sub_total' => 'required|numeric',
         ]);
 
-        return RecycleTransaction::create($request->all());
+        $transaction = RecycleTransaction::create($request->except('items'));
+
+        foreach ($request->items as $item) {
+            $item['transaction_id'] = $transaction->id;
+            RecycleTransactionItem::create($item);
+        }
+
+        return $transaction->load(['items', 'user', 'bank']);
     }
 
     public function show($id) {

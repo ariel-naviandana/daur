@@ -25,11 +25,20 @@
             </div>
 
             <div :style="styles.quantityContainerStyle">
-                <button @click="decreaseQuantity" :style="styles.minusButtonStyle">-</button>
+                <button @click="decreaseQuantity" :style="styles.minusButtonStyle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
                 <span :style="styles.quantityStyle">
                     {{ quantity }} {{ selectedItem?.unit || '' }}
                 </span>
-                <button @click="increaseQuantity" :style="styles.plusButtonStyle">+</button>
+                <button @click="increaseQuantity" :style="styles.plusButtonStyle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
             </div>
 
             <button @click="addItems" :style="styles.addButtonStyle">Tambah</button>
@@ -43,6 +52,7 @@ import axios from 'axios'
 import { theme } from '@/config/theme'
 import { WasteType } from '../interfaces/WasteType'
 import { Category } from '../interfaces/Category'
+import { RecycleTransactionItem } from '../interfaces/RecycleTransactionItem'
 
 const props = defineProps<{
     isOpen: boolean,
@@ -97,11 +107,16 @@ const closeModal = () => {
 
 const addItems = () => {
     if (selectedItem.value) {
-        emit('add', {
-            type: selectedItem.value.name,
+        const transactionItem: RecycleTransactionItem = {
+            id: 0,
+            transaction_id: 0,
+            waste_type_id: selectedItem.value.id,
             quantity: quantity.value,
-            pricePerKg: selectedItem.value.price_per_unit
-        })
+            sub_total: quantity.value * selectedItem.value.price_per_unit,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+        }
+        emit('add', transactionItem)
         closeModal()
     }
 }
@@ -140,10 +155,13 @@ const styles = {
         gap: '12px',
     },
     iconStyle: {
-        width: '30px',
-        height: '30px',
+        width: '50px',
+        height: '50px',
         objectFit: 'cover',
-        marginRight: '12px',
+        alignItems: 'center',
+        justifyContent: 'center',
+        display: 'flex',
+        marginBottom: '8px',
     },
     headingStyle: {
         fontSize: theme.fonts.size.medium,
@@ -256,6 +274,28 @@ const styles = {
         fontWeight: theme.fonts.weight.bold,
         cursor: 'pointer',
         transition: 'background-color 0.2s ease',
+    },
+    imageContainerStyle: {
+        width: '48px',
+        height: '48px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '8px',
+        color: theme.colors.darkGrey,
+    },
+    labelStyle: {
+        margin: 0,
+        fontSize: theme.fonts.size.small,
+        fontWeight: theme.fonts.weight.medium,
+        color: theme.colors.darkGrey,
+        textAlign: 'center',
+    },
+    priceStyle: {
+        fontSize: theme.fonts.size.small,
+        fontWeight: theme.fonts.weight.medium,
+        color: theme.colors.primary,
+        textAlign: 'center',
     },
 }
 </script>

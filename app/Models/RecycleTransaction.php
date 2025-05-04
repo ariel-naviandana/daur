@@ -8,7 +8,7 @@ class RecycleTransaction extends Model
 {
     protected $fillable = [
         'user_id', 'bank_id', 'pickup_address', 'method',
-        'status', 'total_amount', 'total_weight'
+        'status', 'total_amount', 'total_quantity', 'appointment_time', 'note'
     ];
 
     public function user()

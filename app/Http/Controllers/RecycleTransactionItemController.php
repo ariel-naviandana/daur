@@ -15,8 +15,8 @@ class RecycleTransactionItemController extends Controller
         $request->validate([
             'recycle_transaction_id' => 'required|exists:recycle_transactions,id',
             'waste_type_id' => 'required|exists:waste_types,id',
-            'weight' => 'required|numeric',
-            'total_price' => 'required|numeric',
+            'quantity' => 'required|numeric',
+            'sub_total' => 'required|numeric',
         ]);
 
         return RecycleTransactionItem::create($request->all());

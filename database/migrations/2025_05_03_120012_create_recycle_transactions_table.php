@@ -16,9 +16,11 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('bank_id')->nullable()->constrained()->onDelete('set null');
             $table->text('pickup_address')->nullable();
+            $table->datetime('appointment_time');
+            $table->text('note')->nullable();
             $table->enum('method', ['pickup', 'dropoff']);
             $table->enum('status', ['waiting', 'process', 'cancel', 'success'])->default('waiting');
-            $table->decimal('total_weight', 10, 2)->nullable();
+            $table->decimal('total_quantity', 10, 2)->nullable();
             $table->decimal('total_amount', 12, 2);
             $table->timestamps();
         });
