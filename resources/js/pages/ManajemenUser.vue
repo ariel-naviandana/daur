@@ -80,7 +80,7 @@
                 <div
                     v-for="user in filteredUsers"
                     :key="user.id"
-                    class="bg-white p-4 shadow rounded-lg flex justify-between items-center mb-4"
+                    class="bg-white p-4 shadow rounded-2xl flex justify-between items-center mb-4"
                 >
                     <!-- Avatar -->
                     <div class="w-10 h-10 rounded-full overflow-hidden border-none">
@@ -344,16 +344,16 @@ const leftFilterStyle = {
 }
 
 const selectStyle = {
-    padding: '8px 12px',
+    padding: '8px 16px',
     paddingRight: '36px',
     fontSize: theme.fonts.size.base,
-    borderRadius: '6px',
+    borderRadius: '16px',
     border: `1px solid ${theme.colors.lightGrey}`,
     fontFamily: theme.fonts.family,
     appearance: 'none',
     backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
     backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'right 8px center',
+    backgroundPosition: 'right 12px center',
     backgroundSize: '16px',
 }
 
