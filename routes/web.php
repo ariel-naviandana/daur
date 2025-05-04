@@ -59,6 +59,7 @@ Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 Route::get('/waste-types', [WasteTypeController::class, 'index']);
 Route::post('/waste-types', [WasteTypeController::class, 'store']);
 Route::get('/waste-types/{id}', [WasteTypeController::class, 'show']);
+Route::get('/waste-types/category/{categoryId}', [WasteTypeController::class, 'getByCategory']);
 Route::put('/waste-types/{id}', [WasteTypeController::class, 'update']);
 Route::delete('/waste-types/{id}', [WasteTypeController::class, 'destroy']);
 

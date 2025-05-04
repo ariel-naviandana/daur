@@ -27,6 +27,12 @@ class WasteTypeController extends Controller
         return WasteType::with('category')->findOrFail($id);
     }
 
+    public function getByCategory($categoryId) {
+        return WasteType::with('category')
+            ->where('category_id', $categoryId)
+            ->get();
+    }
+
     public function update(Request $request, $id) {
         $waste = WasteType::findOrFail($id);
         $waste->update($request->all());

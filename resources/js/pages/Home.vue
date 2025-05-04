@@ -71,9 +71,27 @@
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
 import { theme } from '@/config/theme'
-import CategoryList from "@/components/CategoryList.vue"
-import {ref} from "vue"
-import PopupDetailSampah from "@/components/PopupDetailSampah.vue"
+import CategoryList from "../components/CategoryList.vue"
+import PopupDetailSampah from "../components/PopupDetailSampah.vue"
+import { ref } from "vue"
+import { Category } from '../interfaces/Category'
+
+const isPopupOpen = ref(false)
+const selectedCategory = ref<Category | null>(null)
+
+const openPopup = (category: Category) => {
+    selectedCategory.value = category
+    isPopupOpen.value = true
+}
+
+const closePopup = () => {
+    isPopupOpen.value = false
+}
+
+const handleAddItem = (item: { type: string; quantity: number; pricePerKg: number }) => {
+    window.location.href = '/recycle'
+    closePopup()
+}
 
 const goToRecycle = () => {
     window.location.href = '/recycle'
@@ -245,23 +263,6 @@ const labelJenisStyle = {
     fontWeight: 500,
     color: '#222222',
     marginTop: '16px'
-}
-
-const isPopupOpen = ref(false)
-const selectedCategory = ref<{ id: number; name: string; icon: string } | null>(null)
-
-const openPopup = (category: { id: number; name: string; icon: string }) => {
-    selectedCategory.value = category
-    isPopupOpen.value = true
-}
-
-const closePopup = () => {
-    isPopupOpen.value = false
-}
-
-const handleAddItem = (item: { type: string; quantity: number; pricePerKg: number }) => {
-    window.location.href = '/recycle'
-    closePopup()
 }
 </script>
 

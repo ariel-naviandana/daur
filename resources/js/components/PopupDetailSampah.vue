@@ -3,7 +3,7 @@
         <div :style="styles.modalStyle">
             <div :style="styles.headerStyle">
                 <div :style="styles.titleContainerStyle">
-                    <img :src="selectedCategory?.icon" :alt="selectedCategory?.name || 'Icon Sampah'" :style="styles.iconStyle" />
+                    <img :src="selectedCategory?.image" :alt="selectedCategory?.name || 'Icon Sampah'" :style="styles.iconStyle" />
                     <h2 :style="styles.headingStyle">{{ selectedCategory?.name || 'Detail Sampah' }}</h2>
                 </div>
                 <button @click="closeModal" :style="styles.closeButtonStyle">
@@ -15,70 +15,68 @@
             </div>
 
             <div :style="styles.gridContainerStyle">
-                <div v-for="(item, index) in wasteItems" :key="index"
-                     :style="[styles.cardStyle, item.active ? styles.activeCardStyle : {}]"
-                     @click="selectItem(index)">
-                    <div :style="styles.imageContainerStyle">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                            <path d="M3 16L7 12L11 16L17 10L21 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
+                <div v-for="(item, index) in wasteTypes" :key="item.id"
+                     :style="[styles.cardStyle, selectedItem?.id === item.id ? styles.activeCardStyle : {}]"
+                     @click="selectItem(item)">
+                    <img :src="item.image" :alt="item.name" :style="styles.iconStyle" />
                     <p :style="styles.labelStyle">{{ item.name }}</p>
-                    <p :style="styles.priceStyle">Rp{{ item.pricePerKg.toLocaleString('id-ID') }}</p>
+                    <p :style="styles.priceStyle">Rp{{ item.price_per_unit.toLocaleString('id-ID') }}</p>
                 </div>
             </div>
 
             <div :style="styles.quantityContainerStyle">
-                <button @click="decreaseQuantity" :style="styles.minusButtonStyle">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-                <span :style="styles.quantityStyle">{{ quantity }} kg</span>
-                <button @click="increaseQuantity" :style="styles.plusButtonStyle">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
+                <button @click="decreaseQuantity" :style="styles.minusButtonStyle">-</button>
+                <span :style="styles.quantityStyle">
+                    {{ quantity }} {{ selectedItem?.unit || '' }}
+                </span>
+                <button @click="increaseQuantity" :style="styles.plusButtonStyle">+</button>
             </div>
 
-            <button @click="addItems" :style="styles.addButtonStyle">
-                Tambah
-            </button>
+            <button @click="addItems" :style="styles.addButtonStyle">Tambah</button>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import axios from 'axios'
 import { theme } from '@/config/theme'
+import { WasteType } from '../interfaces/WasteType'
+import { Category } from '../interfaces/Category'
 
 const props = defineProps<{
     isOpen: boolean,
-    selectedCategory: { id: number; name: string; icon: string } | null
+    selectedCategory: Category | null
 }>()
 
 const emit = defineEmits(['close', 'add'])
 
 const quantity = ref(1)
-const wasteItems = ref([
-    { name: 'Gelas Plastik', pricePerKg: 5000, active: false },
-    { name: 'Bungkus Makanan', pricePerKg: 3000, active: false },
-    { name: 'Botol Warna', pricePerKg: 4000, active: false },
-    { name: 'Sedotan', pricePerKg: 2000, active: false },
-    { name: 'Gelas Warna', pricePerKg: 4500, active: false },
-    { name: 'Botol Bening', pricePerKg: 5500, active: false },
-    { name: 'Perabot Plastik', pricePerKg: 6000, active: false },
-    { name: 'Mainan Plastik', pricePerKg: 3500, active: false },
-])
+const wasteTypes = ref<WasteType[]>([])
+const selectedItem = ref<WasteType | null>(null)
 
-const selectItem = (index: number) => {
-    wasteItems.value = wasteItems.value.map((item, i) => ({
-        ...item,
-        active: i === index
-    }))
+const fetchWasteTypes = async (categoryId: number) => {
+    try {
+        const { data } = await axios.get(`/waste-types/category/${categoryId}`)
+        wasteTypes.value = data
+    } catch (error) {
+        console.error('Error fetching waste types:', error)
+    }
+}
+
+watch(
+    () => props.selectedCategory,
+    async (newCategory) => {
+        if (newCategory) {
+            await fetchWasteTypes(newCategory.id)
+            selectedItem.value = null
+        }
+    },
+    { immediate: true }
+)
+
+const selectItem = (item: WasteType) => {
+    selectedItem.value = item
 }
 
 const increaseQuantity = () => {
@@ -94,16 +92,18 @@ const decreaseQuantity = () => {
 const closeModal = () => {
     emit('close')
     quantity.value = 1
+    selectedItem.value = null
 }
 
 const addItems = () => {
-    const selectedItem = wasteItems.value.find(item => item.active)
-    emit('add', {
-        type: selectedItem?.name,
-        quantity: quantity.value,
-        pricePerKg: selectedItem?.pricePerKg
-    })
-    closeModal()
+    if (selectedItem.value) {
+        emit('add', {
+            type: selectedItem.value.name,
+            quantity: quantity.value,
+            pricePerKg: selectedItem.value.price_per_unit
+        })
+        closeModal()
+    }
 }
 
 const styles = {

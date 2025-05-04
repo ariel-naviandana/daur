@@ -6,13 +6,13 @@
             </svg>
         </button>
 
-        <div ref="categoryListRef" :style="categoryListStyle">
+        <div class="category-list" :style="categoryListStyle">
             <button
                 v-for="category in categories"
                 :key="category.id"
                 :style="categoryItemStyle"
                 @click="selectCategory(category)">
-                <img :src="category.icon" :alt="category.name" :style="categoryIconStyle" />
+                <img :src="category.image" :alt="category.name" :style="categoryIconStyle" />
                 <span :style="categoryLabelStyle">{{ category.name }}</span>
             </button>
         </div>
@@ -26,59 +26,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import { theme } from '@/config/theme'
+import { Category } from '../interfaces/Category'
 
-const getIconPath = (type: string): string => {
-    if (type === "kertas") {
-        return "/images/ic_jenis_kertas.svg"
-    } else if (type === "plastik") {
-        return "/images/ic_jenis_botol_plastik.svg"
-    } else if (type === "kaca") {
-        return "/images/ic_jenis_botol_kaca.svg"
-    } else if (type === "besi") {
-        return "/images/ic_jenis_besi.svg"
-    } else if (type === "aluminium") {
-        return "/images/ic_jenis_aluminium.svg"
-    } else if (type === "kardus") {
-        return "/images/ic_jenis_kardus.svg"
+const categories = ref<Category[]>([])
+
+const fetchCategories = async () => {
+    try {
+        const { data } = await axios.get('/categories')
+        categories.value = data.map((category: any) => ({
+            id: category.id,
+            name: category.name,
+            image: category.image || '/images/ic_jenis_kertas.svg'
+        }))
+    } catch (error) {
+        console.error('Error fetching categories:', error)
     }
-    return "/images/ic_jenis_kertas.svg"
 }
 
-const categories = [
-    { id: 1, name: 'Kertas', icon: getIconPath('kertas') },
-    { id: 2, name: 'Plastik', icon: getIconPath('plastik') },
-    { id: 3, name: 'Kaca', icon: getIconPath('kaca') },
-    { id: 4, name: 'Besi', icon: getIconPath('besi') },
-    { id: 5, name: 'Aluminium', icon: getIconPath('aluminium') },
-    { id: 6, name: 'Kardus', icon: getIconPath('kardus') },
-    { id: 7, name: 'Kain', icon: getIconPath('kertas') },
-    { id: 8, name: 'Elektronik', icon: getIconPath('plastik') },
-    { id: 9, name: 'Baterai', icon: getIconPath('kaca') },
-    { id: 10, name: 'Logam', icon: getIconPath('besi') },
-    { id: 11, name: 'Kayu', icon: getIconPath('aluminium') },
-    { id: 12, name: 'Karet', icon: getIconPath('kardus') },
-    { id: 13, name: 'Pakaian', icon: getIconPath('kertas') },
-    { id: 14, name: 'Tas', icon: getIconPath('plastik') },
-]
+onMounted(fetchCategories)
 
-const categoryListRef = ref<HTMLElement | null>(null)
+const emit = defineEmits(['category-clicked'])
+
+const selectCategory = (category: Category) => {
+    emit('category-clicked', category)
+}
 
 const scrollCategoryList = (direction: 'left' | 'right') => {
-    if (categoryListRef.value) {
-        const scrollAmount = categoryListRef.value.clientWidth
-        categoryListRef.value.scrollBy({
+    const categoryListRef = document.querySelector('.category-list') as HTMLElement
+    if (categoryListRef) {
+        const scrollAmount = categoryListRef.clientWidth
+        categoryListRef.scrollBy({
             left: direction === 'left' ? -scrollAmount : scrollAmount,
             behavior: 'smooth'
         })
     }
-}
-
-const emit = defineEmits(['category-clicked'])
-
-const selectCategory = (category: { id: number; name: string; icon: string }) => {
-    emit('category-clicked', category)
 }
 
 const categoryListContainerStyle = {
