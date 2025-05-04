@@ -100,158 +100,44 @@
             :isOpen="showPopup"
             :item="selectedItem"
             @close="closePopup"
-            @accept="updateStatus('Process')"
-            @reject="updateStatus('Cancel')"
-            @done="updateStatus('Success')"
+            @accept="updateStatus('process')"
+            @reject="updateStatus('cancel')"
+            @done="updateStatus('success')"
             :is-admin="true"
         />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import { theme } from '@/config/theme'
 import RecycleCard from "../components/RecycleCard.vue"
 import PopupDetailRecycle from "../components/PopupDetailRecycle.vue"
-
-interface HistoryItem {
-    date: string
-    status: string
-    amount: number
-    username: string
-    mode: string
-    items: {
-        type: string
-        name: string
-        weight: number
-        price: number
-    }[]
-    address: string
-    pickupTime: string
-    note: string
-}
+import axios from "axios"
+import { RecycleTransaction } from "@/interfaces/RecycleTransaction"
 
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
 const searchQuery = ref('')
 const showPopup = ref(false)
-const selectedItem = ref<HistoryItem | null>(null)
+const selectedItem = ref<RecycleTransaction | null>(null)
+const history = ref<RecycleTransaction[]>([])
 
-const history = ref<HistoryItem[]>([
-    {
-        date: "Selasa, 18 Maret 2025",
-        status: "Waiting",
-        amount: 45000,
-        username: "Ariel Naviandana",
-        mode: "Pick-up",
-        items: [
-            { type: 'kertas', name: 'Koran', weight: 5, price: 15000 },
-            { type: 'kaca', name: 'Gelas Kaca', weight: 7, price: 15000 },
-            { type: 'plastik', name: 'Botol Plastik', weight: 9, price: 15000 }
-        ],
-        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
-        pickupTime: '12.00 WIB',
-        note: 'Di fakultas ilmu komputer, saya tunggu di dekat pintu masuk parkiran gedung f'
-    },
-    {
-        date: "Senin, 17 Maret 2025",
-        status: "Success",
-        amount: 105000,
-        username: "Rudy Tabootie",
-        mode: "Pick-up",
-        items: [
-            { type: 'kertas', name: 'Koran', weight: 10, price: 30000 },
-            { type: 'kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
-            { type: 'plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
-        ],
-        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
-        pickupTime: '14.00 WIB',
-        note: 'Di fakultas ilmu komputer'
-    },
-    {
-        date: "Minggu, 16 Maret 2025",
-        status: "Process",
-        amount: 85000,
-        username: "Jamal",
-        mode: "Pick-up",
-        items: [
-            { type: 'kardus', name: 'Karton Bekas', weight: 10, price: 50000 },
-            { type: 'plastik', name: 'Botol Plastik', weight: 7, price: 35000 }
-        ],
-        address: 'Jl. Raya Bandung, Kec. Sukajadi, Kota Bandung, Jawa Barat 40162',
-        pickupTime: '11.00 WIB',
-        note: 'Dekat pintu gerbang utama'
-    },
-    {
-        date: "Sabtu, 15 Maret 2025",
-        status: "Cancel",
-        amount: 62000,
-        username: "Rudy Tabootie",
-        mode: "Drop-off",
-        items: [
-            { type: 'plastik', name: 'Botol Plastik', weight: 12, price: 36000 },
-            { type: 'kertas', name: 'Koran', weight: 8, price: 26000 }
-        ],
-        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
-        pickupTime: '15.00 WIB',
-        note: 'Di depan gedung'
-    },
-    {
-        date: "Jumat, 14 Maret 2025",
-        status: "Process",
-        amount: 45000,
-        username: "Siti Rahmawati",
-        mode: "Pick-up",
-        items: [
-            { type: 'kertas', name: 'Koran', weight: 5, price: 15000 },
-            { type: 'kardus', name: 'Karton Bekas', weight: 5, price: 30000 }
-        ],
-        address: 'Jl. Ahmad Yani, Kec. Gubeng, Surabaya, Jawa Timur 60281',
-        pickupTime: '16.00 WIB',
-        note: 'Dekat toko swalayan'
-    },
-    {
-        date: "Kamis, 13 Maret 2025",
-        status: "Success",
-        amount: 75000,
-        username: "Ariel Naviandana",
-        mode: "Drop-off",
-        items: [
-            { type: 'kaca', name: 'Gelas Kaca', weight: 15, price: 45000 },
-            { type: 'plastik', name: 'Botol Plastik', weight: 10, price: 30000 }
-        ],
-        address: 'Jl. Veteran Malang, Ketawanggede, Kec. Lowokwaru, Kota Malang, Jawa Timur 65145',
-        pickupTime: '10.00 WIB',
-        note: 'Di fakultas ilmu komputer'
-    },
-    {
-        date: "Rabu, 12 Maret 2025",
-        status: "Waiting",
-        amount: 30000,
-        username: "Budi Santoso",
-        mode: "Drop-off",
-        items: [
-            { type: 'kertas', name: 'Koran', weight: 10, price: 30000 }
-        ],
-        address: 'Jl. Diponegoro, Kec. Tegalsari, Surabaya, Jawa Timur 60264',
-        pickupTime: '09.00 WIB',
-        note: 'Di halaman depan rumah'
-    },
-    {
-        date: "Selasa, 11 Maret 2025",
-        status: "Cancel",
-        amount: 40000,
-        username: "Siti Rahmawati",
-        mode: "Pick-up",
-        items: [
-            { type: 'kardus', name: 'Karton Bekas', weight: 8, price: 40000 }
-        ],
-        address: 'Jl. Ahmad Yani, Kec. Gubeng, Surabaya, Jawa Timur 60281',
-        pickupTime: '14.00 WIB',
-        note: 'Dekat toko swalayan'
+const fetchHistory = async () => {
+    try {
+        const { data } = await axios.get('/recycle-transactions')
+        history.value = data.map((transaction: RecycleTransaction) => ({
+            ...transaction
+        }))
+    } catch (error) {
+        console.error('Error fetching history:', error)
     }
-])
+}
+
+onMounted(() => {
+    fetchHistory()
+})
 
 const filteredAndSearchedHistory = computed(() => {
     let filtered = history.value
@@ -264,21 +150,21 @@ const filteredAndSearchedHistory = computed(() => {
             item.status.toLowerCase() === selectedFilter.value
         )
     if (selectedSort.value === 'latest')
-        filtered = filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        filtered = filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     else if (selectedSort.value === 'highest')
-        filtered = filtered.sort((a, b) => b.amount - a.amount)
+        filtered = filtered.sort((a, b) => b.total_amount - a.total_amount)
     else if (selectedSort.value === 'lowest')
-        filtered = filtered.sort((a, b) => a.amount - b.amount)
+        filtered = filtered.sort((a, b) => a.total_amount - b.total_amount)
     else if (selectedSort.value === 'alphabet-asc')
         filtered = filtered.sort((a, b) => a.username.localeCompare(b.username))
     else if (selectedSort.value === 'alphabet-desc')
         filtered = filtered.sort((a, b) => b.username.localeCompare(a.username))
     else
-        filtered = filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        filtered = filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
     return filtered
 })
 
-const openPopup = (item: HistoryItem) => {
+const openPopup = (item: RecycleTransaction) => {
     selectedItem.value = item
     showPopup.value = true
 }
@@ -288,13 +174,22 @@ const closePopup = () => {
     selectedItem.value = null
 }
 
-const updateStatus = (newStatus: string) => {
+const updateStatus = async (newStatus: string) => {
     if (selectedItem.value) {
-        selectedItem.value.status = newStatus
-        history.value = history.value.map(item =>
-            item === selectedItem.value ? { ...item, status: newStatus } : item
-        )
-        closePopup()
+        try {
+            const response = await axios.put(`/recycle-transactions/${selectedItem.value.id}`, {
+                status: newStatus,
+            })
+
+            const updatedTransaction = response.data
+            history.value = history.value.map(item =>
+                item.id === updatedTransaction.id ? updatedTransaction : item
+            )
+
+            closePopup()
+        } catch (error) {
+            console.error('Error updating transaction status:', error)
+        }
     }
 }
 

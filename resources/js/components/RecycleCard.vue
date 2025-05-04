@@ -19,7 +19,7 @@
                     <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
                 </svg>
                 <div :style="userInfoStyle">
-                    <p :style="usernameStyle">{{ item.user_id }}</p>
+                    <p :style="usernameStyle">{{ getUserName() }}</p>
                     <p :style="dateStyle">{{ formattedDate }}</p>
                 </div>
             </div>
@@ -59,14 +59,40 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, computed } from 'vue'
+import {defineProps, computed, ref, onMounted} from 'vue'
 import { theme } from '@/config/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
+import {User} from "@/interfaces/User"
+import axios from "axios"
 
 const props = defineProps<{ item: RecycleTransaction; isAdmin?: boolean }>()
 defineEmits(['showDetail'])
 
 const isAdmin = computed(() => props.isAdmin ?? false)
+
+const users = ref<User[]>([])
+
+const fetchUser = async () => {
+    try {
+        const { data } = await axios.get('/users')
+        users.value = data.map((user: User) => ({
+            ...user
+        }))
+    } catch (error) {
+        console.error('Error fetching users:', error)
+    }
+}
+
+onMounted(() => {
+    if (isAdmin.value) {
+        fetchUser()
+    }
+})
+
+const getUserName = () => {
+    const user = users.value?.find(user => user.id === props.item.user_id)
+    return user ? user.name : ''
+}
 
 const formattedDate = computed(() => {
     const date = new Date(props.item.appointment_time)

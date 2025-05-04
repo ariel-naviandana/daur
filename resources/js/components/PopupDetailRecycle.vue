@@ -87,12 +87,12 @@
                 <p :style="addressStyle">{{ item.note }}</p>
             </div>
 
-            <div v-if="isAdmin && item.status === 'Waiting'" :style="actionButtonsContainer">
+            <div v-if="isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
                 <button @click="handleReject" :style="rejectButtonStyle">Tolak</button>
                 <button @click="handleAccept" :style="acceptButtonStyle">Terima</button>
             </div>
 
-            <div v-if="isAdmin && item.status === 'Process'" :style="actionButtonsContainer">
+            <div v-if="isAdmin && item.status === 'process'" :style="actionButtonsContainer">
                 <button @click="handleDone" :style="acceptButtonStyle">Selesai</button>
             </div>
         </div>
@@ -154,9 +154,7 @@ const fetchBank = async () => {
 const fetchUser = async () => {
     try {
         const { data } = await axios.get('/users/' + props.item.user_id)
-        user.value = data.map((user: User) => ({
-            ...user
-        }))
+        user.value = data
     } catch (error) {
         console.error('Error fetching user:', error)
     }
@@ -209,11 +207,11 @@ const formattedTime = computed(() => {
 })
 
 const getStatusColor = (status: string) => {
-    if (status === 'Success') {
+    if (status === 'success') {
         return { backgroundColor: theme.colors.primary }
-    } else if (status === 'Cancel') {
+    } else if (status === 'cancel') {
         return { backgroundColor: theme.colors.red }
-    } else if (status === 'Process') {
+    } else if (status === 'process') {
         return { backgroundColor: theme.colors.blue }
     } else {
         return { backgroundColor: theme.colors.yellow }
