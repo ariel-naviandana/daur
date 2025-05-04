@@ -71,7 +71,7 @@
             v-if="showFormPopup"
             :category="selectedCategory"
             @close="closeFormPopup"
-            @save="handleSave"
+            @saved="fetchCategories"
         />
 
         <PopupDelete
@@ -85,7 +85,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import CategoryCard from './CategoryCard.vue'
 import CategoryFormPopup from './PopupFormCategory.vue'
 import PopupDelete from './PopupDelete.vue'
@@ -93,33 +94,35 @@ import { Category } from '../interfaces/Category'
 import { theme } from '../config/theme'
 
 const selectedCategory = ref<Category | null>(null)
-const categories = ref<Category[]>([
-    { id: 1, name: 'Kertas', image: '/images/ic_jenis_kertas.svg' },
-    { id: 2, name: 'Plastik', image: '/images/ic_jenis_botol_plastik.svg' },
-    { id: 3, name: 'Kaca', image: '/images/ic_jenis_botol_kaca.svg' },
-    { id: 4, name: 'Besi', image: '/images/ic_jenis_besi.svg' },
-    { id: 5, name: 'Aluminium', image: '/images/ic_jenis_aluminium.svg' },
-])
+const categories = ref<Category[]>([])
 const selectedSort = ref<string>('alphabet-asc')
 const searchQuery = ref<string>('')
 const showFormPopup = ref(false)
 const showDeletePopup = ref(false)
 
+const fetchCategories = async () => {
+    try {
+        const { data } = await axios.get('/categories')
+        categories.value = data
+    } catch (error) {
+        console.error('Error fetching categories:', error)
+    }
+}
+
+onMounted(fetchCategories)
+
 const filteredAndSortedCategories = computed(() => {
     let filtered = categories.value
-
     if (searchQuery.value) {
         filtered = filtered.filter(category =>
             category.name.toLowerCase().includes(searchQuery.value.toLowerCase())
         )
     }
-
     if (selectedSort.value === 'alphabet-asc') {
         filtered = filtered.sort((a, b) => a.name.localeCompare(b.name))
     } else if (selectedSort.value === 'alphabet-desc') {
         filtered = filtered.sort((a, b) => b.name.localeCompare(a.name))
     }
-
     return filtered
 })
 
@@ -146,20 +149,18 @@ const closeDeletePopup = () => {
     showDeletePopup.value = false
 }
 
-const handleSave = (category: Category) => {
-    if (category.id) {
-        const index = categories.value.findIndex((c: Category) => c.id === category.id)
-        if (index !== -1) categories.value[index] = category
-    } else {
-        category.id = Date.now()
-        categories.value.push(category)
+const handleDelete = async () => {
+    try {
+        if (selectedCategory.value) {
+            await axios.delete(`/categories/${selectedCategory.value.id}`)
+            categories.value = categories.value.filter(
+                (c: Category) => c.id !== selectedCategory.value?.id
+            )
+        }
+        closeDeletePopup()
+    } catch (error) {
+        console.error('Error deleting category:', error)
     }
-    closeFormPopup()
-}
-
-const handleDelete = () => {
-    categories.value = categories.value.filter((c: Category) => c.id !== selectedCategory.value?.id)
-    closeDeletePopup()
 }
 
 const headerWithFiltersStyle = {

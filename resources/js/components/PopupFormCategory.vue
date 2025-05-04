@@ -37,7 +37,7 @@ import { theme } from '../config/theme'
 import { Category } from '../interfaces/Category'
 
 const props = defineProps<{ category?: Category | null }>()
-const emit = defineEmits(['close', 'save'])
+const emit = defineEmits(['close', 'saved'])
 
 const form = ref<Category>({ id: 0, name: '', image: '' })
 const previewImage = ref<string | null>(null)
@@ -87,8 +87,18 @@ const uploadToCloudinary = async (file: File) => {
     }
 }
 
-const save = () => {
-    emit('save', form.value)
+const save = async () => {
+    try {
+        if (form.value.id) {
+            await axios.put(`/categories/${form.value.id}`, form.value)
+        } else {
+            await axios.post('/categories', form.value)
+        }
+        emit('saved')
+        emit('close')
+    } catch (error) {
+        console.error('Error saving category:', error)
+    }
 }
 
 const overlayStyle = {
