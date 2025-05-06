@@ -4,7 +4,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\AdminPageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WalletController;
-use App\Http\Controllers\WithdrawalController;
+use App\Http\Controllers\WalletTransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\WasteTypeController;
 use App\Http\Controllers\RecycleTransactionController;
@@ -44,11 +44,11 @@ Route::get('/wallets/{id}', [WalletController::class, 'show']);
 Route::put('/wallets/{id}', [WalletController::class, 'update']);
 Route::delete('/wallets/{id}', [WalletController::class, 'destroy']);
 
-Route::get('/withdrawals', [WithdrawalController::class, 'index']);
-Route::post('/withdrawals', [WithdrawalController::class, 'store']);
-Route::get('/withdrawals/{id}', [WithdrawalController::class, 'show']);
-Route::put('/withdrawals/{id}', [WithdrawalController::class, 'update']);
-Route::delete('/withdrawals/{id}', [WithdrawalController::class, 'destroy']);
+Route::get('/wallet_transactions', [WalletTransactionController::class, 'index']);
+Route::post('/wallet_transactions', [WalletTransactionController::class, 'store']);
+Route::get('/wallet_transactions/{id}', [WalletTransactionController::class, 'show']);
+Route::put('/wallet_transactions/{id}', [WalletTransactionController::class, 'update']);
+Route::delete('/wallet_transactions/{id}', [WalletTransactionController::class, 'destroy']);
 
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::post('/categories', [CategoryController::class, 'store']);

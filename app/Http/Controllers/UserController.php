@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function index() {
-        return User::with(['recycleTransactions', 'wallet', 'withdrawals', 'sentChats', 'receivedChats'])->get();
+        return User::with(['recycleTransactions', 'wallet', 'sentChats', 'receivedChats'])->get();
     }
 
     public function store(Request $request) {
@@ -25,13 +25,13 @@ class UserController extends Controller
     }
 
     public function show($id) {
-        return User::with(['recycleTransactions', 'wallet', 'withdrawals', 'sentChats', 'receivedChats'])->findOrFail($id);
+        return User::with(['recycleTransactions', 'wallet', 'sentChats', 'receivedChats'])->findOrFail($id);
     }
 
     public function update(Request $request, $id) {
         $user = User::findOrFail($id);
         $user->update($request->except('password'));
-        return $user->load(['recycleTransactions', 'wallet', 'withdrawals', 'sentChats', 'receivedChats']);
+        return $user->load(['recycleTransactions', 'wallet', 'sentChats', 'receivedChats']);
     }
 
     public function destroy($id) {

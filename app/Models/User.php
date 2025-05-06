@@ -26,11 +26,6 @@ class User extends Authenticatable
         return $this->hasOne(Wallet::class);
     }
 
-    public function withdrawals(): HasMany
-    {
-        return $this->hasMany(Withdrawal::class);
-    }
-
     public function sentChats()
     {
         return $this->hasMany(Chat::class, 'sender_id');
