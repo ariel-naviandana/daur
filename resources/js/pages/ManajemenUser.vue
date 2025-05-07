@@ -180,7 +180,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 import Navbar from "@/components/Navbar.vue"
 import { onMounted, onUnmounted } from 'vue'
 

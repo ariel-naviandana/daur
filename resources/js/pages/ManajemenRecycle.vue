@@ -111,7 +111,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
 import Navbar from '../components/Navbar.vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 import RecycleCard from "../components/RecycleCard.vue"
 import PopupDetailRecycle from "../components/PopupDetailRecycle.vue"
 import axios from "axios"

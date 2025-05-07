@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 
 defineProps<{ title: string; value: string }>()
 

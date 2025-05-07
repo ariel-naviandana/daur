@@ -17,7 +17,7 @@ import { ref } from 'vue'
 import ChatList from '../components/ChatList.vue'
 import ChatWindow from '../components/ChatWindow.vue'
 import Navbar from "@/components/Navbar.vue"
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 
 const banks = ref([
     { id: 1, name: 'Bank Sampah Lowokwaru', avatar: 'https://i.pravatar.cc/40?img=1' },

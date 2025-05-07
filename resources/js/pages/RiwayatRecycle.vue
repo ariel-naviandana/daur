@@ -87,7 +87,7 @@ import axios from 'axios'
 import Navbar from '../components/Navbar.vue'
 import RecycleCard from '../components/RecycleCard.vue'
 import PopupDetailRecycle from '../components/PopupDetailRecycle.vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 
 const selectedFilter = ref<string>('all')

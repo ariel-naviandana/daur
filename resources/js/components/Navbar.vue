@@ -106,7 +106,7 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 
 const sidebarOpen = ref(false)
 const toggleSidebar = () => {

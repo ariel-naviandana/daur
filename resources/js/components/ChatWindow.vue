@@ -50,7 +50,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import {theme} from "@/config/theme.js";
+import {theme} from "@/helpers/theme"
 
 const props = defineProps({
     selectedBank: Object,

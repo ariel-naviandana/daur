@@ -53,7 +53,7 @@ import { ref, watch } from 'vue'
 import axios from 'axios'
 import { WasteType } from '../interfaces/WasteType'
 import { Category } from '../interfaces/Category'
-import { theme } from '../config/theme'
+import { theme } from '../helpers/theme'
 
 const props = defineProps<{ wasteType?: WasteType | null; categories: Category[] }>()
 const emit = defineEmits(['close', 'saved'])

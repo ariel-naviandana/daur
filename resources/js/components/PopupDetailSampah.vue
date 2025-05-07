@@ -49,7 +49,7 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import axios from 'axios'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 import { WasteType } from '../interfaces/WasteType'
 import { Category } from '../interfaces/Category'
 import { RecycleTransactionItem } from '../interfaces/RecycleTransactionItem'

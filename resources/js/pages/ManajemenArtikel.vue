@@ -82,7 +82,7 @@
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
 import FormArticle from '../components/FormArticle.vue'
-import { theme } from '../config/theme'
+import { theme } from '../helpers/theme'
 import axios from 'axios'
 import { ref, computed, onMounted } from 'vue'
 

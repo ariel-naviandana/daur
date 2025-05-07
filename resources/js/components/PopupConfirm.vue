@@ -13,7 +13,7 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits } from 'vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 
 const props = defineProps<{
     isOpen: boolean

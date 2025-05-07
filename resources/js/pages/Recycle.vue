@@ -147,7 +147,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 import Navbar from '../components/Navbar.vue'
 import CategoryList from "../components/CategoryList.vue"
 import PopupDetailSampah from '../components/PopupDetailSampah.vue'

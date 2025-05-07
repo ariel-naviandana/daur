@@ -52,7 +52,7 @@ import { ref } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import CategoryManagement from '../components/ManajemenCategory.vue'
 import WasteTypeManagement from '../components/ManajemenWasteType.vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 
 const activeTab = ref<'category' | 'wastetype'>('category')
 

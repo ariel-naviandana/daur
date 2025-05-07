@@ -40,7 +40,7 @@
   import Navbar from '../components/Navbar.vue'
   import InfoCard from '../components/InfoCard.vue'
   import RecycleList from '../components/RecycleList.vue'
-  import { theme } from '@/config/theme'
+  import { theme } from '@/helpers/theme'
 
   const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,

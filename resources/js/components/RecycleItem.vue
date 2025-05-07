@@ -25,7 +25,7 @@
 
   <script setup lang="ts">
   import { computed } from 'vue'
-  import { theme } from '@/config/theme'
+  import { theme } from '@/helpers/theme'
 
   const props = defineProps<{
     name: string

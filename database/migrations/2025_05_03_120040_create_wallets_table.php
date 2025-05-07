@@ -17,7 +17,6 @@ return new class extends Migration
             $table->decimal('balance', 12, 2)->default(0);
             $table->timestamps();
         });
-
     }
 
     /**

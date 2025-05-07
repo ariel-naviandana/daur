@@ -17,7 +17,7 @@
     image: String
   })
 
-  import { theme } from '@/config/theme'
+  import { theme } from '@/helpers/theme'
 
   const cardStyle = {
     display: 'flex',

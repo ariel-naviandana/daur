@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
-import { theme } from '../config/theme'
+import { theme } from '../helpers/theme'
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,

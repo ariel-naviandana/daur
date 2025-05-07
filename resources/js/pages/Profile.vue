@@ -104,7 +104,7 @@
   <script lang="ts" setup>
   import { ref } from 'vue'
   import Navbar from '../components/Navbar.vue'
-  import { theme } from '@/config/theme'
+  import { theme } from '@/helpers/theme'
 
   // Form State
   const nama = ref('')

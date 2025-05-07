@@ -101,7 +101,7 @@ import WasteTypeFormPopup from './PopupFormWasteType.vue'
 import PopupDelete from './PopupDelete.vue'
 import { WasteType } from '../interfaces/WasteType'
 import { Category } from '../interfaces/Category'
-import { theme } from '../config/theme'
+import { theme } from '../helpers/theme'
 
 const selectedWasteType = ref<WasteType | null>(null)
 const wasteTypes = ref<WasteType[]>([])

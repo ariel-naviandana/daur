@@ -101,7 +101,7 @@
 
 <script lang="ts" setup>
 import {computed, onMounted, ref} from 'vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 import {RecycleTransactionItem} from "@/interfaces/RecycleTransactionItem"
 import axios from "axios"
 import {User} from "@/interfaces/User"

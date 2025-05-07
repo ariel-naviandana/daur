@@ -60,7 +60,7 @@
 
 <script lang="ts" setup>
 import {defineProps, computed, ref, onMounted} from 'vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import {User} from "@/interfaces/User"
 import axios from "axios"

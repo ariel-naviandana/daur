@@ -15,7 +15,7 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
 import { WasteType } from '../interfaces/WasteType'
-import { theme } from '../config/theme'
+import { theme } from '../helpers/theme'
 
 const props = defineProps<{ wasteType: WasteType }>()
 

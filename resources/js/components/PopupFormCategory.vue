@@ -33,7 +33,7 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import axios from 'axios'
-import { theme } from '../config/theme'
+import { theme } from '../helpers/theme'
 import { Category } from '../interfaces/Category'
 
 const props = defineProps<{ category?: Category | null }>()

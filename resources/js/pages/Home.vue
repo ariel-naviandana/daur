@@ -70,7 +70,7 @@
 
 <script lang="ts" setup>
 import Navbar from '../components/Navbar.vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 import CategoryList from "../components/CategoryList.vue"
 import PopupDetailSampah from "../components/PopupDetailSampah.vue"
 import { ref } from "vue"

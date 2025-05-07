@@ -97,7 +97,7 @@
     import Navbar from '../components/Navbar.vue'
     import ArtikelCard from '../components/ArtikelCard.vue'
     import { ref } from 'vue'
-    import { theme } from '@/config/theme'
+    import { theme } from '@/helpers/theme'
     import { computed } from 'vue'
 
     const selectedArtikel = ref(null)

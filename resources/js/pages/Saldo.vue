@@ -64,7 +64,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { theme } from '@/config/theme'
+import { theme } from '@/helpers/theme'
 
 const tarikSaldo = () => {
     alert('Penarikan dana (dummy logic)')
