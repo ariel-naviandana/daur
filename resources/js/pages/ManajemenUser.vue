@@ -13,7 +13,7 @@
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    :style="iconStyle"
+                    :style="headerIconStyle"
                 >
                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
                     <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
@@ -80,12 +80,12 @@
                 <div
                     v-for="user in filteredUsers"
                     :key="user.id"
-                    class="bg-white p-4 shadow rounded-2xl flex justify-between items-center mb-4"
+                    :style="cardList"
                 >
                     <!-- Avatar -->
-                    <div class="w-10 h-10 rounded-full overflow-hidden border-none">
+                    <div :style="avatar">
                         <!-- Cek apakah ada profileImage, jika ada tampilkan gambar profil -->
-                        <img v-if="user.profileImage" :src="user.profileImage" alt="Profile" class="w-full h-full object-cover" />
+                        <img v-if="user.profileImage" :src="user.profileImage" alt="Profile" :style="userImage"/>
                         <!-- Jika tidak ada, tampilkan avatar default -->
                         <svg v-else xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" :style="iconStyle">
                             <circle cx="12" cy="12" r="10"></circle>
@@ -94,9 +94,9 @@
                         </svg>
                     </div>
 
-                    <div class="flex-grow ml-4">
-                        <p class="font-semibold">{{ user.name }}</p>
-                        <p class="text-sm text-gray-500">{{ user.email }}</p>
+                    <div :style="detailWrapper">
+                        <p :style="nameStyle">{{ user.name }}</p>
+                        <p :style="emailStyle">{{ user.email }}</p>
                     </div>
 
                     <!-- Dropdown Menu -->
@@ -108,11 +108,11 @@
                             </svg>
                         </button>
 
-                        <div v-if="dropdownOpenId === user.id" class="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg z-10">
+                        <div v-if="dropdownOpenId === user.id" :style="dropdownOpen">
                             <ul class="text-sm text-gray-700">
-                                <li><button @click="handleAction('lihat', user)" :style="btn_dropdown" class="hover:bg-gray-100">Lihat Detail</button></li>
-                                <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="hover:bg-gray-100">Edit</button></li>
-                                <li><button @click="handleAction('hapus', user)" :style="btn_dropdown" class="hover:bg-red-100 text-red-600">Hapus</button></li>
+                                <li><button @click="handleAction('lihat', user)" :style="btn_dropdown" class="button_hover_grey">Lihat Detail</button></li>
+                                <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="button_hover_grey">Edit</button></li>
+                                <li><button @click="handleAction('hapus', user)" :style="btn_dropdown" class="button_hover_red">Hapus</button></li>
                             </ul>
                         </div>
                     </div>
@@ -121,21 +121,22 @@
         </div>
 
         <!-- Popup user detail -->
-        <div v-if="selectedUser" class="fixed inset-0 z-50 flex items-center justify-center">
-            <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" @click="closePopup"></div>
-            <div class="relative z-50 bg-white rounded-xl p-6 w-[90%] max-w-lg shadow-lg">
-                <button @click="closePopup" class="absolute top-3 right-3 text-black">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
-                         viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 18L18 6M6 6l12 12" />
+        <div v-if="selectedUser" :style="popupDetail">
+            <div :style="popupOverlay" @click="closePopup"></div>
+            <div :style="popupContainer">
+                <button @click="closePopup" :style="btnClosePopup">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                         stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
 
-                <div class="flex items-start gap-4 mb-4">
+                <div :style="popupHeader">
                     <div>
-                        <div class="w-10 h-10 rounded-full overflow-hidden border-none">
-                            <img v-if="selectedUser.profileImage" :src="selectedUser.profileImage" alt="Profile" class="w-full h-full object-cover" />
-                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" :style="iconStyle">
+                        <div :style="profileImageWrapper">
+                            <img v-if="selectedUser.profileImage" :src="selectedUser.profileImage" alt="Profile" :style="profileImage" />
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" :style="iconStyle">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <circle cx="12" cy="10" r="3"></circle>
                                 <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
@@ -143,33 +144,31 @@
                         </div>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-lg">{{ selectedUser.name }}</h3>
-                        <p class="text-gray-500">{{ selectedUser.email }}</p>
-                        <p class="mt-2 text-sm"><span class="font-semibold">Alamat</span><br>{{ selectedUser.address }}</p>
+                        <h3 :style="nameUser">{{ selectedUser.name }}</h3>
+                        <p :style="emailUser">{{ selectedUser.email }}</p>
+                        <p :style="alamatUserHeading">Alamat</p>
+                        <p :style="alamatUser">{{ selectedUser.address }}</p>
                     </div>
                 </div>
 
-                <div class="mt-4 bg-gray-50 p-4 rounded-xl flex justify-between items-center text-center">
+                <div :style="containerAktivitas">
                     <div>
-                        <p class="font-semibold">Saldo DAUR</p>
-                        <p class="text-green-600 font-bold">
-                            Rp. {{ selectedUser.saldo ? selectedUser.saldo.toLocaleString('id-ID') : '0' }}
-                        </p>
+                        <p :style="labelAktivitas">Saldo DAUR</p>
+                        <p :style="valueAktivitas">Rp. {{ selectedUser.saldo ? selectedUser.saldo.toLocaleString('id-ID') : '0' }}</p>
                     </div>
                     <div>
-                        <p class="font-semibold">Total Sampah</p>
-                        <p class="text-green-600 font-bold">
-                            {{ selectedUser.totalSampah ? selectedUser.totalSampah : 0 }} Kg
-                        </p>
+                        <p :style="labelAktivitas">Total Sampah</p>
+                        <p :style="valueAktivitas">{{ selectedUser.totalSampah ?? 0 }} Kg</p>
                     </div>
                     <div>
-                        <p class="font-semibold">Recycle</p>
-                        <div class="text-green-600 flex justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
-                                 viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <p :style="labelAktivitas">Recycle</p>
+                        <div :style="iconAktivitas">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                                 stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="1 4 1 10 7 10" />
                                 <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
                             </svg>
+
                         </div>
                     </div>
                 </div>
@@ -328,8 +327,14 @@ const headingContainerStyle = {
     marginBottom: '20px',
 }
 
+const headerIconStyle = {
+    color: theme.colors.darkGrey,
+}
+
 const iconStyle = {
     color: theme.colors.darkGrey,
+    width: '100%',
+    height: 'auto',
 }
 
 const headingStyle = {
@@ -392,18 +397,180 @@ const noResultsStyle = {
     textAlign: 'center',
 }
 
-const noResultsTextStyle = {
-    fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.bold,
-    color: theme.colors.darkGrey,
-    margin: '0 0 8px 0',
+const cardList = {
+    backgroundColor: theme.colors.whiteElement,
+    padding: '1rem',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    borderRadius: '16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '1rem',
 }
 
-const noResultsDescStyle = {
-    fontSize: theme.fonts.size.sm,
+const avatar = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '9999px',
+    overflow: 'hidden',
+    border: 'none',
+}
+
+const userImage = {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+}
+
+const detailWrapper = {
+    flexGrow: 1,
+    marginLeft: '1rem',
+}
+
+const nameStyle = {
+    fontWeight: theme.fonts.weight.semibold,
+    fontSize: theme.fonts.size.base,
+    margin: 0,
+}
+
+const emailStyle = {
+    fontSize: theme.fonts.size.small,
+    color: theme.colors.greyText,
+    margin: 0,
+}
+
+const dropdownOpen = {
+    position: 'absolute',
+    right: 0,
+    marginTop: '0.5rem',
+    width: '10rem',
+    backgroundColor: '#fff',
+    border: `1px solid ${theme.colors.lightGrey}`,
+    borderRadius: '0.7rem',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    zIndex: 10,
+}
+
+const popupDetail = {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 50,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+}
+
+const popupContainer = {
+    backgroundColor: theme.colors.whiteElement,
+    padding: '32px',
+    borderRadius: '30px',
+    maxWidth: '700px',
+    width: '90%',
+    margin: 'auto',
+    position: 'relative',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+}
+
+const popupOverlay = {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: 'rgba(17, 24, 39, 0.5)', // setara dengan bg-gray-900/50
+    backdropFilter: 'blur(4px)',
+};
+
+const popupHeader = {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '16px',
+    padding: '20px',
+}
+
+const profileImageWrapper = {
+    width: '64px',
+    height: '64px',
+    marginTop: '4px',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    flexShrink: 0,
+}
+
+const profileImage = {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+};
+
+const btnClosePopup = {
+    position: 'absolute',
+    top: '22px',
+    right: '22px',
+    color: '#000',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+}
+
+const nameUser = {
+    fontSize: theme.fonts.size.heading,
+    fontWeight: theme.fonts.weight.semibold,
+    margin: 0,
+}
+
+const emailUser = {
+    fontSize: theme.fonts.size.base,
     color: theme.colors.grey,
     margin: 0,
 }
+
+const alamatUserHeading = {
+    fontWeight: theme.fonts.weight.semibold,
+    marginTop: '10px',
+}
+
+const alamatUser = {
+    fontWeight: theme.fonts.weight.regular,
+}
+
+const containerAktivitas = {
+    marginTop: '10rem',
+    width: '70%',
+    backgroundColor: '#f9fafb',
+    padding: '1rem',
+    borderRadius: '12px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    textAlign: 'center',
+    margin: 'auto',
+    position: 'relative',
+}
+
+const noResultsTextStyle = {
+    fontWeight: theme.fonts.weight.semibold,
+    fontSize: theme.fonts.size.base,
+    marginTop: '1rem',
+}
+
+const noResultsDescStyle = {
+    fontSize: theme.fonts.size.small,
+    color: theme.colors.greyText,
+}
+
+const labelAktivitas = {
+    fontWeight: '600',
+    marginBottom: '0.25rem',
+};
+
+const valueAktivitas = {
+    color: theme.colors.primary,
+    fontWeight: '700',
+};
+
+const iconAktivitas = {
+    color: theme.colors.primary,
+    display: 'flex',
+    justifyContent: 'center',
+};
 </script>
 
 <style scoped>
@@ -412,6 +579,20 @@ const noResultsDescStyle = {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
+}
+
+.button_hover_grey:hover {
+    border-radius: 0.7rem;
+    background-color: #f3f4f6;
+}
+
+.button_hover_red:hover {
+    border-radius: 0.7rem;
+    background-color: #fee2e2;
+}
+
+.button_hover_red {
+    color: #dc2626;
 }
 
 input:focus {
