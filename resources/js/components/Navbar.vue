@@ -17,19 +17,19 @@
 
             <ul class="hidden md:flex gap-8">
                 <li>
-                    <a :href="isAdmin ? '/admin' : '/'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin' : '/')">Home</a>
+                    <a :href="isAdmin ? '/admin' : '/'" :style="linkStyle(isAdmin ? '/admin' : '/')">Home</a>
                 </li>
                 <li v-if="isAdmin">
                     <a href="/admin/sampah" :style="linkStyle('/admin/sampah')">Sampah</a>
                 </li>
                 <li>
-                    <a @click="redirectIfNotLoggedIn(isAdmin ? '/admin/recycle' : '/recycle')" :style="linkStyle(isAdmin ? '/admin/recycle' : '/recycle')" role="button">Recycle</a>
+                    <a :href="isAdmin ? '/admin/recycle' : '/recycle'" :style="linkStyle(isAdmin ? '/admin/recycle' : '/recycle')">Recycle</a>
                 </li>
                 <li>
-                    <a :href="isAdmin ? '/admin/artikel' : '/artikel'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin/artikel' : '/artikel')">Artikel</a>
+                    <a :href="isAdmin ? '/admin/artikel' : '/artikel'" :style="linkStyle(isAdmin ? '/admin/artikel' : '/artikel')">Artikel</a>
                 </li>
                 <li>
-                    <a @click="redirectIfNotLoggedIn('/chat')" :style="linkStyle('/chat')" role="button">Chat</a>
+                    <a href="/chat" :style="linkStyle('/chat')">Chat</a>
                 </li>
                 <li v-if="isAdmin">
                     <a href="/admin/users" :style="linkStyle('/admin/users')">User</a>
@@ -39,29 +39,55 @@
                 </li>
             </ul>
 
-            <div class="hidden md:block">
+            <div class="hidden md:block relative">
                 <template v-if="!loggedInUser">
                     <a href="/login" style="color: white; font-weight: bold; background-color: #4CAF50; padding: 6px 28px; border-radius: 24px">Login</a>
                 </template>
                 <template v-else>
-                    <a href="/profile" :style="profileLinkStyle">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="35"
-                            height="35"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            :style="iconStyle"
+                    <div class="flex items-center gap-4">
+                        <a href="#" @click.prevent="toggleDropdown" :style="profileLinkStyle">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="35"
+                                height="35"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                :style="iconStyle"
+                            >
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="10" r="3"></circle>
+                                <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
+                            </svg>
+                        </a>
+                        <div
+                            v-if="showDropdown"
+                            class="absolute top-full right-0 mt-2 w-40 bg-white shadow-lg rounded-lg z-50"
+                            :style="{ fontFamily: theme.fonts.family }"
                         >
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <circle cx="12" cy="10" r="3"></circle>
-                            <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
-                        </svg>
-                    </a>
+                            <ul class="flex flex-col">
+                                <li>
+                                    <a
+                                        href="/profile"
+                                        class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                        :style="linkStyle('/profile')"
+                                        @click="showDropdown = false"
+                                    >Profile</a>
+                                </li>
+                                <li>
+                                    <a
+                                        href=""
+                                        class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                        :style="linkStyle('/logout')"
+                                        @click="logout"
+                                    >Logout</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </template>
             </div>
         </div>
@@ -78,26 +104,31 @@
             </button>
             <ul class="flex flex-col gap-6">
                 <li>
-                    <a :href="isAdmin ? '/admin' : '/'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin' : '/')">Home</a>
+                    <a :href="isAdmin ? '/admin' : '/'" @click="toggleSidebar" :style="linkStyle(isAdmin ? '/admin' : '/')">Home</a>
                 </li>
                 <li v-if="isAdmin">
-                    <a href="/admin/sampah" :style="linkStyle('/admin/sampah')">Sampah</a>
+                    <a href="/admin/sampah" @click="toggleSidebar" :style="linkStyle('/admin/sampah')">Sampah</a>
                 </li>
                 <li>
-                    <a @click="redirectIfNotLoggedIn(isAdmin ? '/admin/recycle' : '/recycle')" :style="linkStyle(isAdmin ? '/admin/recycle' : '/recycle')" role="button">Recycle</a>
+                    <a :href="isAdmin ? '/admin/recycle' : '/recycle'" @click="toggleSidebar" :style="linkStyle(isAdmin ? '/admin/recycle' : '/recycle')">Recycle</a>
                 </li>
-                <li><a :href="isAdmin ? '/admin/artikel' : '/artikel'" @click="closeSidebar" :style="linkStyle(isAdmin ? '/admin/artikel' : '/artikel')">Artikel</a></li>
                 <li>
-                    <a @click="redirectIfNotLoggedIn('/chat')" :style="linkStyle('/chat')" role="button">Chat</a>
+                    <a :href="isAdmin ? '/admin/artikel' : '/artikel'" @click="toggleSidebar" :style="linkStyle(isAdmin ? '/admin/artikel' : '/artikel')">Artikel</a>
+                </li>
+                <li>
+                    <a href="/chat" @click="toggleSidebar" :style="linkStyle('/chat')">Chat</a>
                 </li>
                 <li v-if="isAdmin">
-                    <a href="/admin/users" :style="linkStyle('/admin/users')">User</a>
+                    <a href="/admin/users" @click="toggleSidebar" :style="linkStyle('/admin/users')">User</a>
                 </li>
                 <li v-if="isAdmin">
-                    <a href="/admin/saldo" :style="linkStyle('/admin/saldo')">Saldo</a>
+                    <a href="/admin/saldo" @click="toggleSidebar" :style="linkStyle('/admin/saldo')">Saldo</a>
                 </li>
                 <li>
-                    <a href="/profile" @click="closeSidebar" :style="linkStyle('/profile')">Profil</a>
+                    <a href="/profile" @click="toggleSidebar" :style="linkStyle('/profile')">Profile</a>
+                </li>
+                <li v-if="loggedInUser">
+                    <a href="" @click="logoutAndCloseSidebar" :style="linkStyle('/logout')">Logout</a>
                 </li>
             </ul>
         </div>
@@ -105,31 +136,63 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { theme } from '@/helpers/theme'
+import { useAuthApi } from '@/composables/useAuthApi'
+
+const { getCurrentUser, logout } = useAuthApi()
 
 const sidebarOpen = ref(false)
+const loggedInUser = ref(JSON.parse(localStorage.getItem('user') || 'null'))
+const showDropdown = ref(false)
+
+onMounted(async () => {
+    const user = await getCurrentUser()
+    if (user) {
+        localStorage.setItem('user', JSON.stringify(user))
+        loggedInUser.value = user
+    } else {
+        localStorage.removeItem('user')
+        loggedInUser.value = null
+    }
+
+    document.addEventListener('click', (event) => {
+        const dropdown = document.querySelector('.relative')
+        if (dropdown && !dropdown.contains(event.target as Node)) {
+            showDropdown.value = false
+        }
+    })
+})
+
+const isAdmin = computed(() => loggedInUser.value?.role === 'admin')
+
 const toggleSidebar = () => {
     sidebarOpen.value = !sidebarOpen.value
 }
-const closeSidebar = () => {
-    sidebarOpen.value = false
+
+const toggleDropdown = () => {
+    showDropdown.value = !showDropdown.value
 }
 
-const loggedInUser = JSON.parse(localStorage.getItem('user') || 'null')
-
-const isAdmin = computed(() => loggedInUser?.email === 'admin@gmail.com')
-
-function redirectIfNotLoggedIn(path: string) {
-    if (!loggedInUser) {
-        alert('Anda harus login untuk mengakses fitur ini!')
-        window.location.href = '/login'
-    } else {
-        window.location.href = path
+const logoutUser = async () => {
+    try {
+        const success = await logout()
+        if (success) {
+            localStorage.removeItem('user')
+            loggedInUser.value = null
+            showDropdown.value = false
+        }
+    } catch (error) {
+        console.error('Logout error:', error)
     }
 }
 
-function linkStyle(path: string) {
+const logoutAndCloseSidebar = async () => {
+    await logoutUser()
+    sidebarOpen.value = false
+}
+
+const linkStyle = (path: string) => {
     const isCurrent = window.location.pathname === path
     return {
         color: isCurrent ? theme.colors.primary : theme.colors.darkGrey,
@@ -164,9 +227,6 @@ const profileLinkStyle = {
 <style scoped>
 a:hover {
     text-decoration: underline;
-}
-
-a[role="button"] {
     cursor: pointer;
 }
 </style>

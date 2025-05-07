@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { User } from '../interfaces/User'
 
-export function useUserApi() {
+export function useAuthApi() {
     const register = async (form: User): Promise<User | null> => {
         try {
             const config = {

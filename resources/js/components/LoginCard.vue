@@ -8,9 +8,9 @@
             <!-- Form Login -->
             <form :style="formStyle" @submit.prevent="handleLogin">
                 <label>Email</label>
-                <input type="email" v-model="email" placeholder="Masukkan email" />
+                <input type="email" v-model="email" placeholder="Masukkan email" required />
                 <label>Kata sandi</label>
-                <input type="password" v-model="password" placeholder="Masukkan kata sandi" />
+                <input type="password" v-model="password" placeholder="Masukkan kata sandi" required />
 
                 <a href="/forgot-password" style="color: #4CAF50; text-align: right; display: block; font-size: 14px; font-weight: normal">Lupa kata sandi?</a>
 
@@ -24,25 +24,33 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { useAuthApi } from '@/composables/useAuthApi'
+
+const { login } = useAuthApi()
 
 const email = ref('')
 const password = ref('')
 
-function handleLogin() {
-    const storedUser = localStorage.getItem('user')
-    if (!storedUser) {
-        alert('Pengguna belum terdaftar!')
+const handleLogin = async () => {
+    if (!email.value || !password.value) {
+        alert('Mohon lengkapi semua data.')
         return
     }
 
-    const user = JSON.parse(storedUser)
+    const credentials = {
+        email: email.value,
+        password: password.value,
+    }
 
-    if (user.email === email.value && user.password === password.value) {
+    const user = await login(credentials)
+    if (user) {
+        localStorage.setItem('user', JSON.stringify(user))
         alert('Login berhasil!')
-        if (user.email === "admin@gmail.com")
+        if (user.role === 'admin') {
             window.location.href = '/admin'
-        else
+        } else {
             window.location.href = '/'
+        }
     } else {
         alert('Email atau kata sandi salah!')
     }
@@ -58,7 +66,6 @@ const containerStyle = {
     padding: '24px',
     overflowY: 'auto',
 }
-
 
 const cardStyle = {
     width: '620px',
