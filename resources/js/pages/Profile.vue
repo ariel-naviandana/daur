@@ -103,7 +103,7 @@
 
   <script lang="ts" setup>
   import { ref } from 'vue'
-  import Navbar from '../components/Navbar.vue'
+  import Navbar from '@/components/Navbar.vue'
   import { theme } from '@/helpers/theme'
 
   // Form State

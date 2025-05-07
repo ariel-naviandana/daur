@@ -37,9 +37,9 @@
   </template>
 
   <script lang="ts" setup>
-  import Navbar from '../components/Navbar.vue'
-  import InfoCard from '../components/InfoCard.vue'
-  import RecycleList from '../components/RecycleList.vue'
+  import Navbar from '@/components/Navbar.vue'
+  import InfoCard from '@/components/InfoCard.vue'
+  import RecycleList from '@/components/RecycleList.vue'
   import { theme } from '@/helpers/theme'
 
   const layoutStyle = {

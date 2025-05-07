@@ -94,8 +94,8 @@
     </template>
 
     <script lang="ts" setup>
-    import Navbar from '../components/Navbar.vue'
-    import ArtikelCard from '../components/ArtikelCard.vue'
+    import Navbar from '@/components/Navbar.vue'
+    import ArtikelCard from '@/components/ArtikelCard.vue'
     import { ref } from 'vue'
     import { theme } from '@/helpers/theme'
     import { computed } from 'vue'
