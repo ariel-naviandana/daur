@@ -25,14 +25,14 @@
                     <h1 :style="headingStyle">Daftar Artikel</h1>
                 </div>
 
-                <div class="flex justify-between items-center mb-4">
+                <div :style="sorting">
                     <select v-model="sortOrder" @change="fetchArticles" :style="selectStyle">
                         <option value="newest">Terbaru</option>
                         <option value="oldest">Terlama</option>
                     </select>
 
-                    <div class="flex space-x-4 w-full justify-end">
-                        <button :style="btn_tambah" @click="openCreateForm">
+                    <div :style="rightControl">
+                        <button :style="btn_tambah" class="btn_tambah" @click="openCreateForm">
                             <img src="/public/images/icon_plus.svg" alt="Tambah"/>
                             Tambah
                         </button>
@@ -58,20 +58,19 @@
                     <p :style="noResultsDescStyle">Coba sesuaikan filter atau kata kunci pencarian Anda</p>
                 </div>
 
-                <div v-for="article in filteredAndSortedArticles" :key="article.id"
-                     class="flex justify-between items-center p-4 mb-4 rounded-2xl shadow bg-white">
-                    <div class="w-10 h-10 overflow-hidden border-none mr-4">
+                <div v-for="article in filteredAndSortedArticles" :key="article.id" :style="articleContainer">
+                    <div :style="articleIcon">
                         <img src="/public/images/icon_article.svg" alt="Artikel"/>
                     </div>
 
                     <div class="flex-grow">
-                        <h3 class="font-semibold">{{ article.title }}</h3>
-                        <p class="text-sm text-green-600">{{ formatDate(article.created_at) }}</p>
+                        <h3 class="font-semibold" :style="articleTitle">{{ article.title }}</h3>
+                        <p class="text-sm text-green-600" :style="articleDate">{{ formatDate(article.created_at) }}</p>
                     </div>
 
                     <div class="flex space-x-2">
-                        <button @click="openEditForm(article)" class="bg-yellow-400 text-white px-4 py-1 rounded" :style="btn_edit">Edit</button>
-                        <button @click="deleteArticle(article.id)" class="bg-red-500 text-white px-4 py-1 rounded" :style="btn_hapus">Hapus</button>
+                        <button @click="openEditForm(article)" class="btn_edit" :style="btn_edit">Edit</button>
+                        <button @click="deleteArticle(article.id)" class="btn_hapus" :style="btn_hapus">Hapus</button>
                     </div>
                 </div>
             </div>
@@ -90,6 +89,7 @@ const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
     minHeight: '100vh',
     fontFamily: theme.fonts.family,
+    overflowX: 'hidden',
 }
 
 const contentStyle = {
@@ -178,6 +178,7 @@ const selectStyle = {
 
 const btn_tambah = {
     radius: '30px',
+    height: '40px',
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
@@ -196,6 +197,8 @@ const btn_edit = {
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
     borderRadius: '8px',
+    height: '30px',
+    width: '70px',
 }
 
 const btn_hapus = {
@@ -203,7 +206,8 @@ const btn_hapus = {
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
     borderRadius: '8px',
-    marginLeft: '4px',
+    height: '30px',
+    width: '70px',
     marginRight: '6px',
 }
 
@@ -280,8 +284,69 @@ const formatDate = (dateStr) => {
         year: 'numeric',
     })
 }
+
+const sorting = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '1rem',
+}
+
+const rightControl = {
+    display: 'flex',
+    gap: '1rem',
+    width: '100%',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+}
+
+const articleContainer = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '1rem',
+    marginBottom: '1rem',
+    borderRadius: '24px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    backgroundColor: theme.colors.whiteElement,
+}
+
+const articleIcon = {
+    width: '40px',
+    height: '40px',
+    overflow: 'hidden',
+    border: 'none',
+    marginRight: '1rem',
+}
+
+const articleTitle = {
+    fontWeight: theme.fonts.weight.semibold,
+    fontSize: theme.fonts.size.base,
+    margin: 0,
+}
+
+const articleDate = {
+    fontSize: theme.fonts.size.sm,
+    color: theme.colors.green,
+    margin: 0,
+}
+
 </script>
 
-
 <style scoped>
+::-webkit-scrollbar {
+    display: none;
+}
+
+.btn_tambah:hover {
+
+}
+
+.btn_edit:hover {
+
+}
+
+.btn_hapus:hover {
+    color: #dc2626;
+}
 </style>
