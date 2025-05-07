@@ -5,7 +5,13 @@
                 <h2 class="text-2xl font-bold">{{ isEdit ? 'Edit Artikel' : 'Tambah Artikel Baru' }}</h2>
                 <div class="space-x-2">
                     <button @click="backToList" class="bg-red-500 text-white px-4 py-2 rounded">Batal</button>
-                    <button @click="submitForm" class="bg-green-500 text-white px-4 py-2 rounded">Simpan</button>
+                    <button
+                        @click="submitForm"
+                        :disabled="isUploading"
+                        class="bg-green-500 text-white px-4 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Simpan
+                    </button>
                 </div>
             </div>
 
@@ -20,10 +26,15 @@
             <div class="mb-6 flex justify-center">
                 <div class="border-dashed border-2 border-gray-300 rounded-2xl p-6 text-center w-full">
                     <div class="flex justify-center mb-3">
-                        <img v-if="previewImage" :src="previewImage" class="max-h-64 object-cover rounded" />
+                        <img v-if="previewImage" :src="previewImage" class="max-h-64 object-cover rounded" alt="preview image"/>
                         <img v-else src="/public/images/icon-upload.svg" class="w-16 h-16" alt="upload icon" />
                     </div>
-                    <input type="file" @change="handleImageUpload" class="hidden" ref="fileInput" />
+                    <input
+                        type="file"
+                        accept="image/*"
+                        @change="handleImageUpload"
+                        class="hidden"
+                        ref="fileInput" />
                     <button @click="$refs.fileInput.click()" class="bg-green-600 text-white px-4 py-2 rounded-full">Tambah Gambar</button>
                 </div>
             </div>
@@ -70,6 +81,8 @@
 import { ref, watch, onMounted } from 'vue'
 import axios from 'axios'
 
+const isUploading = ref(false)
+
 const props = defineProps({
     article: {
         type: Object,
@@ -83,7 +96,7 @@ const isEdit = ref(false)
 const form = ref({
     title: '',
     content: '',
-    image: null,
+    image: '',
 })
 const previewImage = ref(null)
 
@@ -93,19 +106,22 @@ onMounted(() => {
         isEdit.value = true
         form.value.title = props.article.title
         form.value.content = props.article.content
-        previewImage.value = props.article.image_url || ''
+        previewImage.value = props.article.image || ''
+        form.value.image = props.article.image || ''
         form.value.reporter = props.article.pewarta || ''
         form.value.editor = props.article.editor || ''
         form.value.copyright = props.article.copyright || ''
         form.value.source = props.article.sumber || ''
     }
 })
+
 watch(() => props.article, (newVal) => {
     if (newVal) {
         isEdit.value = true
         form.value.title = newVal.title
         form.value.content = newVal.content
-        previewImage.value = newVal.image_url || ''
+        previewImage.value = newVal.image || ''
+        form.value.image = newVal.image || ''
     } else {
         isEdit.value = false
         form.value = { title: '', content: '', image: null }
@@ -113,49 +129,68 @@ watch(() => props.article, (newVal) => {
     }
 })
 
-const handleImageUpload = (event) => {
+const handleImageUpload = async (event) => {
     const file = event.target.files[0]
-    if (file) {
-        form.value.image = file
-        previewImage.value = URL.createObjectURL(file)
+    if (!file) return
+
+    previewImage.value = URL.createObjectURL(file)
+    await uploadToCloudinary(file)
+}
+
+const uploadToCloudinary = async (file) => {
+    isUploading.value = true
+    const formData = new FormData()
+    const cloudinaryPreset = 'webdaur'
+    const cloudinaryURL = 'https://api.cloudinary.com/v1_1/dto6d9tbe/image/upload'
+
+    formData.append('file', file)
+    formData.append('upload_preset', cloudinaryPreset)
+
+    try {
+        const response = await axios.post(cloudinaryURL, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        form.value.image = response.data.secure_url
+        console.log('Upload berhasil, URL:', form.value.image)
+    } catch (error) {
+        console.error('Error uploading to Cloudinary:', error.response?.data || error.message)
+        alert('Gagal mengunggah gambar. Silakan coba lagi.')
+    } finally {
+        isUploading.value = false
     }
 }
 
 const submitForm = async () => {
-    const formData = new FormData()
-    formData.append('title', form.value.title)
-    formData.append('content', form.value.content)
-    formData.append('pewarta', form.value.reporter || '')  // Tambahkan pewarta
-    formData.append('editor', form.value.editor || '')    // Tambahkan editor
-    formData.append('copyright', form.value.copyright || '') // Tambahkan copyright
-    formData.append('sumber', form.value.source || '')    // Tambahkan sumber
-    if (form.value.image) {
-        formData.append('image', form.value.image)
+    if (isUploading.value) {
+        alert('Mohon tunggu hingga gambar selesai diunggah.');
+        return;
+    }
+
+    const payload = {
+        title: form.value.title,
+        content: form.value.content,
+        image: form.value.image,
+        pewarta: form.value.reporter,
+        editor: form.value.editor,
+        copyright: form.value.copyright,
+        sumber: form.value.source
     }
 
     try {
         if (isEdit.value && props.article?.id) {
-            await axios.post(`/articles/${props.article.id}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'X-HTTP-Method-Override': 'PUT'
-                }
-            })
+            await axios.put(`/articles/${props.article.id}`, payload)
         } else {
-            await axios.post('/articles', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            })
+            await axios.post('/articles', payload)
         }
-
         emit('saved')
-        emit('close')
     } catch (error) {
-        console.error('Gagal simpan artikel:', error)
+        console.error('Gagal menyimpan artikel:', error)
+        alert('Gagal menyimpan artikel.')
     }
 }
 
 const backToList = () => {
-    emit('close')  // Emit 'close' untuk memberi tahu komponen induk menutup form
+    emit('close')  // Menutup form
 }
 </script>
 
