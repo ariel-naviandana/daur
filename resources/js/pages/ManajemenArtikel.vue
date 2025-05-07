@@ -61,7 +61,8 @@
                 <div v-for="article in filteredAndSortedArticles" :key="article.id"
                      class="flex justify-between items-center p-4 mb-4 rounded-2xl shadow bg-white">
                     <div class="w-10 h-10 overflow-hidden border-none mr-4">
-                        <img src="/public/images/icon_article.svg" alt="Artikel"/>
+                        <img v-if="article.image_url" :src="article.image_url" alt="Artikel"/>
+                        <img v-else src="/public/images/icon_article.svg" alt="Artikel"/>
                     </div>
 
                     <div class="flex-grow">

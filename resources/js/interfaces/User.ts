@@ -6,6 +6,7 @@ export interface User {
     id: number
     name: string
     email: string
+    password: string
     phone?: string | null
     address?: string | null
     profile_picture?: string | null
