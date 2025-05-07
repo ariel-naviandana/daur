@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Chat } from '../interfaces/Chat'
 
-export function useChat() {
+export function useChatApi() {
     const getChats = async (): Promise<Chat[]> => {
         try {
             const response = await axios.get('/chats')

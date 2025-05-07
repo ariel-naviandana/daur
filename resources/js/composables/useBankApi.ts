@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Bank } from '../interfaces/Bank'
 
-export function useBank() {
+export function useBankApi() {
     const getBanks = async (): Promise<Bank[]> => {
         try {
             const response = await axios.get('/banks')

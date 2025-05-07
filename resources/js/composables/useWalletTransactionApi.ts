@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { WalletTransaction } from '../interfaces/WalletTransaction'
 
-export function useWalletTransaction() {
+export function useWalletTransactionApi() {
     const getWalletTransactions = async (): Promise<WalletTransaction[]> => {
         try {
             const response = await axios.get('/wallet_transactions')

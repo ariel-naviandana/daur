@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { WasteType } from '../interfaces/WasteType'
 
-export function useWasteType() {
+export function useWasteTypeApi() {
     const getWasteTypes = async (): Promise<WasteType[]> => {
         try {
             const response = await axios.get('/waste-types')

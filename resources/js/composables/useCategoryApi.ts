@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Category } from '../interfaces/Category'
 
-export function useCategory() {
+export function useCategoryApi() {
     const getCategories = async (): Promise<Category[]> => {
         try {
             const response = await axios.get('/categories')

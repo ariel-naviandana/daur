@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Article } from '../interfaces/Article'
 
-export function useArticle() {
+export function useArticleApi() {
     const getArticles = async (search?: string, sort: 'newest' | 'oldest' = 'newest'): Promise<Article[]> => {
         try {
             const params = { search, sort }

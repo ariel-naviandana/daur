@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { RecycleTransactionItem } from '../interfaces/RecycleTransactionItem'
 
-export function useRecycleTransactionItem() {
+export function useRecycleTransactionItemApi() {
     const getRecycleTransactionItems = async (): Promise<RecycleTransactionItem[]> => {
         try {
             const response = await axios.get('/recycle-transaction-items')
