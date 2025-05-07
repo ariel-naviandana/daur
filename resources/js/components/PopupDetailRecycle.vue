@@ -95,6 +95,10 @@
             <div v-if="isAdmin && item.status === 'process'" :style="actionButtonsContainer">
                 <button @click="handleDone" :style="acceptButtonStyle">Selesai</button>
             </div>
+
+            <div v-if="!isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
+                <button @click="handleReject" :style="rejectButtonStyle">Batalkan</button>
+            </div>
         </div>
     </div>
 </template>

@@ -77,6 +77,7 @@
             :isOpen="showPopup"
             :item="selectedItem"
             @close="closePopup"
+            @reject="updateStatus('cancel')"
             :is-admin="false"
         />
     </div>
@@ -90,23 +91,28 @@ import PopupDetailRecycle from '@/components/PopupDetailRecycle.vue'
 import { theme } from '@/helpers/theme'
 import { useRecycleTransactionApi } from '@/composables/useRecycleTransactionApi'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
+import {User} from "@/interfaces/User"
+import {useAuthApi} from "@/composables/useAuthApi"
 
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
 const showPopup = ref(false)
 const selectedItem = ref<RecycleTransaction | null>(null)
 const history = ref<RecycleTransaction[]>([])
-const { getRecycleTransactionsByUser } = useRecycleTransactionApi()
+const { getRecycleTransactionsByUser, saveRecycleTransaction } = useRecycleTransactionApi()
+const { getCurrentUser } = useAuthApi()
+const user = ref<User>()
 
 const fetchHistory = async () => {
     try {
-        history.value = await getRecycleTransactionsByUser(1)
+        history.value = await getRecycleTransactionsByUser(user.value.id)
     } catch (error) {
         console.error('Error fetching history:', error)
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
+    user.value = await getCurrentUser()
     fetchHistory()
 })
 
@@ -134,6 +140,29 @@ const openPopup = (item: RecycleTransaction) => {
 const closePopup = () => {
     showPopup.value = false
     selectedItem.value = null
+}
+
+const updateStatus = async (newStatus: string) => {
+    if (selectedItem.value) {
+        try {
+            const updatedTransaction = {
+                ...selectedItem.value,
+                status: newStatus
+            }
+            const success = await saveRecycleTransaction(updatedTransaction)
+            if (success) {
+                history.value = history.value.map(item =>
+                    item.id === updatedTransaction.id ? updatedTransaction : item
+                )
+                closePopup()
+            } else {
+                alert('Gagal memperbarui status transaksi')
+            }
+        } catch (error) {
+            console.error('Error updating transaction status:', error)
+            alert('Terjadi kesalahan saat memperbarui status')
+        }
+    }
 }
 
 const layoutStyle = {

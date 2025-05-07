@@ -54,7 +54,7 @@
                     <span :style="bookingIconStyle">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="currentColor" stroke-width="2"/>
-                            <path d="M brag16 2V6M8 2V6M3 10H21" stroke="currentColor" stroke-width="2"/>
+                            <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </span>
                     Booking
@@ -160,6 +160,10 @@ import { Category } from '@/interfaces/Category'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
 import { WasteType } from '@/interfaces/WasteType'
+import { useAuthApi } from '@/composables/useAuthApi'
+import {User} from "@/interfaces/User"
+
+const { getCurrentUser } = useAuthApi()
 
 const { getWasteTypes } = useWasteTypeApi()
 const { saveRecycleTransaction } = useRecycleTransactionApi()
@@ -175,6 +179,7 @@ const cartItems = ref<RecycleTransactionItem[]>([])
 const dropOffLocations = ref<Bank[]>([])
 const selectedDropOff = ref<Bank | null>(null)
 const wasteTypes = ref<WasteType[]>([])
+const user = ref<User>()
 
 const fetchBanks = async () => {
     try {
@@ -194,6 +199,7 @@ const fetchWasteTypes = async () => {
 }
 
 onMounted(async () => {
+    user.value = await getCurrentUser()
     await fetchBanks()
     await fetchWasteTypes()
 })
@@ -234,7 +240,7 @@ const submitTransaction = async () => {
 
         const payload: RecycleTransaction & { items: { waste_type_id: number; quantity: number; sub_total: number }[] } = {
             id: 0,
-            user_id: 1,
+            user_id: user.value.id,
             bank_id: isPickup.value ? null : selectedDropOff.value?.id || null,
             pickup_address: isPickup.value ? address.value : null,
             appointment_time: formattedAppointmentTime,
