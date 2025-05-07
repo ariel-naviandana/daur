@@ -77,32 +77,30 @@
             :isOpen="showPopup"
             :item="selectedItem"
             @close="closePopup"
+            :is-admin="false"
         />
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
-import Navbar from '../components/Navbar.vue'
-import RecycleCard from '../components/RecycleCard.vue'
-import PopupDetailRecycle from '../components/PopupDetailRecycle.vue'
+import Navbar from '@/components/Navbar.vue'
+import RecycleCard from '@/components/RecycleCard.vue'
+import PopupDetailRecycle from '@/components/PopupDetailRecycle.vue'
 import { theme } from '@/helpers/theme'
+import { useRecycleTransactionApi } from '@/composables/useRecycleTransactionApi'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
 const showPopup = ref(false)
 const selectedItem = ref<RecycleTransaction | null>(null)
-
 const history = ref<RecycleTransaction[]>([])
+const { getRecycleTransactionsByUser } = useRecycleTransactionApi()
 
 const fetchHistory = async () => {
     try {
-        const { data } = await axios.get('/recycle-transactions/user/1')
-        history.value = data.map((transaction: RecycleTransaction) => ({
-            ...transaction
-        }))
+        history.value = await getRecycleTransactionsByUser(1)
     } catch (error) {
         console.error('Error fetching history:', error)
     }
@@ -141,13 +139,13 @@ const closePopup = () => {
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
     minHeight: '100vh',
-    fontFamily: theme.fonts.family,
+    fontFamily: theme.fonts.family
 }
 
 const contentStyle = {
     maxWidth: '1200px',
     margin: '0 auto',
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const headingContainerStyle = {
@@ -155,17 +153,17 @@ const headingContainerStyle = {
     alignItems: 'center',
     gap: '12px',
     size: theme.fonts.size.subheading,
-    marginBottom: '20px',
+    marginBottom: '20px'
 }
 
 const iconStyle = {
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const headingStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
-    margin: 0,
+    margin: 0
 }
 
 const selectStyle = {
@@ -179,7 +177,7 @@ const selectStyle = {
     backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right 8px center',
-    backgroundSize: '16px',
+    backgroundSize: '16px'
 }
 
 const noResultsStyle = {
@@ -188,25 +186,25 @@ const noResultsStyle = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '48px 0',
-    textAlign: 'center',
+    textAlign: 'center'
 }
 
 const noResultsIconStyle = {
     color: theme.colors.grey,
-    marginBottom: '16px',
+    marginBottom: '16px'
 }
 
 const noResultsTextStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.bold,
     color: theme.colors.darkGrey,
-    margin: '0 0 8px 0',
+    margin: '0 0 8px 0'
 }
 
 const noResultsDescStyle = {
     fontSize: theme.fonts.size.sm,
     color: theme.colors.grey,
-    margin: 0,
+    margin: 0
 }
 </script>
 
@@ -214,18 +212,19 @@ const noResultsDescStyle = {
 .filters {
     display: flex;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 24px
 }
+
 .history-list {
     list-style: none;
-    padding: 0;
+    padding: 0
 }
 
 [style*="flex-direction: column"] {
-    display: flex;
+    display: flex
 }
 
 ::-webkit-scrollbar {
-    display: none;
+    display: none
 }
 </style>

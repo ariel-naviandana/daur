@@ -22,7 +22,7 @@
                     </div>
                     <div :style="userTextContainer">
                         <div :style="dateStyle">{{ formattedDate }}</div>
-                        <div :style="usernameStyle">{{ (user ? user.name : "Loading...") }}</div>
+                        <div :style="usernameStyle">{{ item.user ? item.user.name : 'Loading...' }}</div>
                     </div>
                 </div>
                 <div v-else :style="dateStyle">{{ formattedDate }}</div>
@@ -40,16 +40,16 @@
             </div>
 
             <div :style="itemListStyle">
-                <div v-for="(waste, index) in (recycleItems ? recycleItems : [])" :key="index" :style="itemStyle">
+                <div v-for="(waste, index) in (item.items || [])" :key="index" :style="itemStyle">
                     <div :style="itemLeftStyle">
                         <img
-                            :src="getWasteTypeImage(index)"
+                            :src="getWasteTypeImage(waste)"
                             alt="Item Image"
                             :style="itemImageStyle"
                         />
                         <div :style="itemTextStyle">
-                            <div :style="itemNameStyle">{{ getWasteTypeName(index) }}</div>
-                            <div :style="itemWeightStyle">{{ waste.quantity }} {{ getWasteTypeUnit(index) }}</div>
+                            <div :style="itemNameStyle">{{ getWasteTypeName(waste) }}</div>
+                            <div :style="itemWeightStyle">{{ waste.quantity }} {{ getWasteTypeUnit(waste) }}</div>
                         </div>
                     </div>
                     <div :style="priceStyle">Rp{{ waste.sub_total.toLocaleString('id-ID') }}</div>
@@ -71,20 +71,20 @@
 
             <div :style="pickupDetailsContainer">
                 <div :style="pickupDetailSection">
-                    <h3 :style="sectionTitleStyle">{{ item.method == "pickup" ? "Alamat Penjemputan" : "Alamat Drop-off" }}</h3>
+                    <h3 :style="sectionTitleStyle">{{ item.method === 'pickup' ? 'Alamat Penjemputan' : 'Alamat Drop-off' }}</h3>
                     <p :style="addressStyle">
-                        {{ item.method == "pickup" ? item.pickup_address : (bank ? bank.address : "Loading...") }}
+                        {{ item.method === 'pickup' ? item.pickup_address : (item.bank ? item.bank.address : 'Loading...') }}
                     </p>
                 </div>
                 <div :style="pickupDetailSection">
-                    <h3 :style="sectionTitleStyle">{{ item.method == "pickup" ? "Waktu Penjemputan" : "Waktu Drop-off" }}</h3>
+                    <h3 :style="sectionTitleStyle">{{ item.method === 'pickup' ? 'Waktu Penjemputan' : 'Waktu Drop-off' }}</h3>
                     <p :style="addressStyle">{{ formattedTime }}</p>
                 </div>
             </div>
 
             <div :style="addressContainerStyle">
                 <h3 :style="sectionTitleStyle">Catatan</h3>
-                <p :style="addressStyle">{{ item.note }}</p>
+                <p :style="addressStyle">{{ item.note || 'Tidak ada catatan' }}</p>
             </div>
 
             <div v-if="isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
@@ -100,76 +100,22 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, ref} from 'vue'
+import { computed } from 'vue'
 import { theme } from '@/helpers/theme'
-import {RecycleTransactionItem} from "@/interfaces/RecycleTransactionItem"
-import axios from "axios"
-import {User} from "@/interfaces/User"
-import {Bank} from "@/interfaces/Bank"
-import {WasteType} from "@/interfaces/WasteType"
+import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
+import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
 
 const props = defineProps<{
     isOpen: boolean
-    item: RecycleTransactionItem
+    item: RecycleTransaction
     isAdmin?: boolean
 }>()
-
-const bank = ref<Bank | null>(null)
-const user = ref<User | null>(null)
-
-const recycleItems = ref<RecycleTransactionItem[]>([])
-const wasteTypes = ref<WasteType[]>([])
-
-const fetchWasteTypes = async () => {
-    try {
-        const { data } = await axios.get('/waste-types')
-        wasteTypes.value = data.map((wasteType: WasteType) => ({
-            ...wasteType
-        }))
-    } catch (error) {
-        console.error('Error fetching waste types:', error)
-    }
-}
-
-const fetchRecycleItems = async () => {
-    try {
-        const { data } = await axios.get('/recycle-transaction-items/transaction/' + props.item.id)
-        recycleItems.value = data.map((recycleItem: RecycleTransactionItem) => ({
-            ...recycleItem
-        }))
-    } catch (error) {
-        console.error('Error fetching recycle items:', error)
-    }
-}
-
-const fetchBank = async () => {
-    try {
-        const { data } = await axios.get('/banks/' + props.item.bank_id)
-        bank.value = data
-    } catch (error) {
-        console.error('Error fetching bank:', error)
-    }
-}
-
-const fetchUser = async () => {
-    try {
-        const { data } = await axios.get('/users/' + props.item.user_id)
-        user.value = data
-    } catch (error) {
-        console.error('Error fetching user:', error)
-    }
-}
-
-onMounted(() => {
-    fetchWasteTypes()
-    fetchRecycleItems()
-    fetchBank()
-    fetchUser()
-})
 
 const emit = defineEmits(['close', 'accept', 'reject', 'done'])
 
 const isAdmin = computed(() => props.isAdmin ?? false)
+
+console.log(props.item)
 
 const closeModal = () => {
     emit('close')
@@ -193,7 +139,7 @@ const formattedDate = computed(() => {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
-        year: 'numeric',
+        year: 'numeric'
     })
 })
 
@@ -202,7 +148,7 @@ const formattedTime = computed(() => {
     return date.toLocaleTimeString('id-ID', {
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
+        second: '2-digit'
     }).replace(/\./g, ':')
 })
 
@@ -223,24 +169,20 @@ const formatMethod = (method: string) => {
         return 'Pick-up'
     } else if (method === 'dropoff') {
         return 'Drop-off'
-    } else {
-        return method
     }
+    return method
 }
 
-const getWasteTypeName = (index: number) => {
-    const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === recycleItems.value[index].waste_type_id)
-    return wasteType ? wasteType.name : ''
+const getWasteTypeName = (item: RecycleTransactionItem) => {
+    return item.waste_type?.name || ''
 }
 
-const getWasteTypeImage = (index: number) => {
-    const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === recycleItems.value[index].waste_type_id)
-    return wasteType ? wasteType.image : ''
+const getWasteTypeImage = (item: RecycleTransactionItem) => {
+    return item.waste_type?.image || ''
 }
 
-const getWasteTypeUnit = (index: number) => {
-    const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === recycleItems.value[index].waste_type_id)
-    return wasteType ? wasteType.unit : ''
+const getWasteTypeUnit = (item: RecycleTransactionItem) => {
+    return item.waste_type?.unit || ''
 }
 
 const overlayStyle = {
@@ -253,7 +195,7 @@ const overlayStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1000,
+    zIndex: 1000
 }
 
 const modalStyle = {
@@ -263,40 +205,40 @@ const modalStyle = {
     width: '90%',
     maxWidth: '600px',
     maxHeight: '90vh',
-    overflow: 'auto',
+    overflow: 'auto'
 }
 
 const headerStyle = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '16px',
+    marginBottom: '16px'
 }
 
 const userInfoContainer = {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
+    gap: '12px'
 }
 
 const userIconStyle = {
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const userTextContainer = {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
 }
 
 const dateStyle = {
     color: theme.colors.darkGrey,
-    fontSize: theme.fonts.size.base,
+    fontSize: theme.fonts.size.base
 }
 
 const usernameStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.bold,
-    color: theme.colors.black,
+    color: theme.colors.black
 }
 
 const closeButtonStyle = {
@@ -304,73 +246,73 @@ const closeButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     padding: '4px',
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const titleContainer = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '24px',
+    marginBottom: '24px'
 }
 
 const titleStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
-    margin: 0,
+    margin: 0
 }
 
 const statusBadgeStyle = {
     padding: '3px 12px',
     color: theme.colors.whiteElement,
     borderRadius: '6px',
-    fontSize: theme.fonts.size.base,
+    fontSize: theme.fonts.size.base
 }
 
 const itemListStyle = {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
-    marginBottom: '24px',
+    marginBottom: '24px'
 }
 
 const itemStyle = {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'center'
 }
 
 const itemLeftStyle = {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
+    gap: '12px'
 }
 
 const itemImageStyle = {
     width: '24px',
     height: '24px',
-    borderRadius: '4px',
+    borderRadius: '4px'
 }
 
 const itemTextStyle = {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
 }
 
 const itemNameStyle = {
     fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.medium,
+    fontWeight: theme.fonts.weight.medium
 }
 
 const itemWeightStyle = {
     fontSize: theme.fonts.size.base,
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const priceStyle = {
     fontSize: theme.fonts.size.base,
     color: theme.colors.primary,
-    fontWeight: theme.fonts.weight.medium,
+    fontWeight: theme.fonts.weight.semibold
 }
 
 const totalContainerStyle = {
@@ -379,7 +321,7 @@ const totalContainerStyle = {
     padding: '16px 0',
     borderTop: `1px solid ${theme.colors.lightGrey}`,
     borderBottom: `1px solid ${theme.colors.lightGrey}`,
-    marginBottom: '24px',
+    marginBottom: '24px'
 }
 
 const totalWeightStyle = {
@@ -387,17 +329,17 @@ const totalWeightStyle = {
     flexDirection: 'column',
     gap: '4px',
     color: theme.colors.darkGrey,
-    fontSize: theme.fonts.size.base,
+    fontSize: theme.fonts.size.base
 }
 
 const weightValueStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
-    color: theme.colors.primary,
+    color: theme.colors.primary
 }
 
 const pickupStyle = {
-    marginBottom: '24px',
+    marginBottom: '24px'
 }
 
 const pickupBadgeStyle = {
@@ -405,42 +347,42 @@ const pickupBadgeStyle = {
     color: theme.colors.whiteElement,
     padding: '6px 12px',
     borderRadius: '6px',
-    fontSize: theme.fonts.size.base,
+    fontSize: theme.fonts.size.base
 }
 
 const pickupDetailsContainer = {
     display: 'grid',
     gridTemplateColumns: '2fr 1fr',
     gap: '24px',
-    marginBottom: '24px',
+    marginBottom: '24px'
 }
 
 const pickupDetailSection = {
-    flex: 1,
+    flex: 1
 }
 
 const addressContainerStyle = {
-    marginBottom: '24px',
+    marginBottom: '24px'
 }
 
 const sectionTitleStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.bold,
     marginBottom: '8px',
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const addressStyle = {
     fontSize: theme.fonts.size.base,
     color: theme.colors.darkGrey,
     margin: 0,
-    lineHeight: '1.5',
+    lineHeight: '1.5'
 }
 
 const actionButtonsContainer = {
     display: 'flex',
     gap: '16px',
-    justifyContent: 'center',
+    justifyContent: 'center'
 }
 
 const buttonBaseStyle = {
@@ -450,22 +392,22 @@ const buttonBaseStyle = {
     fontWeight: theme.fonts.weight.medium,
     color: theme.colors.whiteElement,
     cursor: 'pointer',
-    border: 'none',
+    border: 'none'
 }
 
 const rejectButtonStyle = {
     ...buttonBaseStyle,
-    backgroundColor: theme.colors.red,
+    backgroundColor: theme.colors.red
 }
 
 const acceptButtonStyle = {
     ...buttonBaseStyle,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary
 }
 </script>
 
 <style scoped>
 ::-webkit-scrollbar {
-    display: none;
+    display: none
 }
 </style>

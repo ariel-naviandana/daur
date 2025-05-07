@@ -9,5 +9,5 @@ export interface WasteType {
     image?: string | null
     created_at?: string
     updated_at?: string
-    category?: Category
+    waste_type?: Category
 }

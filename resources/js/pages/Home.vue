@@ -69,12 +69,12 @@
 </template>
 
 <script lang="ts" setup>
-import Navbar from '../components/Navbar.vue'
+import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
-import CategoryList from "../components/CategoryList.vue"
-import PopupDetailSampah from "../components/PopupDetailSampah.vue"
+import CategoryList from "@/components/CategoryList.vue"
+import PopupDetailSampah from "@/components/PopupDetailSampah.vue"
 import { ref } from "vue"
-import { Category } from '../interfaces/Category'
+import { Category } from '@/interfaces/Category'
 
 const isPopupOpen = ref(false)
 const selectedCategory = ref<Category | null>(null)

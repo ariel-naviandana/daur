@@ -50,12 +50,13 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import axios from 'axios'
-import { WasteType } from '../interfaces/WasteType'
-import { Category } from '../interfaces/Category'
-import { theme } from '../helpers/theme'
+import { theme } from '@/helpers/theme'
+import { useWasteTypeApi } from '@/composables/useWasteTypeApi'
+import { useImageApi } from '@/composables/useImageApi'
+import { WasteType } from '@/interfaces/WasteType'
+import { Category } from '@/interfaces/Category'
 
-const props = defineProps<{ wasteType?: WasteType | null; categories: Category[] }>()
+const props = defineProps<{ wasteType?: WasteType | null, categories: Category[] }>()
 const emit = defineEmits(['close', 'saved'])
 
 const form = ref<WasteType>({
@@ -64,10 +65,11 @@ const form = ref<WasteType>({
     name: '',
     unit: '',
     price_per_unit: 0,
-    image: '',
+    image: ''
 })
 const previewImage = ref<string | null>(null)
-const isUploading = ref(false)
+const { saveWasteType } = useWasteTypeApi()
+const { isUploading, uploadToCloudinary } = useImageApi()
 
 watch(
     () => props.wasteType,
@@ -90,42 +92,22 @@ const handleFileChange = async (event: Event) => {
     }
     reader.readAsDataURL(file)
 
-    await uploadToCloudinary(file)
-}
-
-const uploadToCloudinary = async (file: File) => {
-    isUploading.value = true
-    const formData = new FormData()
-    const cloudinaryPreset = 'webdaur'
-    const cloudinaryURL = 'https://api.cloudinary.com/v1_1/dto6d9tbe/image/upload'
-
-    formData.append('file', file)
-    formData.append('upload_preset', cloudinaryPreset)
-
-    try {
-        const response = await axios.post(cloudinaryURL, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        })
-        form.value.image = response.data.secure_url
-    } catch (error) {
-        console.error('Error uploading to Cloudinary:', error)
-        alert('Gagal mengunggah gambar. Silakan coba lagi.')
-    } finally {
-        isUploading.value = false
-    }
+    const imageUrl = await uploadToCloudinary(file)
+    if (imageUrl) form.value.image = imageUrl
 }
 
 const save = async () => {
     try {
-        if (form.value.id) {
-            await axios.put(`/waste-types/${form.value.id}`, form.value)
+        const success = await saveWasteType(form.value)
+        if (success) {
+            emit('saved')
+            emit('close')
         } else {
-            await axios.post('/waste-types', form.value)
+            alert('Gagal menyimpan jenis sampah')
         }
-        emit('saved')
-        emit('close')
     } catch (error) {
         console.error('Error saving waste type:', error)
+        alert('Terjadi kesalahan saat menyimpan')
     }
 }
 
@@ -139,7 +121,7 @@ const overlayStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1000,
+    zIndex: 1000
 }
 
 const popupStyle = {
@@ -150,27 +132,27 @@ const popupStyle = {
     maxWidth: '400px',
     maxHeight: '90vh',
     overflowY: 'auto',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
 }
 
 const titleStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
     marginBottom: '16px',
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const formGroupStyle = {
     marginBottom: '16px',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
 }
 
 const labelStyle = {
     fontSize: theme.fonts.size.base,
     marginBottom: '8px',
     color: theme.colors.darkGrey,
-    fontWeight: theme.fonts.weight.medium,
+    fontWeight: theme.fonts.weight.medium
 }
 
 const inputStyle = {
@@ -179,31 +161,31 @@ const inputStyle = {
     borderRadius: '6px',
     border: `1px solid ${theme.colors.lightGrey}`,
     outline: 'none',
-    fontFamily: theme.fonts.family,
+    fontFamily: theme.fonts.family
 }
 
 const selectStyle = {
     ...inputStyle,
     appearance: 'none',
-    backgroundColor: theme.colors.whiteElement,
+    backgroundColor: theme.colors.whiteElement
 }
 
 const previewContainerStyle = {
     marginTop: '12px',
-    textAlign: 'center',
+    textAlign: 'center'
 }
 
 const previewImageStyle = {
     width: '100px',
     height: '100px',
     objectFit: 'cover',
-    borderRadius: '6px',
+    borderRadius: '6px'
 }
 
 const buttonGroupStyle = {
     display: 'flex',
     justifyContent: 'flex-end',
-    gap: '12px',
+    gap: '12px'
 }
 
 const cancelButtonStyle = {
@@ -213,7 +195,7 @@ const cancelButtonStyle = {
     color: theme.colors.darkGrey,
     fontSize: theme.fonts.size.base,
     border: 'none',
-    cursor: 'pointer',
+    cursor: 'pointer'
 }
 
 const saveButtonStyle = {
@@ -223,12 +205,12 @@ const saveButtonStyle = {
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
     border: 'none',
-    cursor: 'pointer',
+    cursor: 'pointer'
 }
 </script>
 
 <style scoped>
 ::-webkit-scrollbar {
-    display: none;
+    display: none
 }
 </style>

@@ -5,7 +5,7 @@
                 <div :style="leftFilterStyle">
                     <select v-model="selectedCategoryFilter" :style="selectStyle">
                         <option value="">Semua Kategori</option>
-                        <option v-for="category in categories" :key="category.id" :value="category.id">
+                        <option v-for="category in uniqueCategories" :key="category.id" :value="category.id">
                             {{ category.name }}
                         </option>
                     </select>
@@ -78,7 +78,7 @@
         <WasteTypeFormPopup
             v-if="showFormPopup"
             :wasteType="selectedWasteType"
-            :categories="categories"
+            :categories="uniqueCategories"
             @close="closeFormPopup"
             @saved="fetchWasteTypes"
         />
@@ -95,44 +95,41 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import { useWasteTypeApi } from '@/composables/useWasteTypeApi'
 import WasteTypeCard from './WasteTypeCard.vue'
 import WasteTypeFormPopup from './PopupFormWasteType.vue'
 import PopupDelete from './PopupDelete.vue'
-import { WasteType } from '../interfaces/WasteType'
-import { Category } from '../interfaces/Category'
-import { theme } from '../helpers/theme'
+import { WasteType } from '@/interfaces/WasteType'
+import { Category } from '@/interfaces/Category'
+import { theme } from '@/helpers/theme'
 
 const selectedWasteType = ref<WasteType | null>(null)
 const wasteTypes = ref<WasteType[]>([])
-const categories = ref<Category[]>([])
 const selectedSort = ref<string>('alphabet-asc')
 const selectedCategoryFilter = ref<number | ''>('')
 const searchQuery = ref<string>('')
 const showFormPopup = ref(false)
 const showDeletePopup = ref(false)
+const { getWasteTypes, deleteWasteType } = useWasteTypeApi()
 
 const fetchWasteTypes = async () => {
     try {
-        const { data } = await axios.get('/waste-types')
-        wasteTypes.value = data
+        wasteTypes.value = await getWasteTypes()
     } catch (error) {
         console.error('Error fetching waste types:', error)
     }
 }
 
-const fetchCategories = async () => {
-    try {
-        const { data } = await axios.get('/categories')
-        categories.value = data
-    } catch (error) {
-        console.error('Error fetching categories:', error)
-    }
-}
+onMounted(fetchWasteTypes)
 
-onMounted(async () => {
-    await fetchWasteTypes()
-    await fetchCategories()
+const uniqueCategories = computed(() => {
+    const categoriesMap = new Map<number, Category>()
+    wasteTypes.value.forEach(wasteType => {
+        if (wasteType.category) {
+            categoriesMap.set(wasteType.category.id, wasteType.category)
+        }
+    })
+    return Array.from(categoriesMap.values())
 })
 
 const filteredAndSortedWasteTypes = computed(() => {
@@ -183,7 +180,7 @@ const closeDeletePopup = () => {
 const handleDelete = async () => {
     try {
         if (selectedWasteType.value) {
-            await axios.delete(`/waste-types/${selectedWasteType.value.id}`)
+            await deleteWasteType(selectedWasteType.value.id)
             wasteTypes.value = wasteTypes.value.filter(
                 (w: WasteType) => w.id !== selectedWasteType.value?.id
             )
@@ -200,7 +197,7 @@ const headerWithFiltersStyle = {
     alignItems: 'center',
     marginBottom: '16px',
     flexWrap: 'wrap',
-    gap: '16px',
+    gap: '16px'
 }
 
 const addButtonStyle = {
@@ -210,19 +207,19 @@ const addButtonStyle = {
     borderRadius: '6px',
     fontSize: theme.fonts.size.base,
     cursor: 'pointer',
-    border: 'none',
+    border: 'none'
 }
 
 const filtersWrapperStyle = {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
 }
 
 const leftFilterStyle = {
     display: 'flex',
-    gap: '12px',
+    gap: '12px'
 }
 
 const searchWrapperStyle = {
@@ -233,12 +230,12 @@ const searchWrapperStyle = {
     borderRadius: '100px',
     padding: '8px 16px',
     width: '300px',
-    flexGrow: 1,
+    flexGrow: 1
 }
 
 const searchIconStyle = {
     color: theme.colors.lightGrey,
-    marginRight: '12px',
+    marginRight: '12px'
 }
 
 const searchInputStyle = {
@@ -248,7 +245,7 @@ const searchInputStyle = {
     fontSize: theme.fonts.size.base,
     backgroundColor: 'transparent',
     color: theme.colors.darkGrey,
-    fontFamily: theme.fonts.family,
+    fontFamily: theme.fonts.family
 }
 
 const selectStyle = {
@@ -262,13 +259,13 @@ const selectStyle = {
     backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right 8px center',
-    backgroundSize: '16px',
+    backgroundSize: '16px'
 }
 
 const listStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-    gap: '16px',
+    gap: '16px'
 }
 
 const noResultsStyle = {
@@ -277,19 +274,19 @@ const noResultsStyle = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '48px 0',
-    textAlign: 'center',
+    textAlign: 'center'
 }
 
 const noResultsTextStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.bold,
     color: theme.colors.darkGrey,
-    margin: '0 0 8px 0',
+    margin: '0 0 8px 0'
 }
 
 const noResultsDescStyle = {
     fontSize: theme.fonts.size.base,
     color: theme.colors.grey,
-    margin: 0,
+    margin: 0
 }
 </script>

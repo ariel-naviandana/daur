@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class RecycleTransactionController extends Controller
 {
     public function index() {
-        return RecycleTransaction::with(['user', 'items', 'bank'])->get();
+        return RecycleTransaction::with(['user', 'items.wasteType', 'bank'])->get();
     }
 
     public function store(Request $request) {
@@ -36,15 +36,15 @@ class RecycleTransactionController extends Controller
             RecycleTransactionItem::create($item);
         }
 
-        return $transaction->load(['items', 'user', 'bank']);
+        return $transaction->load(['items.wasteType', 'user', 'bank']);
     }
 
     public function show($id) {
-        return RecycleTransaction::with(['user', 'items', 'bank'])->findOrFail($id);
+        return RecycleTransaction::with(['user', 'items.wasteType', 'bank'])->findOrFail($id);
     }
 
     public function getByUser($userId) {
-        return RecycleTransaction::with('user')
+        return RecycleTransaction::with(['user', 'items.wasteType', 'bank'])
             ->where('user_id', $userId)
             ->get();
     }
@@ -52,7 +52,7 @@ class RecycleTransactionController extends Controller
     public function update(Request $request, $id) {
         $trx = RecycleTransaction::findOrFail($id);
         $trx->update($request->all());
-        return $trx->load(['user', 'items', 'bank']);
+        return $trx->load(['user', 'items.wasteType', 'bank']);
     }
 
     public function destroy($id) {

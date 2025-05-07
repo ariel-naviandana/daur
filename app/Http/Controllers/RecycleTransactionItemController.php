@@ -27,7 +27,7 @@ class RecycleTransactionItemController extends Controller
     }
 
     public function getByTransaction($transactionId) {
-        return RecycleTransactionItem::with('transaction')
+        return RecycleTransactionItem::with(['transaction', 'wasteType'])
             ->where('transaction_id', $transactionId)
             ->get();
     }

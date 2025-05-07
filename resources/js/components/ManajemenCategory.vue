@@ -86,12 +86,12 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import { useCategoryApi } from '@/composables/useCategoryApi'
 import CategoryCard from './CategoryCard.vue'
 import CategoryFormPopup from './PopupFormCategory.vue'
 import PopupDelete from './PopupDelete.vue'
-import { Category } from '../interfaces/Category'
-import { theme } from '../helpers/theme'
+import { Category } from '@/interfaces/Category'
+import { theme } from '@/helpers/theme'
 
 const selectedCategory = ref<Category | null>(null)
 const categories = ref<Category[]>([])
@@ -99,11 +99,11 @@ const selectedSort = ref<string>('alphabet-asc')
 const searchQuery = ref<string>('')
 const showFormPopup = ref(false)
 const showDeletePopup = ref(false)
+const { getCategories, deleteCategory } = useCategoryApi()
 
 const fetchCategories = async () => {
     try {
-        const { data } = await axios.get('/categories')
-        categories.value = data
+        categories.value = await getCategories()
     } catch (error) {
         console.error('Error fetching categories:', error)
     }
@@ -152,7 +152,7 @@ const closeDeletePopup = () => {
 const handleDelete = async () => {
     try {
         if (selectedCategory.value) {
-            await axios.delete(`/categories/${selectedCategory.value.id}`)
+            await deleteCategory(selectedCategory.value.id)
             categories.value = categories.value.filter(
                 (c: Category) => c.id !== selectedCategory.value?.id
             )
@@ -166,7 +166,7 @@ const handleDelete = async () => {
 const headerWithFiltersStyle = {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '16px',
+    marginBottom: '16px'
 }
 
 const addButtonStyle = {
@@ -177,18 +177,18 @@ const addButtonStyle = {
     fontSize: theme.fonts.size.base,
     cursor: 'pointer',
     border: 'none',
-    marginLeft: 'auto',
+    marginLeft: 'auto'
 }
 
 const filtersWrapperStyle = {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
+    gap: '12px'
 }
 
 const leftFilterStyle = {
     display: 'flex',
-    gap: '12px',
+    gap: '12px'
 }
 
 const searchWrapperStyle = {
@@ -203,7 +203,7 @@ const searchWrapperStyle = {
 
 const searchIconStyle = {
     color: theme.colors.lightGrey,
-    marginRight: '12px',
+    marginRight: '12px'
 }
 
 const searchInputStyle = {
@@ -213,7 +213,7 @@ const searchInputStyle = {
     fontSize: theme.fonts.size.base,
     backgroundColor: 'transparent',
     color: theme.colors.darkGrey,
-    fontFamily: theme.fonts.family,
+    fontFamily: theme.fonts.family
 }
 
 const selectStyle = {
@@ -227,13 +227,13 @@ const selectStyle = {
     backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right 8px center',
-    backgroundSize: '16px',
+    backgroundSize: '16px'
 }
 
 const listStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-    gap: '16px',
+    gap: '16px'
 }
 
 const noResultsStyle = {
@@ -242,19 +242,19 @@ const noResultsStyle = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '48px 0',
-    textAlign: 'center',
+    textAlign: 'center'
 }
 
 const noResultsTextStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.bold,
     color: theme.colors.darkGrey,
-    margin: '0 0 8px 0',
+    margin: '0 0 8px 0'
 }
 
 const noResultsDescStyle = {
     fontSize: theme.fonts.size.base,
     color: theme.colors.grey,
-    margin: 0,
+    margin: 0
 }
 </script>

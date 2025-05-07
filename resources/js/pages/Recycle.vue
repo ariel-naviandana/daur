@@ -17,27 +17,27 @@
                 </h2>
 
                 <div :style="cartItemsContainerStyle">
-                    <div v-for="(item, index) in cartItems" :key="index" :style="cartItemStyle">
-                      <div :style="itemLeftStyle">
-                        <img :src="getWasteTypeImage(index)" :alt="getWasteTypeName(index)" :style="itemIconStyle" />
-                        <div :style="itemDetailsStyle">
-                          <span :style="itemNameStyle">{{ getWasteTypeName(index) }}</span>
-                          <div :style="weightContainerStyle">
-                            <button :style="minusButtonStyle" @click="updateWeight(index, -1)">
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                              </svg>
-                            </button>
-                            <div :style="weightBadgeStyle">{{ item.quantity }} {{getWasteTypeUnit(index)}}</div>
-                            <button :style="plusButtonStyle" @click="updateWeight(index, 1)">
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                              </svg>
-                            </button>
-                          </div>
+                    <div v-for="item in cartItems" :key="item.waste_type_id" :style="cartItemStyle">
+                        <div :style="itemLeftStyle">
+                            <img :src="getWasteTypeImage(item.waste_type_id)" :alt="getWasteTypeName(item.waste_type_id)" :style="itemIconStyle" />
+                            <div :style="itemDetailsStyle">
+                                <span :style="itemNameStyle">{{ getWasteTypeName(item.waste_type_id) }}</span>
+                                <div :style="weightContainerStyle">
+                                    <button :style="minusButtonStyle" @click="updateWeight(item.waste_type_id, -1)">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                    <div :style="weightBadgeStyle">{{ item.quantity }} {{ getWasteTypeUnit(item.waste_type_id) }}</div>
+                                    <button :style="plusButtonStyle" @click="updateWeight(item.waste_type_id, 1)">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <span :style="priceStyle">Rp{{ item.sub_total.toLocaleString('id-ID') }}</span>
+                        <span :style="priceStyle">Rp{{ item.sub_total.toLocaleString('id-ID') }}</span>
                     </div>
                 </div>
 
@@ -54,7 +54,7 @@
                     <span :style="bookingIconStyle">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="currentColor" stroke-width="2"/>
-                            <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" stroke-width="2"/>
+                            <path d="M brag16 2V6M8 2V6M3 10H21" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </span>
                     Booking
@@ -66,33 +66,33 @@
                 </div>
 
                 <form @submit.prevent="openConfirmBookingPopup" :style="formStyle">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.4490029217627!2d112.61110207401013!3d-7.952464992072013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78827f2d620975%3A0xf19b7459bbee5ed5!2sUniversitas%20Brawijaya!5e0!3m2!1sid!2sid!4v1746149712107!5m2!1sid!2sid" width="400" height="300" style="width:100%" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.4490029217627!2d112.61110207401013!3d-7.952464992072013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78827f2d620975%3A0xf19b7459bbee5ed5!2sUniversitas%20Brawijaya!5e0!3m2!1sid!2sid!4v1746149712107!5m2!1sid!2sid" width="400" height="300" style="width:100%" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     <div :style="formRowStyle">
                         <div :style="{ ...formGroupStyle, flex: 1.5 }">
                             <label :style="labelStyle">
                                 {{ isPickup ? 'Alamat Penjemputan' : 'Pilih Alamat Drop-off' }}
                             </label>
-                          <div>
-                            <input
-                                v-if="isPickup"
-                                v-model="address"
-                                type="text"
-                                :style="inputStyle"
-                                placeholder="Masukkan alamat lengkap penjemputan"
-                                required
-                            />
-                            <select
-                                v-else
-                                v-model="selectedDropOff"
-                                :style="selectStyle"
-                                required
-                            >
-                              <option disabled value="">Pilih alamat drop-off</option>
-                              <option v-for="(location, index) in dropOffLocations" :key="index" :value="location">
-                                {{ location.name }} - {{ location.address }}
-                              </option>
-                            </select>
-                          </div>
+                            <div>
+                                <input
+                                    v-if="isPickup"
+                                    v-model="address"
+                                    type="text"
+                                    :style="inputStyle"
+                                    placeholder="Masukkan alamat lengkap penjemputan"
+                                    required
+                                />
+                                <select
+                                    v-else
+                                    v-model="selectedDropOff"
+                                    :style="selectStyle"
+                                    required
+                                >
+                                    <option disabled value="">Pilih alamat drop-off</option>
+                                    <option v-for="location in dropOffLocations" :key="location.id" :value="location">
+                                        {{ location.name }} - {{ location.address }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
 
                         <div :style="{ ...formGroupStyle, flex: 1 }">
@@ -148,25 +148,61 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { theme } from '@/helpers/theme'
-import Navbar from '../components/Navbar.vue'
-import CategoryList from "../components/CategoryList.vue"
-import PopupDetailSampah from '../components/PopupDetailSampah.vue'
-import PopupDelete from "../components/PopupDelete.vue"
-import PopupConfirm from "../components/PopupConfirm.vue"
-import axios from 'axios'
+import Navbar from '@/components/Navbar.vue'
+import CategoryList from '@/components/CategoryList.vue'
+import PopupDetailSampah from '@/components/PopupDetailSampah.vue'
+import PopupDelete from '@/components/PopupDelete.vue'
+import PopupConfirm from '@/components/PopupConfirm.vue'
+import { useWasteTypeApi } from '@/composables/useWasteTypeApi'
+import { useRecycleTransactionApi } from '@/composables/useRecycleTransactionApi'
 import { Bank } from '@/interfaces/Bank'
-import {Category} from "@/interfaces/Category"
+import { Category } from '@/interfaces/Category'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
-import {WasteType} from "@/interfaces/WasteType"
+import { WasteType } from '@/interfaces/WasteType'
+
+const { getWasteTypes } = useWasteTypeApi()
+const { saveRecycleTransaction } = useRecycleTransactionApi()
 
 const isConfirmBookingOpen = ref(false)
+const isPickup = ref(true)
+const address = ref('')
+const pickupTime = ref('')
+const note = ref('')
+const isPopupOpen = ref(false)
+const selectedCategory = ref<Category | null>(null)
+const cartItems = ref<RecycleTransactionItem[]>([])
+const dropOffLocations = ref<Bank[]>([])
+const selectedDropOff = ref<Bank | null>(null)
+const wasteTypes = ref<WasteType[]>([])
+
+const fetchBanks = async () => {
+    try {
+        const response = await fetch('/banks')
+        dropOffLocations.value = await response.json()
+    } catch (error) {
+        console.error('Error fetching banks:', error)
+    }
+}
+
+const fetchWasteTypes = async () => {
+    try {
+        wasteTypes.value = await getWasteTypes()
+    } catch (error) {
+        console.error('Error fetching waste types:', error)
+    }
+}
+
+onMounted(async () => {
+    await fetchBanks()
+    await fetchWasteTypes()
+})
 
 const openConfirmBookingPopup = () => {
     if (validateForm()) {
         isConfirmBookingOpen.value = true
     } else {
-        alert("Harap isi semua input yang diperlukan sebelum melanjutkan.")
+        alert('Harap isi semua input yang diperlukan sebelum melanjutkan.')
     }
 }
 
@@ -176,9 +212,9 @@ const closeConfirmBookingPopup = () => {
 
 const validateForm = () => {
     if (isPickup.value) {
-        return address.value.trim() !== "" && pickupTime.value.trim() !== ""
+        return address.value.trim() !== '' && pickupTime.value.trim() !== ''
     } else {
-        return selectedDropOff.value?.id !== null && pickupTime.value.trim() !== ""
+        return selectedDropOff.value?.id != null && pickupTime.value.trim() !== ''
     }
 }
 
@@ -196,7 +232,7 @@ const submitTransaction = async () => {
         const appointmentDate = new Date()
         const formattedAppointmentTime = `${appointmentDate.getFullYear()}-${(appointmentDate.getMonth() + 1 < 10 ? '0' : '')}${appointmentDate.getMonth() + 1}-${(appointmentDate.getDate() < 10 ? '0' : '')}${appointmentDate.getDate()} ${pickupTime.value}:00`
 
-        const payload: RecycleTransaction = {
+        const payload: RecycleTransaction & { items: { waste_type_id: number; quantity: number; sub_total: number }[] } = {
             id: 0,
             user_id: 1,
             bank_id: isPickup.value ? null : selectedDropOff.value?.id || null,
@@ -205,67 +241,29 @@ const submitTransaction = async () => {
             method: isPickup.value ? 'pickup' : 'dropoff',
             status: 'waiting',
             note: note.value,
-            total_weight: null,
+            total_quantity: null,
             total_amount: totalPrice.value,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
+            items: cartItems.value.map(item => ({
+                waste_type_id: item.waste_type_id,
+                quantity: item.quantity,
+                sub_total: item.sub_total
+            }))
         }
 
-        const transactionItems = cartItems.value.map(item => ({
-            waste_type_id: item.waste_type_id,
-            quantity: item.quantity,
-            sub_total: item.sub_total,
-        }))
-
-        const response = await axios.post('/recycle-transactions', {
-            ...payload,
-            items: transactionItems,
-        })
-
-        console.log('Response:', response.data)
-        alert('Transaksi berhasil dibuat!')
-        redirectToRiwayat()
+        const success = await saveRecycleTransaction(payload)
+        if (success) {
+            alert('Transaksi berhasil dibuat!')
+            redirectToRiwayat()
+        } else {
+            alert('Gagal membuat transaksi. Silakan coba lagi.')
+        }
     } catch (error) {
         console.error('Error submitting transaction:', error)
         alert('Terjadi kesalahan saat membuat transaksi. Silakan coba lagi.')
     }
 }
-
-const dropOffLocations = ref<Bank[]>([])
-const selectedDropOff = ref<Bank | null>(null)
-const wasteTypes = ref<WasteType | null>(null)
-
-onMounted(async () => {
-    await fetchBanks()
-    await fetchWasteTypes()
-})
-
-const fetchBanks = async () => {
-    try {
-        const { data } = await axios.get('/banks')
-        dropOffLocations.value = data
-    } catch (error) {
-        console.error('Error fetching banks:', error)
-    }
-}
-
-const fetchWasteTypes = async () => {
-    try {
-        const { data } = await axios.get('/waste-types')
-        wasteTypes.value = data
-    } catch (error) {
-        console.error('Error fetching waste types:', error)
-    }
-}
-
-const isPickup = ref(true)
-const address = ref('')
-const pickupTime = ref('')
-const note = ref('')
-
-const isPopupOpen = ref(false)
-const selectedCategory = ref<Category | null>(null)
-const cartItems = ref<RecycleTransactionItem[]>([])
 
 const openPopup = (category: Category) => {
     selectedCategory.value = category
@@ -283,10 +281,8 @@ const handleAddItem = (item: RecycleTransactionItem) => {
         existingItem.quantity += item.quantity
         existingItem.sub_total += item.sub_total
     } else {
-        cartItems.value.push(item)
+        cartItems.value.push({ ...item, name: getWasteTypeName(item.waste_type_id) })
     }
-
-    console.log('Item ditambahkan ke keranjang:', cartItems.value)
 }
 
 const totalPrice = computed(() => cartItems.value.reduce((sum, item) => sum + item.sub_total, 0))
@@ -296,7 +292,7 @@ const itemToDelete = ref<RecycleTransactionItem | null>(null)
 
 const confirmDelete = () => {
     if (itemToDelete.value) {
-        cartItems.value = cartItems.value.filter(item => item !== itemToDelete.value)
+        cartItems.value = cartItems.value.filter(item => item.waste_type_id !== itemToDelete.value.waste_type_id)
         closeConfirmPopup()
     }
 }
@@ -306,36 +302,39 @@ const closeConfirmPopup = () => {
     itemToDelete.value = null
 }
 
-const updateWeight = (index: number, change: number) => {
-    const item = cartItems.value[index]
+const updateWeight = (wasteTypeId: number, change: number) => {
+    const item = cartItems.value.find(item => item.waste_type_id === wasteTypeId)
+    if (!item) return
+
     const newQuantity = item.quantity + change
+    const wasteType = wasteTypes.value.find(wt => wt.id === wasteTypeId)
+
+    if (!wasteType) {
+        console.error('WasteType tidak ditemukan untuk waste_type_id:', wasteTypeId)
+        return
+    }
 
     if (newQuantity > 0) {
-        const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === item.waste_type_id)
-        if (!wasteType) {
-            console.error('WasteType tidak ditemukan untuk waste_type_id:', item.waste_type_id)
-            return
-        }
         item.quantity = newQuantity
         item.sub_total = newQuantity * wasteType.price_per_unit
     } else {
-        itemToDelete.value = item
+        itemToDelete.value = { ...item, name: wasteType.name }
         isConfirmDeleteOpen.value = true
     }
 }
 
-const getWasteTypeName = (index: number) => {
-    const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === cartItems.value[index].waste_type_id)
+const getWasteTypeName = (wasteTypeId: number) => {
+    const wasteType = wasteTypes.value.find(wt => wt.id === wasteTypeId)
     return wasteType ? wasteType.name : ''
 }
 
-const getWasteTypeImage = (index: number) => {
-    const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === cartItems.value[index].waste_type_id)
-    return wasteType ? wasteType.image : ''
+const getWasteTypeImage = (wasteTypeId: number) => {
+    const wasteType = wasteTypes.value.find(wt => wt.id === wasteTypeId)
+    return wasteType ? wasteType.image || '' : ''
 }
 
-const getWasteTypeUnit = (index: number) => {
-    const wasteType = wasteTypes.value?.find(wasteType => wasteType.id === cartItems.value[index].waste_type_id)
+const getWasteTypeUnit = (wasteTypeId: number) => {
+    const wasteType = wasteTypes.value.find(wt => wt.id === wasteTypeId)
     return wasteType ? wasteType.unit : ''
 }
 
@@ -398,7 +397,7 @@ const itemIconStyle = {
     height: '40px',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
 }
 
 const itemDetailsStyle = {
@@ -437,6 +436,16 @@ const weightButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     color: 'white'
+}
+
+const minusButtonStyle = {
+    ...weightButtonStyle,
+    backgroundColor: theme.colors.red
+}
+
+const plusButtonStyle = {
+    ...weightButtonStyle,
+    backgroundColor: theme.colors.primary
 }
 
 const priceStyle = {
@@ -492,12 +501,6 @@ const pickupButtonStyle = {
     cursor: 'pointer'
 }
 
-const formRowStyle = {
-    display: 'flex',
-    gap: '16px',
-    width: '100%'
-}
-
 const formStyle = {
     display: 'flex',
     flexDirection: 'column',
@@ -505,10 +508,22 @@ const formStyle = {
     marginTop: '24px'
 }
 
+const formRowStyle = {
+    display: 'flex',
+    gap: '16px',
+    width: '100%'
+}
+
 const formGroupStyle = {
     display: 'flex',
     flexDirection: 'column',
     gap: '8px'
+}
+
+const labelStyle = {
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.medium,
+    color: theme.colors.darkGrey
 }
 
 const inputStyle = {
@@ -519,12 +534,6 @@ const inputStyle = {
     fontFamily: theme.fonts.family,
     width: '100%',
     boxSizing: 'border-box'
-}
-
-const labelStyle = {
-    fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.medium,
-    color: theme.colors.darkGrey
 }
 
 const textareaStyle = {
@@ -550,34 +559,18 @@ const submitButtonStyle = {
     cursor: 'pointer'
 }
 
-const minusButtonStyle = {
-    ...weightButtonStyle,
-    backgroundColor: theme.colors.red
-}
-
-const plusButtonStyle = {
-    ...weightButtonStyle,
-    backgroundColor: theme.colors.primary
-}
-
 const selectStyle = {
-  width: '100%',
-  padding: '8px 12px',
-  paddingRight: '36px',
-  fontSize: theme.fonts.size.base,
-  borderRadius: '6px',
-  border: `1px solid ${theme.colors.grey}`,
-  fontFamily: theme.fonts.family,
-  appearance: 'none',
-  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'right 8px center',
-  backgroundSize: '16px',
+    width: '100%',
+    padding: '8px 12px',
+    paddingRight: '36px',
+    fontSize: theme.fonts.size.base,
+    borderRadius: '6px',
+    border: `1px solid ${theme.colors.grey}`,
+    fontFamily: theme.fonts.family,
+    appearance: 'none',
+    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 8px center',
+    backgroundSize: '16px'
 }
 </script>
-
-<style scoped>
-::-webkit-scrollbar {
-    display: none;
-}
-</style>

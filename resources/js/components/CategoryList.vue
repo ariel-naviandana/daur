@@ -27,16 +27,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { useCategoryApi } from '@/composables/useCategoryApi'
 import { theme } from '@/helpers/theme'
-import { Category } from '../interfaces/Category'
+import { Category } from '@/interfaces/Category'
 
 const categories = ref<Category[]>([])
+const { getCategories } = useCategoryApi()
 
 const fetchCategories = async () => {
     try {
-        const { data } = await axios.get('/categories')
-        categories.value = data.map((category: any) => ({
+        const data = await getCategories()
+        categories.value = data.map((category: Category) => ({
             id: category.id,
             name: category.name,
             image: category.image || '/images/ic_jenis_kertas.svg'
@@ -71,21 +72,6 @@ const categoryListContainerStyle = {
     alignItems: 'center',
     gap: '16px',
     padding: '16px 0'
-}
-
-const navigationButtonStyle = {
-    width: '40px',
-    height: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: 'none',
-    borderRadius: '50%',
-    backgroundColor: 'white',
-    color: theme.colors.darkGrey,
-    cursor: 'pointer',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-    flexShrink: 0
 }
 
 const categoryListStyle = {
@@ -126,10 +112,25 @@ const categoryLabelStyle = {
     color: theme.colors.darkGrey,
     fontWeight: 500
 }
+
+const navigationButtonStyle = {
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: 'none',
+    borderRadius: '50%',
+    backgroundColor: 'white',
+    color: theme.colors.darkGrey,
+    cursor: 'pointer',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    flexShrink: 0
+}
 </script>
 
 <style scoped>
 ::-webkit-scrollbar {
-    display: none;
+    display: none
 }
 </style>

@@ -110,12 +110,12 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
-import Navbar from '../components/Navbar.vue'
+import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
-import RecycleCard from "../components/RecycleCard.vue"
-import PopupDetailRecycle from "../components/PopupDetailRecycle.vue"
-import axios from "axios"
-import { RecycleTransaction } from "@/interfaces/RecycleTransaction"
+import RecycleCard from '@/components/RecycleCard.vue'
+import PopupDetailRecycle from '@/components/PopupDetailRecycle.vue'
+import { useRecycleTransactionApi } from '@/composables/useRecycleTransactionApi'
+import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
@@ -123,13 +123,11 @@ const searchQuery = ref('')
 const showPopup = ref(false)
 const selectedItem = ref<RecycleTransaction | null>(null)
 const history = ref<RecycleTransaction[]>([])
+const { getRecycleTransactions, saveRecycleTransaction } = useRecycleTransactionApi()
 
 const fetchHistory = async () => {
     try {
-        const { data } = await axios.get('/recycle-transactions')
-        history.value = data.map((transaction: RecycleTransaction) => ({
-            ...transaction
-        }))
+        history.value = await getRecycleTransactions()
     } catch (error) {
         console.error('Error fetching history:', error)
     }
@@ -143,7 +141,7 @@ const filteredAndSearchedHistory = computed(() => {
     let filtered = history.value
     if (searchQuery.value)
         filtered = filtered.filter(item =>
-            item.username.toLowerCase().includes(searchQuery.value.toLowerCase())
+            item.user?.username?.toLowerCase().includes(searchQuery.value.toLowerCase())
         )
     if (selectedFilter.value !== 'all')
         filtered = filtered.filter(item =>
@@ -156,9 +154,9 @@ const filteredAndSearchedHistory = computed(() => {
     else if (selectedSort.value === 'lowest')
         filtered = filtered.sort((a, b) => a.total_amount - b.total_amount)
     else if (selectedSort.value === 'alphabet-asc')
-        filtered = filtered.sort((a, b) => a.username.localeCompare(b.username))
+        filtered = filtered.sort((a, b) => a.user?.username?.localeCompare(b.user?.username || '') || 0)
     else if (selectedSort.value === 'alphabet-desc')
-        filtered = filtered.sort((a, b) => b.username.localeCompare(a.username))
+        filtered = filtered.sort((a, b) => b.user?.username?.localeCompare(a.user?.username || '') || 0)
     else
         filtered = filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
     return filtered
@@ -177,18 +175,22 @@ const closePopup = () => {
 const updateStatus = async (newStatus: string) => {
     if (selectedItem.value) {
         try {
-            const response = await axios.put(`/recycle-transactions/${selectedItem.value.id}`, {
-                status: newStatus,
-            })
-
-            const updatedTransaction = response.data
-            history.value = history.value.map(item =>
-                item.id === updatedTransaction.id ? updatedTransaction : item
-            )
-
-            closePopup()
+            const updatedTransaction = {
+                ...selectedItem.value,
+                status: newStatus
+            }
+            const success = await saveRecycleTransaction(updatedTransaction)
+            if (success) {
+                history.value = history.value.map(item =>
+                    item.id === updatedTransaction.id ? updatedTransaction : item
+                )
+                closePopup()
+            } else {
+                alert('Gagal memperbarui status transaksi')
+            }
         } catch (error) {
             console.error('Error updating transaction status:', error)
+            alert('Terjadi kesalahan saat memperbarui status')
         }
     }
 }
@@ -196,13 +198,13 @@ const updateStatus = async (newStatus: string) => {
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
     minHeight: '100vh',
-    fontFamily: theme.fonts.family,
+    fontFamily: theme.fonts.family
 }
 
 const contentStyle = {
     maxWidth: '1200px',
     margin: '0 auto',
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const headingContainerStyle = {
@@ -210,22 +212,22 @@ const headingContainerStyle = {
     alignItems: 'center',
     gap: '12px',
     size: theme.fonts.size.subheading,
-    marginBottom: '20px',
+    marginBottom: '20px'
 }
 
 const iconStyle = {
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const headingStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
-    margin: 0,
+    margin: 0
 }
 
 const leftFilterStyle = {
     display: 'flex',
-    gap: '12px',
+    gap: '12px'
 }
 
 const selectStyle = {
@@ -239,7 +241,7 @@ const selectStyle = {
     backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right 8px center',
-    backgroundSize: '16px',
+    backgroundSize: '16px'
 }
 
 const searchWrapperStyle = {
@@ -250,12 +252,12 @@ const searchWrapperStyle = {
     border: `1px solid ${theme.colors.lightGrey}`,
     borderRadius: '100px',
     padding: '8px 16px',
-    width: '300px',
+    width: '300px'
 }
 
 const searchIconStyle = {
     color: theme.colors.lightGrey,
-    marginRight: '12px',
+    marginRight: '12px'
 }
 
 const searchInputStyle = {
@@ -265,7 +267,7 @@ const searchInputStyle = {
     fontSize: theme.fonts.size.base,
     backgroundColor: 'transparent',
     color: theme.colors.darkGrey,
-    fontFamily: theme.fonts.family,
+    fontFamily: theme.fonts.family
 }
 
 const noResultsStyle = {
@@ -274,20 +276,20 @@ const noResultsStyle = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '48px 0',
-    textAlign: 'center',
+    textAlign: 'center'
 }
 
 const noResultsTextStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.bold,
     color: theme.colors.darkGrey,
-    margin: '0 0 8px 0',
+    margin: '0 0 8px 0'
 }
 
 const noResultsDescStyle = {
     fontSize: theme.fonts.size.sm,
     color: theme.colors.grey,
-    margin: 0,
+    margin: 0
 }
 </script>
 
@@ -296,23 +298,23 @@ const noResultsDescStyle = {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 24px
 }
 
 .history-list {
     list-style: none;
-    padding: 0;
+    padding: 0
 }
 
 input:focus {
-    outline: none;
+    outline: none
 }
 
 [style*="flex-direction: column"] {
-    display: flex;
+    display: flex
 }
 
 ::-webkit-scrollbar {
-    display: none;
+    display: none
 }
 </style>
