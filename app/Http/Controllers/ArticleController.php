@@ -28,7 +28,7 @@ class ArticleController extends Controller
         $request->validate([
             'title' => 'required|string',
             'content' => 'required|string',
-            'image_url' => 'nullable|string',
+            'image' => 'nullable|string',
             'pewarta' => 'nullable|string',
             'editor' => 'nullable|string',
             'sumber' => 'nullable|string',
@@ -38,7 +38,7 @@ class ArticleController extends Controller
         return Article::create([
             'title' => $request->title,
             'content' => $request->content,
-            'image_url' => $request->image_url,
+            'image' => $request->image,
             'pewarta' => $request->pewarta,
             'editor' => $request->editor,
             'sumber' => $request->sumber,
@@ -56,7 +56,7 @@ class ArticleController extends Controller
         $request->validate([
             'title' => 'required|string',
             'content' => 'required|string',
-            'image_url' => 'nullable|string',
+            'image' => 'nullable|string',
             'pewarta' => 'nullable|string',
             'editor' => 'nullable|string',
             'sumber' => 'nullable|string',
@@ -66,14 +66,14 @@ class ArticleController extends Controller
         $article->update([
             'title' => $request->title,
             'content' => $request->content,
-            'image_url' => $request->image_url,
+            'image' => $request->image,
             'pewarta' => $request->pewarta,
             'editor' => $request->editor,
             'sumber' => $request->sumber,
             'copyright' => $request->copyright
         ]);
 
-        return response()->json($article);
+        return $article;
     }
 
     public function destroy($id) {
