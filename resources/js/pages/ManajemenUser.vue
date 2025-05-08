@@ -216,7 +216,6 @@ const users = ref([
         address: 'Jl. Mawar No. 10, Malang',
         saldo: 25000,
         totalSampah: 15,
-        profileImage: 'https://i.pravatar.cc/100?img=3' // contoh avatar URL
     },
     {
         id: 2,

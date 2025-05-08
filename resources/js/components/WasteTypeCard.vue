@@ -1,6 +1,7 @@
 <template>
     <div :style="cardStyle">
         <img v-if="wasteType.image" :src="wasteType.image" :alt="wasteType.name" :style="imageStyle" />
+        <img v-else src="/public/images/icon_article.svg" :alt="wasteType.name" :style="imageStyle" />
         <div :style="contentStyle">
             <p :style="nameStyle">{{ wasteType.name }} ({{ wasteType.unit }})</p>
             <p :style="priceStyle">Rp{{ wasteType.price_per_unit.toLocaleString('id-ID') }}/{{ wasteType.unit }}</p>

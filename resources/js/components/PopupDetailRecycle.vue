@@ -182,7 +182,7 @@ const getWasteTypeName = (item: RecycleTransactionItem) => {
 }
 
 const getWasteTypeImage = (item: RecycleTransactionItem) => {
-    return item.waste_type?.image || ''
+    return item.waste_type?.image || '/images/icon_article.svg'
 }
 
 const getWasteTypeUnit = (item: RecycleTransactionItem) => {

@@ -336,7 +336,7 @@ const getWasteTypeName = (wasteTypeId: number) => {
 
 const getWasteTypeImage = (wasteTypeId: number) => {
     const wasteType = wasteTypes.value.find(wt => wt.id === wasteTypeId)
-    return wasteType ? wasteType.image || '' : ''
+    return wasteType.image ? wasteType.image : '/images/icon_article.svg'
 }
 
 const getWasteTypeUnit = (wasteTypeId: number) => {

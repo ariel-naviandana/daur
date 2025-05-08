@@ -40,7 +40,7 @@ const fetchCategories = async () => {
         categories.value = data.map((category: Category) => ({
             id: category.id,
             name: category.name,
-            image: category.image || '/images/ic_jenis_kertas.svg'
+            image: category.image || '/images/icon_article.svg'
         }))
     } catch (error) {
         console.error('Error fetching categories:', error)
