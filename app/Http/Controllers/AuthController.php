@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +31,11 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
             'profile_picture' => $validated['profile_picture'] ?? null,
             'role' => $validated['role']
+        ]);
+
+        Wallet::create([
+            'user_id' => $user->id,
+            'balance' => 0,
         ]);
 
         Auth::login($user);
