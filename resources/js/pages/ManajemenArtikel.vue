@@ -2,7 +2,6 @@
     <div :style="layoutStyle">
         <Navbar />
         <div :style="contentStyle" class="p-6">
-            <!-- Tampilkan FormArticle jika sedang tambah/edit -->
             <FormArticle
                 v-if="showForm"
                 :article="selectedArticle"
@@ -10,12 +9,20 @@
                 @close="closeForm"
                 @saved="onArticleSaved"
             />
-
-            <!-- Jika tidak sedang tambah/edit, tampilkan daftar artikel -->
             <div v-else>
                 <div :style="headingContainerStyle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :style="iconStyle">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="28"
+                        height="28"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        :style="iconStyle"
+                    >
                         <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
                         <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
                         <path d="M9 12h6"></path>
@@ -30,27 +37,49 @@
                         <option value="newest">Terbaru</option>
                         <option value="oldest">Terlama</option>
                     </select>
-
                     <div :style="rightControl">
                         <button :style="btn_tambah" class="btn_tambah" @click="openCreateForm">
-                            <img src="/public/images/icon_plus.svg" alt="Tambah"/>
+                            <img src="/public/images/icon_plus.svg" alt="Tambah" />
                             Tambah
                         </button>
                         <div :style="searchWrapperStyle">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                 :style="searchIconStyle">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                :style="searchIconStyle"
+                            >
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
-                            <input v-model="searchQuery" placeholder="Cari judul artikel" :style="searchInputStyle" />
+                            <input
+                                v-model="searchQuery"
+                                placeholder="Cari judul artikel"
+                                :style="searchInputStyle"
+                                @input="fetchArticles"
+                            />
                         </div>
                     </div>
                 </div>
 
-                <div v-if="filteredAndSortedArticles.length === 0" :style="noResultsStyle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <div v-if="articles.length === 0" :style="noResultsStyle">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
@@ -58,20 +87,33 @@
                     <p :style="noResultsDescStyle">Coba sesuaikan filter atau kata kunci pencarian Anda</p>
                 </div>
 
-                <div v-for="article in filteredAndSortedArticles" :key="article.id" :style="articleContainer">
+                <div v-for="article in articles" :key="article.id" :style="articleContainer">
                     <div :style="articleIcon">
-                        <img v-if="article.image_url" :src="article.image_url" alt="cover" class="rounded-lg"/>
-                        <img v-else src="/public/images/icon_article.svg" alt="Artikel"/>
+                        <img
+                            v-if="article.image_url"
+                            :src="article.image_url"
+                            alt="cover"
+                            class="rounded-lg"
+                        />
+                        <img v-else src="/public/images/icon_article.svg" alt="Artikel" />
                     </div>
-
                     <div class="flex-grow">
                         <h3 class="font-semibold" :style="articleTitle">{{ article.title }}</h3>
-                        <p class="text-sm text-green-600" :style="articleDate">{{ formatDate(article.created_at) }}</p>
+                        <p class="text-sm text-green-600" :style="articleDate">
+                            {{ formatDate(article.created_at) }}
+                        </p>
                     </div>
-
                     <div class="flex space-x-2">
-                        <button @click="openEditForm(article)" class="btn_edit" :style="btn_edit">Edit</button>
-                        <button @click="deleteArticle(article.id)" class="btn_hapus" :style="btn_hapus">Hapus</button>
+                        <button @click="openEditForm(article)" class="btn_edit" :style="btn_edit">
+                            Edit
+                        </button>
+                        <button
+                            @click="deleteArticle(article.id)"
+                            class="btn_hapus"
+                            :style="btn_hapus"
+                        >
+                            Hapus
+                        </button>
                     </div>
                 </div>
             </div>
@@ -83,8 +125,11 @@
 import Navbar from '@/components/Navbar.vue'
 import FormArticle from '@/components/FormArticle.vue'
 import { theme } from '@/helpers/theme'
-import axios from 'axios'
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useArticleApi } from '@/composables/useArticleApi'
+import type { Article } from '@/interfaces/Article'
+
+const { getArticles, deleteArticle } = useArticleApi()
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -212,55 +257,30 @@ const btn_hapus = {
     marginRight: '6px',
 }
 
-const articles = ref([])
+const articles = ref<Article[]>([])
 const searchQuery = ref('')
-const sortOrder = ref('newest')
+const sortOrder = ref<'newest' | 'oldest'>('newest')
 const showForm = ref(false)
-const selectedArticle = ref(null)
+const selectedArticle = ref<Article | null>(null)
 
 const fetchArticles = async () => {
-    try {
-        const { data } = await axios.get('/articles', {
-            params: { search: searchQuery.value, sort: sortOrder.value },
-        })
-        articles.value = data
-    } catch (error) {
-        console.error('Error fetching articles:', error)
-    }
+    articles.value = await getArticles(searchQuery.value, sortOrder.value)
 }
 
 onMounted(fetchArticles)
-
-const filteredAndSortedArticles = computed(() => {
-    let filtered = articles.value
-    if (searchQuery.value) {
-        filtered = filtered.filter(article =>
-            article.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-        )
-    }
-    return sortOrder.value === 'oldest'
-        ? filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-        : filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-})
 
 const openCreateForm = () => {
     selectedArticle.value = null
     showForm.value = true
 }
 
-const openEditForm = (article) => {
-    selectedArticle.value = {
-        ...article,
-        pewarta: article.pewarta || '',
-        sumber: article.sumber || '',
-        editor: article.editor || '',
-        copyright: article.copyright || '',
-    }
+const openEditForm = (article: Article) => {
+    selectedArticle.value = { ...article }
     showForm.value = true
 }
 
 const closeForm = () => {
-    showForm.value = false  // Menutup form dan kembali ke daftar artikel
+    showForm.value = false
 }
 
 const onArticleSaved = () => {
@@ -268,16 +288,8 @@ const onArticleSaved = () => {
     fetchArticles()
 }
 
-const deleteArticle = async (id) => {
-    try {
-        await axios.delete(`/articles/${id}`)
-        fetchArticles()
-    } catch (error) {
-        console.error('Error deleting article:', error)
-    }
-}
-
-const formatDate = (dateStr) => {
+const formatDate = (dateStr?: string) => {
+    if (!dateStr) return ''
     const date = new Date(dateStr)
     return date.toLocaleDateString('id-ID', {
         day: 'numeric',
@@ -331,7 +343,6 @@ const articleDate = {
     color: theme.colors.green,
     margin: 0,
 }
-
 </script>
 
 <style scoped>
@@ -340,11 +351,9 @@ const articleDate = {
 }
 
 .btn_tambah:hover {
-
 }
 
 .btn_edit:hover {
-
 }
 
 .btn_hapus:hover {

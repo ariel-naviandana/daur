@@ -17,127 +17,139 @@
                 </div>
             </div>
 
-            <!-- Judul -->
             <div :style="inputContainer">
                 <label :style="labelInput">Judul</label>
-                <input v-model="form.title" type="text" placeholder="judul" :style="inputField"/>
+                <input v-model="form.title" type="text" placeholder="judul" :style="inputField" />
             </div>
 
-            <!-- Gambar -->
             <div :style="inputContainerCover">
                 <div :style="inputFrameCover">
                     <label :style="labelInput">Cover Artikel</label>
                     <div :style="inputCover">
-                        <img v-if="previewImage" :src="previewImage" alt="preview image" :style="cloudCover"/>
-                        <img v-else src="/public/images/icon-upload.svg" alt="upload icon" :style="defaultCover"/>
+                        <img
+                            v-if="previewImage"
+                            :src="previewImage"
+                            alt="preview image"
+                            :style="cloudCover"
+                        />
+                        <img
+                            v-else
+                            src="/public/images/icon-upload.svg"
+                            alt="upload icon"
+                            :style="defaultCover"
+                        />
                     </div>
                     <input
                         type="file"
                         accept="image/*"
                         @change="handleImageUpload"
                         :style="{ display: 'none' }"
-                        ref="fileInput" />
+                        ref="fileInput"
+                    />
                     <button @click="$refs.fileInput.click()" :style="btnTambahGambar">
                         {{ isEdit && previewImage ? 'Ubah Gambar' : 'Tambah Gambar' }}
                     </button>
                 </div>
             </div>
 
-            <!-- Isi Artikel -->
             <div :style="inputContainer">
                 <label :style="labelInput">Isi Artikel</label>
-                <textarea v-model="form.content" rows="6" placeholder="isi artikel" :style="inputField"></textarea>
+                <textarea
+                    v-model="form.content"
+                    rows="6"
+                    placeholder="isi artikel"
+                    :style="inputField"
+                ></textarea>
             </div>
 
-            <!-- Pewarta -->
             <div :style="inputContainer">
                 <label :style="labelInput">Pewarta</label>
-                <input v-model="form.reporter" type="text" placeholder="Nama Pewarta" :style="inputField"/>
+                <input
+                    v-model="form.pewarta"
+                    type="text"
+                    placeholder="Nama Pewarta"
+                    :style="inputField"
+                />
             </div>
 
-            <!-- Editor -->
             <div :style="inputContainer">
                 <label :style="labelInput">Editor</label>
-                <input v-model="form.editor" type="text" placeholder="Nama Editor" :style="inputField"/>
+                <input
+                    v-model="form.editor"
+                    type="text"
+                    placeholder="Nama Editor"
+                    :style="inputField"
+                />
             </div>
 
-            <!-- Copyright -->
             <div :style="inputContainer">
                 <label :style="labelInput">Copyright</label>
-                <input v-model="form.copyright" type="text" placeholder="Copyright" :style="inputField"/>
+                <input
+                    v-model="form.copyright"
+                    type="text"
+                    placeholder="Copyright"
+                    :style="inputField"
+                />
             </div>
 
-            <!-- Sumber -->
             <div :style="inputContainer">
                 <label :style="labelInput">Sumber</label>
-                <input v-model="form.source" type="text" placeholder="Sumber artikel" :style="inputField"/>
+                <input
+                    v-model="form.sumber"
+                    type="text"
+                    placeholder="Sumber artikel"
+                    :style="inputField"
+                />
             </div>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { theme } from '@/helpers/theme'
-import { ref, watch, onMounted } from 'vue'
-import axios from 'axios'
+import { ref } from 'vue'
+import { useArticleApi } from '@/composables/useArticleApi'
+import type { Article } from '@/interfaces/Article'
 
+const { saveArticle } = useArticleApi()
 const isUploading = ref(false)
 
-const props = defineProps({
-    article: {
-        type: Object,
-        default: null
-    }
-})
-const emit = defineEmits(['close', 'saved'])
+const props = defineProps<{
+    article: Article | null
+    isEdit: boolean
+}>()
 
-const isEdit = ref(false)
+const emit = defineEmits<{
+    (e: 'close'): void
+    (e: 'saved'): void
+}>()
 
-const form = ref({
+const form = ref<Partial<Article>>({
+    id: undefined,
     title: '',
     content: '',
-    image: '',
+    image_url: null,
+    pewarta: null,
+    editor: null,
+    copyright: null,
+    sumber: null,
 })
-const previewImage = ref(null)
+const previewImage = ref<string | null>(null)
 
-// Saat komponen dipasang atau article berubah
-onMounted(() => {
-    if (props.article) {
-        isEdit.value = true
-        form.value.title = props.article.title
-        form.value.content = props.article.content
-        previewImage.value = props.article.image || ''
-        form.value.image = props.article.image || ''
-        form.value.reporter = props.article.pewarta || ''
-        form.value.editor = props.article.editor || ''
-        form.value.copyright = props.article.copyright || ''
-        form.value.source = props.article.sumber || ''
-    }
-})
+if (props.article) {
+    form.value = { ...props.article }
+    previewImage.value = props.article.image_url || null
+}
 
-watch(() => props.article, (newVal) => {
-    if (newVal) {
-        isEdit.value = true
-        form.value.title = newVal.title
-        form.value.content = newVal.content
-        previewImage.value = newVal.image || ''
-        form.value.image = newVal.image || ''
-    } else {
-        isEdit.value = false
-        form.value = { title: '', content: '', image: null }
-        previewImage.value = null
-    }
-})
-
-const handleImageUpload = async (event) => {
-    const file = event.target.files[0]
+const handleImageUpload = async (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0]
     if (!file) return
 
     previewImage.value = URL.createObjectURL(file)
     await uploadToCloudinary(file)
 }
 
-const uploadToCloudinary = async (file) => {
+const uploadToCloudinary = async (file: File) => {
     isUploading.value = true
     const formData = new FormData()
     const cloudinaryPreset = 'webdaur'
@@ -147,13 +159,14 @@ const uploadToCloudinary = async (file) => {
     formData.append('upload_preset', cloudinaryPreset)
 
     try {
-        const response = await axios.post(cloudinaryURL, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
+        const response = await fetch(cloudinaryURL, {
+            method: 'POST',
+            body: formData,
         })
-        form.value.image = response.data.secure_url
-        console.log('Upload berhasil, URL:', form.value.image)
+        const data = await response.json()
+        form.value.image_url = data.secure_url
     } catch (error) {
-        console.error('Error uploading to Cloudinary:', error.response?.data || error.message)
+        console.error('Error uploading to Cloudinary:', error)
         alert('Gagal mengunggah gambar. Silakan coba lagi.')
     } finally {
         isUploading.value = false
@@ -165,37 +178,30 @@ const submitForm = async () => {
         alert('Mohon tunggu hingga gambar selesai diunggah.')
         return
     }
-    console.log('Article ID:', props.article?.id)
 
-    const payload = {
-        title: form.value.title,
-        content: form.value.content,
-        image_url: form.value.image,
-        pewarta: form.value.reporter,
+    const article: Article = {
+        id: form.value.id || 0,
+        title: form.value.title || '',
+        content: form.value.content || '',
+        image_url: form.value.image_url,
+        pewarta: form.value.pewarta,
         editor: form.value.editor,
         copyright: form.value.copyright,
-        sumber: form.value.source
+        sumber: form.value.sumber,
+        created_at: form.value.created_at,
+        updated_at: form.value.updated_at,
     }
 
-    try {
-        if (isEdit.value && props.article?.id) {
-            console.log('Sending PUT request to update article with ID:', props.article.id)
-            const response = await axios.put(`/articles/${props.article.id}`, payload)
-            console.log('Response from backend:', response)
-        } else {
-            const response = await axios.post('/articles', payload)
-            console.log('payload', payload)
-            console.log('Article created:', response)
-        }
+    const success = await saveArticle(article)
+    if (success) {
         emit('saved')
-    } catch (error) {
-        console.error('Gagal menyimpan artikel:', error)
+    } else {
         alert('Gagal menyimpan artikel.')
     }
 }
 
 const backToList = () => {
-    emit('close')  // Menutup form
+    emit('close')
 }
 
 const layoutStyle = {
@@ -311,22 +317,22 @@ const btnTambahGambar = {
     fontSize: theme.fonts.size.base,
     cursor: 'pointer',
 }
+
+const spinnerStyle = {
+    width: '32px',
+    height: '32px',
+    border: '2px solid rgba(0, 0, 0, 0.2)',
+    borderTopColor: '#4caf50',
+    borderRadius: '50%',
+    animation: 'spin 0.6s linear infinite',
+    display: 'inline-block',
+    marginLeft: '6px',
+    marginTop: '4px',
+    verticalAlign: 'center',
+}
 </script>
 
 <style scoped>
-.spinner {
-    width: 32px;
-    height: 32px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    border-top-color: #4caf50;
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-    display: inline-block;
-    margin-left: 6px;
-    margin-top: 4px;
-    vertical-align: center;
-}
-
 @keyframes spin {
     to {
         transform: rotate(360deg)

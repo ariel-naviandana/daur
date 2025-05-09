@@ -25,9 +25,9 @@ class DatabaseSeeder extends Seeder
         // Users
         DB::table('users')->insert([
             [
-                'name' => 'Ahmad Santoso',
-                'email' => 'ahmad@example.com',
-                'password' => Hash::make('password123'),
+                'name' => 'user',
+                'email' => 'user@gmail.com',
+                'password' => Hash::make('Pass123@'),
                 'phone' => '081234567890',
                 'address' => 'Jl. Merdeka No. 10, Jakarta',
                 'profile_picture' => null,
@@ -36,9 +36,9 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Siti Aminah',
-                'email' => 'siti@example.com',
-                'password' => Hash::make('password123'),
+                'name' => 'Admin Daur',
+                'email' => 'admin@gmail.com',
+                'password' => Hash::make('Pass123@'),
                 'phone' => '081987654321',
                 'address' => 'Jl. Sudirman No. 25, Bandung',
                 'profile_picture' => null,
@@ -48,8 +48,8 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Budi Hartono',
-                'email' => 'budi@example.com',
-                'password' => Hash::make('password123'),
+                'email' => 'budi@gmail.com',
+                'password' => Hash::make('Pass123@'),
                 'phone' => '081112233445',
                 'address' => 'Jl. Gatot Subroto No. 5, Surabaya',
                 'profile_picture' => null,
