@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-import { theme } from '../config/theme'
+import { theme } from '@/helpers/theme'
 import { ref, watch, onMounted } from 'vue'
 import axios from 'axios'
 
@@ -162,15 +162,15 @@ const uploadToCloudinary = async (file) => {
 
 const submitForm = async () => {
     if (isUploading.value) {
-        alert('Mohon tunggu hingga gambar selesai diunggah.');
-        return;
+        alert('Mohon tunggu hingga gambar selesai diunggah.')
+        return
     }
-    console.log('Article ID:', props.article?.id);
+    console.log('Article ID:', props.article?.id)
 
     const payload = {
         title: form.value.title,
         content: form.value.content,
-        image: form.value.image,
+        image_url: form.value.image,
         pewarta: form.value.reporter,
         editor: form.value.editor,
         copyright: form.value.copyright,
@@ -179,17 +179,18 @@ const submitForm = async () => {
 
     try {
         if (isEdit.value && props.article?.id) {
-            console.log('Sending PUT request to update article with ID:', props.article.id);
-            const response = await axios.put(`/articles/${props.article.id}`, payload);
-            console.log('Response from backend:', response);
+            console.log('Sending PUT request to update article with ID:', props.article.id)
+            const response = await axios.put(`/articles/${props.article.id}`, payload)
+            console.log('Response from backend:', response)
         } else {
-            const response = await axios.post('/articles', payload);
-            console.log('Article created:', response);
+            const response = await axios.post('/articles', payload)
+            console.log('payload', payload)
+            console.log('Article created:', response)
         }
         emit('saved')
     } catch (error) {
-        console.error('Gagal menyimpan artikel:', error);
-        alert('Gagal menyimpan artikel.');
+        console.error('Gagal menyimpan artikel:', error)
+        alert('Gagal menyimpan artikel.')
     }
 }
 
@@ -328,7 +329,7 @@ const btnTambahGambar = {
 
 @keyframes spin {
     to {
-        transform: rotate(360deg);
+        transform: rotate(360deg)
     }
 }
 </style>

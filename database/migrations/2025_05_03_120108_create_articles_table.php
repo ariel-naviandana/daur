@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('content');
-            $table->string('image')->nullable();
+            $table->string('image_url')->nullable();
             $table->string('pewarta')->nullable();
             $table->string('editor')->nullable();
             $table->string('copyright')->nullable();

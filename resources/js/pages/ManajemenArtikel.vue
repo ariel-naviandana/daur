@@ -60,7 +60,8 @@
 
                 <div v-for="article in filteredAndSortedArticles" :key="article.id" :style="articleContainer">
                     <div :style="articleIcon">
-                        <img src="/public/images/icon_article.svg" alt="Artikel"/>
+                        <img v-if="article.image_url" :src="article.image_url" alt="cover" class="rounded-lg"/>
+                        <img v-else src="/public/images/icon_article.svg" alt="Artikel"/>
                     </div>
 
                     <div class="flex-grow">
@@ -79,9 +80,9 @@
 </template>
 
 <script lang="ts" setup>
-import Navbar from '../components/Navbar.vue'
-import FormArticle from '../components/FormArticle.vue'
-import { theme } from '../config/theme'
+import Navbar from '@/components/Navbar.vue'
+import FormArticle from '@/components/FormArticle.vue'
+import { theme } from '@/helpers/theme'
 import axios from 'axios'
 import { ref, computed, onMounted } from 'vue'
 
@@ -259,8 +260,8 @@ const openEditForm = (article) => {
 }
 
 const closeForm = () => {
-    showForm.value = false;  // Menutup form dan kembali ke daftar artikel
-};
+    showForm.value = false  // Menutup form dan kembali ke daftar artikel
+}
 
 const onArticleSaved = () => {
     showForm.value = false
@@ -335,7 +336,7 @@ const articleDate = {
 
 <style scoped>
 ::-webkit-scrollbar {
-    display: none;
+    display: none
 }
 
 .btn_tambah:hover {
@@ -347,6 +348,6 @@ const articleDate = {
 }
 
 .btn_hapus:hover {
-    color: #dc2626;
+    color: #dc2626
 }
 </style>
