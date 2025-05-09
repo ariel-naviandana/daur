@@ -42,7 +42,7 @@ const emit = defineEmits(['close', 'saved'])
 
 const form = ref<Category>({ id: 0, name: '', image: '' })
 const previewImage = ref<string | null>(null)
-const { createCategory, updateCategory } = useCategoryApi()
+const { saveCategory } = useCategoryApi()
 const { isUploading, uploadToCloudinary } = useImageApi()
 
 watch(
@@ -70,11 +70,7 @@ const handleFileChange = async (event: Event) => {
 
 const save = async () => {
     try {
-        if (form.value.id) {
-            await updateCategory(form.value.id, form.value)
-        } else {
-            await createCategory(form.value)
-        }
+        await saveCategory(form.value)
         emit('saved')
         emit('close')
     } catch (error) {

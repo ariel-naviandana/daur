@@ -111,8 +111,8 @@
                         <div v-if="dropdownOpenId === user.id" :style="dropdownOpen">
                             <ul class="text-sm text-gray-700">
                                 <li><button @click="handleAction('lihat', user)" :style="btn_dropdown" class="button_hover_grey">Lihat Detail</button></li>
-                                <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="button_hover_grey">Edit</button></li>
-                                <li><button @click="handleAction('hapus', user)" :style="btn_dropdown" class="button_hover_red">Hapus</button></li>
+                                <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="button_hover_grey">Update Role</button></li>
+                                <li><button @click="handleAction('block', user)" :style="btn_dropdown" class="button_hover_red">Blokir User</button></li>
                             </ul>
                         </div>
                     </div>
@@ -272,8 +272,8 @@ const handleAction = (action, user) => {
         openUserPopup(user)
     } else if (action === 'edit') {
         alert(`Edit user: ${user.name}`)
-    } else if (action === 'hapus') {
-        const confirmed = confirm(`Hapus user ${user.name}?`)
+    } else if (action === 'block') {
+        const confirmed = confirm(`Blokir user ${user.name}?`)
         if (confirmed) {
             users.value = users.value.filter(u => u.id !== user.id)
         }
