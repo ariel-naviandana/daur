@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-import { theme } from '../config/theme'
+import { theme } from '@/helpers/theme'
 import { ref, watch, onMounted } from 'vue'
 import axios from 'axios'
 

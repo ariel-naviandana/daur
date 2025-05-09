@@ -14,20 +14,14 @@
             <!-- Nama User -->
             <h1 :style="userNameStyle">Rudy Tabootie</h1>
         </div>
-        <!-- Card Saldo -->
-        <!-- Card Saldo -->
-        <div :style="saldoCardStyle">
-            <div>
-                <p :style="saldoLabelStyle">Saldo DAUR</p>
-                <p :style="saldoAmountStyle">Rp. 25,000</p>
-            </div>
-            <button :style="[penarikanButtonStyle, isHover ? penarikanHoverStyle : {}]" @mouseover="isHover = true"
-                @mouseleave="isHover = false" @click="tarikSaldo">
-                <img src="/public/images/withdraw-icon.svg" alt="" style="margin-right: 10px" />
-                Penarikan dana
-            </button>
-        </div>
 
+        <!-- Card Saldo -->
+        <SaldoCard @click="showModal = true" @tarikSaldo="showModal = true" />
+        <WithdrawalCard
+            :visible="showModal"
+            @close="showModal = false"
+            @submit="handleWithdraw"
+        />
 
         <!-- Section Mutasi Saldo -->
         <div :style="mutasiWrapperStyle">
@@ -65,10 +59,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { theme } from '@/helpers/theme'
+import SaldoCard from "@/components/SaldoCard.vue";
+import WithdrawalCard from "@/components/WithdrawalCard.vue"
 
-const tarikSaldo = () => {
-    alert('Penarikan dana (dummy logic)')
+const showModal = ref(false)
+
+const handleWithdraw = (data: { destination: string; amount: string }) => {
+    console.log('Penarikan ke:', data.destination)
+    console.log('Jumlah:', data.amount)
+    showModal.value = false
 }
+
 const isHoverDownload = ref(false)
 const isHoverFilter = ref(false)
 
@@ -102,60 +103,11 @@ const backButtonStyle = {
     gap: '10px'
 }
 
-const penarikanButtonStyle = {
-    width: '300px',
-    height: '50px',
-    backgroundColor: theme.colors.primary,
-    color: 'white',
-    fontWeight: theme.fonts.weight.semibold,
-    fontSize: theme.fonts.size.base,
-    display: 'flex',
-    borderRadius: '999px',
-    padding: '8px 20px',
-    border: 'none',
-    cursor: 'pointer',
-    marginBottom:'10px',
-    gap: '10px'
-}
-
 const userNameStyle = {
     fontSize: theme.fonts.size.heading,
     fontWeight: theme.fonts.weight.bold,
     color: theme.colors.darkGrey,
     marginBottom: '1.5rem',
-}
-
-const saldoCardStyle = {
-  backgroundColor: theme.colors.whiteElement,
-  borderRadius: '24px',
-  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-  padding: '2rem',
-  display: 'flex',
-  flexDirection: 'column', // arahkan isi ke bawah
-  justifyContent: 'space-between',
-  width: '900px',
-  height: '240px',
-  margin: '0 auto',
-  marginBottom: '2rem',
-}
-
-const saldoLabelStyle = {
-    fontWeight: theme.fonts.weight.semibold,
-    fontSize: theme.fonts.size.medium,
-    color: theme.colors.darkGrey,
-    marginBottom: '10px',
-}
-
-const saldoAmountStyle = {
-    fontSize: theme.fonts.size.large,
-    fontWeight: theme.fonts.weight.bold,
-    color: theme.colors.primary,
-    marginBottom: '30px'
-}
-
-const penarikanHoverStyle = {
-    backgroundColor: '#2d862d',
-    transform: 'scale(1.05)',
 }
 
 const upperSection = {
