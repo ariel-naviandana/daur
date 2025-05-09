@@ -9,10 +9,10 @@ class Article extends Model
     protected $fillable = [
         'title',
         'content',
-        'image_url',
+        'image',
         'pewarta',
         'editor',
-        'copyright',
         'sumber',
+        'copyright'
     ];
 }
