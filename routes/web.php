@@ -15,9 +15,6 @@ use App\Http\Controllers\BankController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/profile', [PageController::class, 'profile'])->name('profile');
-Route::get('/saldo', [PageController::class, 'saldo'])->name('saldo');
-
 Route::middleware(\App\Http\Middleware\RedirectToHome::class)->group(function () {
     Route::get('/login', [PageController::class, 'login'])->name('login');
     Route::get('/register', [PageController::class, 'register'])->name('register');
