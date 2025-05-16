@@ -57,12 +57,12 @@ export function useAuthApi() {
         }
     }
 
-    const updateProfile = async (data: { address: string; phone: string; name?: string }): Promise<User | null> => {
+    const updateProfile = async (data: { name?: string; address?: string; phone?: string; profile_picture?: string }): Promise<User | null> => {
         try {
             const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+            },
             }
             const response = await axios.post('/profile/update', data, config)
             return response.data.user

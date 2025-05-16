@@ -25,8 +25,11 @@ Route::get('/artikel', [PageController::class, 'artikel'])->name('artikel');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
+Route::post('/profile/update', [UserController::class, 'updateProfile']);
+
 Route::middleware(\App\Http\Middleware\AuthMiddleware::class)->group(function () {
     Route::get('/profile', [PageController::class, 'profile'])->name('profile');
+
     Route::get('/chat', [PageController::class, 'chat'])->name('chat');
     Route::get('/recycle', [PageController::class, 'recycle'])->name('recycle');
     Route::get('/riwayat', [PageController::class, 'riwayat'])->name('riwayat');

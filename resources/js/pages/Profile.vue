@@ -3,37 +3,43 @@
   <div :style="layoutStyle">
     <!-- Profil dan Card Saldo -->
     <div :style="topSectionStyle">
-      <div :style="imgStyle">
-        <img src="/public/images/profile-pict-holder.svg" alt="Foto Profil" />
+      <div :style="imgStyle" style="position: relative;">
+        <img
+          :src="previewImage || userProfileImage || '/images/profile-pict-holder.svg'"
+          alt="Foto Profil"
+          style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"
+        />
+
+        <div
+          @click="triggerFileInput"
+          style="position: absolute; bottom: 10px; right: 10px; background-color: #FFFFFF; border-radius: 50%; padding: 6px; cursor: pointer; box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);"
+        >
+          <img src="/public/images/edit.png" alt="Edit" style="width: 20px; height: 20px;" />
+        </div>
+
+        <input
+          type="file"
+          accept="image/*"
+          ref="fileInputRef"
+          @change="handleImageChange"
+          style="display: none;"
+        />
       </div>
 
       <div :style="containerStyle">
-        <!-- Kartu Saldo -->
-        <div
-          :style="columnStyle"
-          @click=""
-          @mouseover="hoverSaldo = true"
-          @mouseleave="hoverSaldo = false"
-        >
+        <div :style="columnStyle" @mouseover="hoverSaldo = true" @mouseleave="hoverSaldo = false">
           <h2 :style="headingStyle">Saldo DAUR</h2>
           <div :style="[textStatStyle, hoverSaldo ? hoverCardStyle : {}]">
             <a href="/saldo">Rp. 25.000</a>
           </div>
         </div>
 
-        <!-- Kartu Sampah -->
         <div :style="columnStyle">
           <h2 :style="headingStyle">Total Sampah</h2>
           <div :style="textStatStyle">15 Kg</div>
         </div>
 
-        <!-- Kartu Riwayat -->
-        <div
-          :style="columnStyle"
-          @click=""
-          @mouseover="hoverRiwayat = true"
-          @mouseleave="hoverRiwayat = false"
-        >
+        <div :style="columnStyle" @mouseover="hoverRiwayat = true" @mouseleave="hoverRiwayat = false">
           <h2 :style="headingStyle">Riwayat</h2>
           <a href="/riwayat">
             <img
@@ -47,7 +53,7 @@
     </div>
 
     <!-- Form Profil -->
-    <form style="max-width: 680px; margin: 2rem auto;" @submit.prevent>
+    <form style="max-width: 680px; margin: 2rem auto;" @submit.prevent="simpanProfil">
       <div style="margin-bottom: 1rem;">
         <label for="name" :style="labelStyle">Nama</label>
         <input
@@ -87,7 +93,6 @@
       <div :style="buttonContainerStyle">
         <button
           type="submit"
-          @click="simpanProfil"
           @mouseover="isHover = true"
           @mouseleave="isHover = false"
           :style="[buttonStyle, isHover ? buttonHoverStyle : {}]"
@@ -104,44 +109,78 @@ import { ref, onMounted } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
 import { useAuthApi } from '@/composables/useAuthApi'
+import { useImageApi } from '@/composables/useImageApi'
 
 const { getCurrentUser, updateProfile } = useAuthApi()
+const { uploadToCloudinary } = useImageApi()
 
-// Form State
+const fileInputRef = ref<HTMLInputElement | null>(null)
+const selectedImage = ref<File | null>(null)
+const previewImage = ref<string | null>(null)
+const userProfileImage = ref<string | null>(null)
+
 const nama = ref('')
 const alamat = ref('')
 const phone = ref('')
+const userId = ref<number | null>(null)
 
-// Hover State
 const hoverSaldo = ref(false)
 const hoverRiwayat = ref(false)
 const isHover = ref(false)
 
-// Fetch user saat komponen dimuat
+const triggerFileInput = () => {
+  fileInputRef.value?.click()
+}
+
 onMounted(async () => {
   const user = await getCurrentUser()
   if (user) {
     nama.value = user.name || ''
     alamat.value = user.address || ''
     phone.value = user.phone || ''
+    userProfileImage.value = user.profile_picture || null
+    userId.value = user.id 
   }
 })
 
-// Fungsi simpan profil
+const handleImageChange = (event: Event) => {
+  const file = (event.target as HTMLInputElement)?.files?.[0]
+  if (file) {
+    selectedImage.value = file
+    previewImage.value = URL.createObjectURL(file)
+  }
+}
+
 const simpanProfil = async () => {
+  let imageUrl = userProfileImage.value
+
+  if (selectedImage.value) {
+    const uploadedUrl = await uploadToCloudinary(selectedImage.value)
+    if (!uploadedUrl) {
+      alert('Gagal upload gambar!')
+      return
+    }
+    imageUrl = uploadedUrl
+  }
+
   const updatedUser = await updateProfile({
+    id: userId.value,
     name: nama.value,
     address: alamat.value,
     phone: phone.value,
+    profile_picture: imageUrl,
   })
+
   if (updatedUser) {
-    alert('Profil berhasil disimpan!')
+    userProfileImage.value = updatedUser.image || imageUrl
+    previewImage.value = null
+    selectedImage.value = null
+    alert('Profil berhasil diperbarui!')
   } else {
     alert('Gagal menyimpan profil.')
   }
 }
 
-// Styling
 const hoverCardStyle = {
   transform: 'scale(1.05)',
   transition: '0.2s ease-in-out',
@@ -251,13 +290,9 @@ const buttonStyle = {
   color: 'white',
   fontWeight: theme.fonts.weight.semibold,
   fontSize: theme.fonts.size.base,
+  border: 'none',
   borderRadius: '999px',
   padding: '10px 30px',
   cursor: 'pointer',
-  border: 'none',
 }
 </script>
-
-<style scoped>
-/* Tidak diperlukan jika semua sudah inline */
-</style>
