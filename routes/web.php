@@ -38,9 +38,12 @@ Route::middleware([AuthMiddleware::class, NoCacheMiddleware::class, 'web'])->gro
     Route::get('/me', [AuthController::class, 'me'])->name('auth.me');
 });
 
-Route::middleware([AuthMiddleware::class . ':master_admin', NoCacheMiddleware::class, 'web'])->group(function () {
+Route::middleware([AuthMiddleware::class . ':master_admin-bank_admin', NoCacheMiddleware::class, 'web'])->group(function () {
     Route::get('/admin', [AdminPageController::class, 'home'])->name('home-admin');
     Route::get('/admin/recycle', [AdminPageController::class, 'recycleManagement'])->name('manajemen-recycle');
+});
+
+Route::middleware([AuthMiddleware::class . ':master_admin', NoCacheMiddleware::class, 'web'])->group(function () {
     Route::get('/admin/users', [AdminPageController::class, 'userManagement'])->name('admin.users');
     Route::get('/admin/artikel', [AdminPageController::class, 'articleManagement'])->name('manajemen-artikel');
     Route::get('/admin/sampah', [AdminPageController::class, 'wasteItemManagement'])->name('manajemen-sampah');

@@ -36,7 +36,7 @@ const password = ref('')
 onMounted(async () => {
     const user = await getCurrentUser()
     if (user) {
-        window.location.href = user.role === 'master_admin' ? '/admin' : '/'
+        window.location.href = user.role === 'master_admin' || 'bank_admin' ? '/admin' : '/'
         window.history.pushState({}, '', window.location.href)
     }
 })

@@ -5,11 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\RecycleTransaction;
 use App\Models\RecycleTransactionItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RecycleTransactionController extends Controller
 {
-    public function index() {
-        return RecycleTransaction::with(['user', 'items.wasteType', 'bank'])->get();
+    public function index()
+    {
+        $user = Auth::user();
+
+        $query = RecycleTransaction::with(['user', 'items.wasteType', 'bank']);
+
+        if ($user->role === 'master_admin')
+            return $query->get();
+        else if ($user->role === 'bank_admin') {
+            if (!$user->bank_id)
+                return response()->json(['message' => 'Bank admin must be associated with a bank'], 403);
+            return $query->where('bank_id', $user->bank_id)->get();
+        } else
+            return response()->json(['message' => 'Unauthorized'], 403);
     }
 
     public function store(Request $request) {

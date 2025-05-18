@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -8,13 +7,18 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthMiddleware
 {
-    public function handle(Request $request, Closure $next, $role = null)
+    public function handle(Request $request, Closure $next, $roles = [])
     {
         if (!Auth::check())
-            return redirect()->route('login')->with('error', 'Please login to access this page.');
+            return redirect()->route('login');
 
-        if ($role && Auth::user()->role !== $role)
-            abort(403, 'You do not have permission to access this page.');
+        if ($roles) {
+            $allowedRoles = explode('-', $roles);
+            $userRole = Auth::user()->role;
+
+            if (!in_array($userRole, $allowedRoles))
+                abort(403, 'Unauthorized action.');
+        }
 
         return $next($request);
     }
