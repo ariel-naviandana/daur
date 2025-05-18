@@ -35,7 +35,6 @@ class UserController extends Controller
         return $user->load(['recycleTransactions', 'wallet', 'sentChats', 'receivedChats']);
     }
 
-    // di UserController.php
     public function updateProfile(Request $request)
     {
         $user = auth()->user();

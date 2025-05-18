@@ -77,7 +77,7 @@ export function useAuthApi() {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
             },
             }
-            const response = await axios.post('/profile/update', data, config)
+            const response = await axios.put('/users', data, config)
             return response.data.user
         } catch (error) {
             console.error('Error updating profile:', error)
@@ -90,6 +90,6 @@ export function useAuthApi() {
         login,
         logout,
         getCurrentUser,
-        updateProfile, 
+        updateProfile,
     }
 }
