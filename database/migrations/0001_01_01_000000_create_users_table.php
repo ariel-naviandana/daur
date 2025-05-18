@@ -19,10 +19,10 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
             $table->string('profile_picture')->nullable();
-            $table->enum('role', ['user', 'admin'])->default('user');
+            $table->foreignId('bank_id')->nullable()->constrained()->onDelete('cascade');
+            $table->enum('role', ['user', 'master_admin', 'bank_admin'])->default('user');
             $table->timestamps();
         });
-
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

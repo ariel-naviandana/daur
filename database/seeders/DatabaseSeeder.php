@@ -10,7 +10,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run()
     {
-        // Delete records from all tables in the correct order to respect foreign key constraints
         DB::table('wallet_transactions')->delete();
         DB::table('recycle_transaction_items')->delete();
         DB::table('recycle_transactions')->delete();
@@ -22,6 +21,31 @@ class DatabaseSeeder extends Seeder
         DB::table('banks')->delete();
         DB::table('articles')->delete();
 
+        // Banks (Bank Sampah)
+        DB::table('banks')->insert([
+            [
+                'name' => 'Bank Sampah Induk Jakarta',
+                'address' => 'Jl. Thamrin No. 12, Jakarta Pusat',
+                'phone' => '081111222333',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Bank Sampah Bersih Surabaya',
+                'address' => 'Jl. Ahmad Yani No. 20, Surabaya',
+                'phone' => '081222333444',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Bank Sampah Hijau Bandung',
+                'address' => 'Jl. Diponegoro No. 30, Bandung',
+                'phone' => '081333444555',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
         // Users
         DB::table('users')->insert([
             [
@@ -31,6 +55,7 @@ class DatabaseSeeder extends Seeder
                 'phone' => '081234567890',
                 'address' => 'Jl. Merdeka No. 10, Jakarta',
                 'profile_picture' => null,
+                'bank_id' => null,
                 'role' => 'user',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -42,7 +67,8 @@ class DatabaseSeeder extends Seeder
                 'phone' => '081987654321',
                 'address' => 'Jl. Sudirman No. 25, Bandung',
                 'profile_picture' => null,
-                'role' => 'admin',
+                'bank_id' => null,
+                'role' => 'master_admin',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -53,7 +79,20 @@ class DatabaseSeeder extends Seeder
                 'phone' => '081112233445',
                 'address' => 'Jl. Gatot Subroto No. 5, Surabaya',
                 'profile_picture' => null,
+                'bank_id' => null,
                 'role' => 'user',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Bank Admin Jakarta',
+                'email' => 'bankadmin@gmail.com',
+                'password' => Hash::make('Pass123@'),
+                'phone' => '081555666777',
+                'address' => 'Jl. Thamrin No. 12, Jakarta Pusat',
+                'profile_picture' => null,
+                'bank_id' => 1,
+                'role' => 'bank_admin',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -227,31 +266,6 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'kg',
                 'price_per_unit' => 1000.00,
                 'image' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
-
-        // Banks (Bank Sampah)
-        DB::table('banks')->insert([
-            [
-                'name' => 'Bank Sampah Induk Jakarta',
-                'address' => 'Jl. Thamrin No. 12, Jakarta Pusat',
-                'phone' => '081111222333',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Bank Sampah Bersih Surabaya',
-                'address' => 'Jl. Ahmad Yani No. 20, Surabaya',
-                'phone' => '081222333444',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Bank Sampah Hijau Bandung',
-                'address' => 'Jl. Diponegoro No. 30, Bandung',
-                'phone' => '081333444555',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

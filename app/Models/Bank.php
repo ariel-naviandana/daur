@@ -13,4 +13,9 @@ class Bank extends Model
     {
         return $this->hasMany(RecycleTransaction::class);
     }
+
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
 }

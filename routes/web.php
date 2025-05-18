@@ -14,8 +14,10 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\RedirectToHome;
+use App\Http\Middleware\AuthMiddleware;
 
-Route::middleware(\App\Http\Middleware\RedirectToHome::class)->group(function () {
+Route::middleware(RedirectToHome::class)->group(function () {
     Route::get('/login', [PageController::class, 'login'])->name('login');
     Route::get('/register', [PageController::class, 'register'])->name('register');
 });
@@ -25,7 +27,7 @@ Route::get('/artikel', [PageController::class, 'artikel'])->name('artikel');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
-Route::middleware(\App\Http\Middleware\AuthMiddleware::class)->group(function () {
+Route::middleware(AuthMiddleware::class)->group(function () {
     Route::get('/profile', [PageController::class, 'profile'])->name('profile');
     Route::get('/chat', [PageController::class, 'chat'])->name('chat');
     Route::get('/recycle', [PageController::class, 'recycle'])->name('recycle');
@@ -35,7 +37,7 @@ Route::middleware(\App\Http\Middleware\AuthMiddleware::class)->group(function ()
     Route::get('/me', [AuthController::class, 'me'])->name('auth.me');
 });
 
-Route::middleware(\App\Http\Middleware\AuthMiddleware::class . ':admin')->group(function () {
+Route::middleware(AuthMiddleware::class . ':master_admin')->group(function () {
     Route::get('/admin', [AdminPageController::class, 'home'])->name('home-admin');
     Route::get('/admin/recycle', [AdminPageController::class, 'recycleManagement'])->name('manajemen-recycle');
     Route::get('/admin/users', [AdminPageController::class, 'userManagement'])->name('admin.users');

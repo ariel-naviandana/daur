@@ -44,9 +44,8 @@ const handleLogin = async () => {
 
     const user = await login(credentials)
     if (user) {
-        localStorage.setItem('user', JSON.stringify(user))
         alert('Login berhasil!')
-        if (user.role === 'admin') {
+        if (user.role === 'master_admin') {
             window.location.href = '/admin'
         } else {
             window.location.href = '/'

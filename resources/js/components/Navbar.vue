@@ -40,7 +40,7 @@
             </ul>
 
             <div class="hidden md:block relative">
-                <template v-if="!loggedInUser">
+                <template v-if="!user">
                     <a href="/login" style="color: white; font-weight: bold; background-color: #4CAF50; padding: 6px 28px; border-radius: 24px">Login</a>
                 </template>
                 <template v-else>
@@ -127,7 +127,7 @@
                 <li>
                     <a href="/profile" @click="toggleSidebar" :style="linkStyle('/profile')">Profile</a>
                 </li>
-                <li v-if="loggedInUser">
+                <li v-if="user">
                     <a href="" @click="logoutAndCloseSidebar" :style="linkStyle('/logout')">Logout</a>
                 </li>
             </ul>
@@ -139,22 +139,17 @@
 import { ref, computed, onMounted } from 'vue'
 import { theme } from '@/helpers/theme'
 import { useAuthApi } from '@/composables/useAuthApi'
+import {User} from "@/interfaces/User"
 
 const { getCurrentUser, logout } = useAuthApi()
 
-const sidebarOpen = ref(false)
-const loggedInUser = ref(JSON.parse(localStorage.getItem('user') || 'null'))
+const user = ref<User>(null)
+
+const sidebarOpen = ref()
 const showDropdown = ref(false)
 
 onMounted(async () => {
-    const user = await getCurrentUser()
-    if (user) {
-        localStorage.setItem('user', JSON.stringify(user))
-        loggedInUser.value = user
-    } else {
-        localStorage.removeItem('user')
-        loggedInUser.value = null
-    }
+    user.value = await getCurrentUser()
 
     document.addEventListener('click', (event) => {
         const dropdown = document.querySelector('.relative')
@@ -164,7 +159,7 @@ onMounted(async () => {
     })
 })
 
-const isAdmin = computed(() => loggedInUser.value?.role === 'admin')
+const isAdmin = computed(() => user.value?.role === 'master_admin')
 
 const toggleSidebar = () => {
     sidebarOpen.value = !sidebarOpen.value
@@ -177,11 +172,7 @@ const toggleDropdown = () => {
 const logoutUser = async () => {
     try {
         const success = await logout()
-        if (success) {
-            localStorage.removeItem('user')
-            loggedInUser.value = null
-            showDropdown.value = false
-        }
+        showDropdown.value = false
     } catch (error) {
         console.error('Logout error:', error)
     }

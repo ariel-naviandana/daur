@@ -56,7 +56,6 @@ const handleRegister = async () => {
 
     const user = await register(userData as User)
     if (user) {
-        localStorage.setItem('user', JSON.stringify(user))
         alert('Pendaftaran berhasil!')
         window.location.href = '/login'
     } else {

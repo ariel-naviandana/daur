@@ -1,6 +1,7 @@
 import {RecycleTransaction} from "./RecycleTransaction"
 import {Wallet} from "./Wallet"
 import {Chat} from "./Chat"
+import {Bank} from "./Bank"
 
 export interface User {
     id: number
@@ -17,4 +18,6 @@ export interface User {
     wallet?: Wallet | null
     sentChats?: Chat[]
     receivedChats?: Chat[]
+    bank_id?: number | null
+    bank?: Bank | null
 }

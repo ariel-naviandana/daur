@@ -12,7 +12,7 @@ class RedirectToHome
     {
         if (Auth::check()) {
             $user = Auth::user();
-            $redirectTo = $user->role === 'admin' ? '/admin' : '/';
+            $redirectTo = $user->role === 'master_admin' ? '/admin' : '/';
             return redirect($redirectTo);
         }
 

@@ -11,7 +11,7 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'phone', 'address', 'profile_picture', 'role'
+        'name', 'email', 'password', 'phone', 'address', 'profile_picture', 'role', 'bank_id'
     ];
 
     protected $hidden = ['password'];
@@ -34,6 +34,11 @@ class User extends Authenticatable
     public function receivedChats()
     {
         return $this->hasMany(Chat::class, 'receiver_id');
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class);
     }
 }
 

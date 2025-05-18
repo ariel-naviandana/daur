@@ -16,8 +16,9 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
-            'role' => 'required|in:user,admin',
+            'role' => 'required|in:user,master_admin,bank_admin',
             'profile_picture' => 'nullable|string',
+            'bank_id' => 'nullable|exists:banks,id',
         ]);
 
         $validated['password'] = bcrypt($validated['password']);
