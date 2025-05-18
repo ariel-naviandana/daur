@@ -23,13 +23,21 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuthApi } from '@/composables/useAuthApi'
 
-const { login } = useAuthApi()
+const { login, getCurrentUser } = useAuthApi()
 
 const email = ref('')
 const password = ref('')
+
+onMounted(async () => {
+    const user = await getCurrentUser()
+    if (user) {
+        window.location.href = user.role === 'master_admin' ? '/admin' : '/'
+        window.history.pushState({}, '', window.location.href)
+    }
+})
 
 const handleLogin = async () => {
     if (!email.value || !password.value) {
@@ -43,14 +51,7 @@ const handleLogin = async () => {
     }
 
     const user = await login(credentials)
-    if (user) {
-        alert('Login berhasil!')
-        if (user.role === 'master_admin') {
-            window.location.href = '/admin'
-        } else {
-            window.location.href = '/'
-        }
-    } else {
+    if (!user) {
         alert('Email atau kata sandi salah!')
     }
 }

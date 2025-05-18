@@ -10,7 +10,11 @@ export function useAuthApi() {
                 },
             }
             const response = await axios.post('/register', form, config)
-            return response.data.user
+            const user = response.data.user
+            if (user) {
+                window.location.href = user.role === 'master_admin' ? '/admin' : '/'
+            }
+            return user
         } catch (error) {
             console.error('Error registering user:', error)
             return null
@@ -25,7 +29,13 @@ export function useAuthApi() {
                 },
             }
             const response = await axios.post('/login', credentials, config)
-            return response.data.user
+            const user = response.data.user
+            if (user) {
+                window.location.href = user.role === 'master_admin' ? '/admin' : '/'
+                // Push a new history state to prevent back to login
+                window.history.pushState({}, '', window.location.href)
+            }
+            return user
         } catch (error) {
             console.error('Error logging in:', error)
             return null
@@ -40,6 +50,9 @@ export function useAuthApi() {
                 },
             }
             await axios.post('/logout', {}, config)
+            window.location.href = '/login'
+            // Push a new history state to prevent back to protected pages
+            window.history.pushState({}, '', '/login')
             return true
         } catch (error) {
             console.error('Error logging out:', error)

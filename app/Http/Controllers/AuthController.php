@@ -22,7 +22,7 @@ class AuthController extends Controller
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/',
             ],
             'profile_picture' => 'nullable|string',
-            'role' => 'required|in:user,admin'
+            'role' => 'required|in:user,master_admin,bank_admin',
         ]);
 
         $user = User::create([
@@ -30,7 +30,7 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'profile_picture' => $validated['profile_picture'] ?? null,
-            'role' => $validated['role']
+            'role' => $validated['role'],
         ]);
 
         Wallet::create([
@@ -39,32 +39,50 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
-        return response()->json(['message' => 'Registration successful', 'user' => $user]);
+
+        return response()->json(['message' => 'Registration successful', 'user' => $user])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     public function login(Request $request)
     {
         $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string'
+            'password' => 'required|string',
         ]);
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            return response()->json(['message' => 'Login successful', 'user' => $user]);
+            $request->session()->regenerate();
+            return response()->json(['message' => 'Login successful', 'user' => $user])
+                ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+                ->header('Pragma', 'no-cache')
+                ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
         }
 
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return response()->json(['message' => 'Logged out successfully']);
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json(['message' => 'Logged out successfully'])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     public function me()
     {
-        return response()->json(['user' => Auth::user()]);
+        $user = Auth::user();
+        return response()->json(['user' => $user])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 }

@@ -79,7 +79,7 @@
                                 </li>
                                 <li>
                                     <a
-                                        href=""
+                                        href="#"
                                         class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                         :style="linkStyle('/logout')"
                                         @click="logout"
@@ -128,7 +128,7 @@
                     <a href="/profile" @click="toggleSidebar" :style="linkStyle('/profile')">Profile</a>
                 </li>
                 <li v-if="user">
-                    <a href="" @click="logoutAndCloseSidebar" :style="linkStyle('/logout')">Logout</a>
+                    <a href="#" @click="logoutAndCloseSidebar" :style="linkStyle('/logout')">Logout</a>
                 </li>
             </ul>
         </div>
@@ -139,17 +139,33 @@
 import { ref, computed, onMounted } from 'vue'
 import { theme } from '@/helpers/theme'
 import { useAuthApi } from '@/composables/useAuthApi'
-import {User} from "@/interfaces/User"
+import { User } from '@/interfaces/User'
 
 const { getCurrentUser, logout } = useAuthApi()
 
-const user = ref<User>(null)
-
-const sidebarOpen = ref()
+const user = ref<User | null>(null)
+const sidebarOpen = ref(false)
 const showDropdown = ref(false)
 
 onMounted(async () => {
     user.value = await getCurrentUser()
+
+    const publicPaths = ['/', '/artikel', '/login', '/register']
+    if (!user.value && !publicPaths.includes(window.location.pathname)) {
+        window.location.href = '/login'
+        window.history.pushState({}, '', '/login')
+    }
+
+    window.addEventListener('popstate', () => {
+        const currentPath = window.location.pathname
+        if (!user.value && !publicPaths.includes(currentPath)) {
+            window.location.href = '/login'
+            window.history.pushState({}, '', '/login')
+        } else if (user.value && ['/login', '/register'].includes(currentPath)) {
+            window.location.href = user.value.role === 'master_admin' ? '/admin' : '/'
+            window.history.pushState({}, '', window.location.href)
+        }
+    })
 
     document.addEventListener('click', (event) => {
         const dropdown = document.querySelector('.relative')
@@ -169,17 +185,8 @@ const toggleDropdown = () => {
     showDropdown.value = !showDropdown.value
 }
 
-const logoutUser = async () => {
-    try {
-        const success = await logout()
-        showDropdown.value = false
-    } catch (error) {
-        console.error('Logout error:', error)
-    }
-}
-
 const logoutAndCloseSidebar = async () => {
-    await logoutUser()
+    await logout()
     sidebarOpen.value = false
 }
 
