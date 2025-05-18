@@ -70,10 +70,26 @@ export function useAuthApi() {
         }
     }
 
+    const updateProfile = async (data: { name?: string; address?: string; phone?: string; profile_picture?: string }): Promise<User | null> => {
+        try {
+            const config = {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+            },
+            }
+            const response = await axios.post('/profile/update', data, config)
+            return response.data.user
+        } catch (error) {
+            console.error('Error updating profile:', error)
+            return null
+        }
+    }
+
     return {
         register,
         login,
         logout,
         getCurrentUser,
+        updateProfile, 
     }
 }

@@ -35,6 +35,14 @@ class UserController extends Controller
         return $user->load(['recycleTransactions', 'wallet', 'sentChats', 'receivedChats']);
     }
 
+    // di UserController.php
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+        $user->update($request->only('name', 'address', 'phone', 'profile_picture'));
+        return response()->json(['user' => $user]);
+    }
+
     public function destroy($id) {
         User::findOrFail($id)->delete();
         return response()->json(['message' => 'User deleted']);
