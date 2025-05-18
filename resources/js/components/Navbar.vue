@@ -22,6 +22,9 @@
                 <li v-if="isAdmin">
                     <a href="/admin/sampah" :style="linkStyle('/admin/sampah')">Sampah</a>
                 </li>
+                <li v-if="isAdmin">
+                    <a href="/admin/bank" @click="toggleSidebar" :style="linkStyle('/admin/bank')">Bank</a>
+                </li>
                 <li>
                     <a :href="isAdmin ? '/admin/recycle' : '/recycle'" :style="linkStyle(isAdmin ? '/admin/recycle' : '/recycle')">Recycle</a>
                 </li>
@@ -108,6 +111,9 @@
                 </li>
                 <li v-if="isAdmin">
                     <a href="/admin/sampah" @click="toggleSidebar" :style="linkStyle('/admin/sampah')">Sampah</a>
+                </li>
+                <li v-if="isAdmin">
+                    <a href="/admin/bank" @click="toggleSidebar" :style="linkStyle('/admin/bank')">Bank</a>
                 </li>
                 <li>
                     <a :href="isAdmin ? '/admin/recycle' : '/recycle'" @click="toggleSidebar" :style="linkStyle(isAdmin ? '/admin/recycle' : '/recycle')">Recycle</a>

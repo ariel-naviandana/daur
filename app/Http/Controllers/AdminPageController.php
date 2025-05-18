@@ -27,5 +27,9 @@ class AdminPageController extends Controller
     public function saldoManagement() {
         return view('manajemen-saldo');
     }
+
+    public function bankManagement() {
+        return view('manajemen-bank');
+    }
 }
 

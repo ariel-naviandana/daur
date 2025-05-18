@@ -45,6 +45,7 @@ Route::middleware([AuthMiddleware::class . ':master_admin', NoCacheMiddleware::c
     Route::get('/admin/artikel', [AdminPageController::class, 'articleManagement'])->name('manajemen-artikel');
     Route::get('/admin/sampah', [AdminPageController::class, 'wasteItemManagement'])->name('manajemen-sampah');
     Route::get('/admin/saldo', [AdminPageController::class, 'saldoManagement'])->name('manajemen-saldo');
+    Route::get('/admin/bank', [AdminPageController::class, 'bankManagement'])->name('manajemen-bank');
 });
 
 Route::get('/users', [UserController::class, 'index']);

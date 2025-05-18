@@ -14,7 +14,8 @@ import Register from "./pages/Register.vue"
 import HomeAdmin from "./pages/HomeAdmin.vue"
 import ManajemenSaldo from "./pages/ManajemenSaldo.vue"
 import ManajemenArtikel from "./pages/ManajemenArtikel.vue"
-import ManajemenSampah from "./pages/ManajemenSampah.vue";
+import ManajemenSampah from "./pages/ManajemenSampah.vue"
+import ManajemenBank from "./pages/ManajemenBank.vue"
 
 const el = document.getElementById('app')
 
@@ -68,6 +69,9 @@ if (el) {
         break
     case 'manajemen-saldo':
         component = ManajemenSaldo
+        break
+    case 'manajemen-bank':
+        component = ManajemenBank
         break
     default:
       console.error('Unknown page component:', page)
