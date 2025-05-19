@@ -168,7 +168,7 @@ onMounted(async () => {
             window.location.href = '/login'
             window.history.pushState({}, '', '/login')
         } else if (user.value && ['/login', '/register'].includes(currentPath)) {
-            window.location.href = user.value.role === 'master_admin' || 'bank_admin' ? '/admin' : '/'
+            window.location.href = user.value.role === 'master_admin' || user.value.role === 'bank_admin' ? '/admin' : '/'
             window.history.pushState({}, '', window.location.href)
         }
     })

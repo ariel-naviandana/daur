@@ -12,7 +12,7 @@ export function useAuthApi() {
             const response = await axios.post('/register', form, config)
             const user = response.data.user
             if (user) {
-                window.location.href = user.role === 'master_admin' ? '/admin' : '/'
+                window.location.href = user.role === 'master_admin' || user.role === 'bank_admin' ? '/admin' : '/'
             }
             return user
         } catch (error) {
@@ -31,7 +31,7 @@ export function useAuthApi() {
             const response = await axios.post('/login', credentials, config)
             const user = response.data.user
             if (user) {
-                window.location.href = user.role === 'master_admin' || 'bank_admin' ? '/admin' : '/'
+                window.location.href = user.role === 'master_admin' || user.role === 'bank_admin' ? '/admin' : '/'
                 window.history.pushState({}, '', window.location.href)
             }
             return user
