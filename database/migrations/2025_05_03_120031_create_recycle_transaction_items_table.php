@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('waste_type_id')->constrained()->onDelete('cascade');
             $table->decimal('quantity', 10, 2);
             $table->decimal('sub_total', 12, 2);
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

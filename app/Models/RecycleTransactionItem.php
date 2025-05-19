@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RecycleTransactionItem extends Model
 {
-    protected $fillable = ['transaction_id', 'waste_type_id', 'quantity', 'sub_total'];
+    protected $fillable = ['transaction_id', 'waste_type_id', 'quantity', 'sub_total', 'image'];
 
     public function transaction()
     {

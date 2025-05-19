@@ -17,6 +17,7 @@ class RecycleTransactionItemController extends Controller
             'waste_type_id' => 'required|exists:waste_types,id',
             'quantity' => 'required|numeric',
             'sub_total' => 'required|numeric',
+            'image' => 'nullable|string'
         ]);
 
         return RecycleTransactionItem::create($request->all());

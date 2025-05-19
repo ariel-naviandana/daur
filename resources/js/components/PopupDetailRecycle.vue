@@ -50,6 +50,17 @@
                         <div :style="itemTextStyle">
                             <div :style="itemNameStyle">{{ getWasteTypeName(waste) }}</div>
                             <div :style="itemWeightStyle">{{ waste.quantity }} {{ getWasteTypeUnit(waste) }}</div>
+                            <div v-if="waste.image" :style="proofImageContainerStyle">
+                                <img
+                                    :src="waste.image"
+                                    alt="Proof of Waste"
+                                    :style="proofImageStyle"
+                                    @click="openFullScreen(waste.image)"
+                                />
+                            </div>
+                            <div v-else :style="noImageStyle">
+                                Tidak ada bukti foto
+                            </div>
                         </div>
                     </div>
                     <div :style="priceStyle">Rp{{ waste.sub_total.toLocaleString('id-ID') }}</div>
@@ -101,10 +112,22 @@
             </div>
         </div>
     </div>
+
+    <div v-if="isFullScreenOpen" :style="fullScreenOverlayStyle">
+        <div :style="fullScreenImageContainerStyle">
+            <img :src="fullScreenImage" :style="fullScreenImageStyle" alt="Full Screen Proof" />
+            <button @click="closeFullScreen" :style="fullScreenCloseButtonStyle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
@@ -118,6 +141,8 @@ const props = defineProps<{
 const emit = defineEmits(['close', 'accept', 'reject', 'done'])
 
 const isAdmin = computed(() => props.isAdmin ?? false)
+const isFullScreenOpen = ref(false)
+const fullScreenImage = ref<string>('')
 
 const closeModal = () => {
     emit('close')
@@ -133,6 +158,16 @@ const handleDone = () => {
 
 const handleReject = () => {
     emit('reject')
+}
+
+const openFullScreen = (imageUrl: string) => {
+    fullScreenImage.value = imageUrl
+    isFullScreenOpen.value = true
+}
+
+const closeFullScreen = () => {
+    isFullScreenOpen.value = false
+    fullScreenImage.value = ''
 }
 
 const formattedDate = computed(() => {
@@ -298,7 +333,8 @@ const itemImageStyle = {
 
 const itemTextStyle = {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    gap: '4px'
 }
 
 const itemNameStyle = {
@@ -309,6 +345,24 @@ const itemNameStyle = {
 const itemWeightStyle = {
     fontSize: theme.fonts.size.base,
     color: theme.colors.darkGrey
+}
+
+const proofImageContainerStyle = {
+    marginTop: '8px'
+}
+
+const proofImageStyle = {
+    width: '60px',
+    height: '60px',
+    objectFit: 'cover',
+    borderRadius: '4px',
+    cursor: 'pointer'
+}
+
+const noImageStyle = {
+    fontSize: theme.fonts.size.base,
+    color: theme.colors.darkGrey,
+    marginTop: '8px'
 }
 
 const priceStyle = {
@@ -405,6 +459,44 @@ const rejectButtonStyle = {
 const acceptButtonStyle = {
     ...buttonBaseStyle,
     backgroundColor: theme.colors.primary
+}
+
+const fullScreenOverlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2000
+}
+
+const fullScreenImageContainerStyle = {
+    position: 'relative',
+    maxWidth: '90%',
+    maxHeight: '90vh'
+}
+
+const fullScreenImageStyle = {
+    width: '100%',
+    height: 'auto',
+    maxHeight: '90vh',
+    objectFit: 'contain',
+    borderRadius: '8px'
+}
+
+const fullScreenCloseButtonStyle = {
+    position: 'absolute',
+    top: '-30px',
+    right: '-30px',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '4px',
+    color: theme.colors.whiteElement
 }
 </script>
 

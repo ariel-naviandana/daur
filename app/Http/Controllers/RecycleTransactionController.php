@@ -40,6 +40,7 @@ class RecycleTransactionController extends Controller
             'items.*.waste_type_id' => 'required|exists:waste_types,id',
             'items.*.quantity' => 'required|numeric',
             'items.*.sub_total' => 'required|numeric',
+            'items.*.image' => 'nullable|string',
         ]);
 
         $transaction = RecycleTransaction::create($request->except('items'));

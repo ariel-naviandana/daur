@@ -35,6 +35,23 @@
                                         </svg>
                                     </button>
                                 </div>
+                                <div :style="formGroupStyle">
+                                    <label :style="labelStyle">Bukti Foto Sampah (Wajib)</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        @change="handleFileChange($event, item.waste_type_id)"
+                                        :style="inputStyle"
+                                        :disabled="isUploading.value"
+                                        required
+                                    />
+                                    <div v-if="item.image || previewImages[item.waste_type_id]" :style="previewContainerStyle">
+                                        <img :src="item.image || previewImages[item.waste_type_id]" :style="previewImageStyle" />
+                                    </div>
+                                    <div v-if="isUploading.value && uploadingItemId?.value === item.waste_type_id" :style="uploadingStyle">
+                                        Mengunggah...
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <span :style="priceStyle">Rp{{ item.sub_total.toLocaleString('id-ID') }}</span>
@@ -115,7 +132,7 @@
                         ></textarea>
                     </div>
 
-                    <button type="submit" :style="submitButtonStyle">Konfirmasi</button>
+                    <button type="submit" :style="submitButtonStyle" :disabled="isUploading.value">Konfirmasi</button>
                 </form>
             </div>
         </div>
@@ -155,18 +172,19 @@ import PopupDelete from '@/components/PopupDelete.vue'
 import PopupConfirm from '@/components/PopupConfirm.vue'
 import { useWasteTypeApi } from '@/composables/useWasteTypeApi'
 import { useRecycleTransactionApi } from '@/composables/useRecycleTransactionApi'
+import { useImageApi } from '@/composables/useImageApi'
 import { Bank } from '@/interfaces/Bank'
 import { Category } from '@/interfaces/Category'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
 import { WasteType } from '@/interfaces/WasteType'
 import { useAuthApi } from '@/composables/useAuthApi'
-import {User} from "@/interfaces/User"
+import { User } from "@/interfaces/User"
 
 const { getCurrentUser } = useAuthApi()
-
 const { getWasteTypes } = useWasteTypeApi()
 const { saveRecycleTransaction } = useRecycleTransactionApi()
+const { isUploading, uploadToCloudinary } = useImageApi()
 
 const isConfirmBookingOpen = ref(false)
 const isPickup = ref(true)
@@ -180,6 +198,8 @@ const dropOffLocations = ref<Bank[]>([])
 const selectedDropOff = ref<Bank | null>(null)
 const wasteTypes = ref<WasteType[]>([])
 const user = ref<User>()
+const previewImages = ref<{ [key: number]: string }>({})
+const uploadingItemId = ref<number | null>(null)
 
 const fetchBanks = async () => {
     try {
@@ -217,6 +237,11 @@ const closeConfirmBookingPopup = () => {
 }
 
 const validateForm = () => {
+    const allItemsHaveImages = cartItems.value.every(item => item.image)
+    if (!allItemsHaveImages) {
+        alert('Harap unggah bukti foto untuk semua item di keranjang.')
+        return false
+    }
     if (isPickup.value) {
         return address.value.trim() !== '' && pickupTime.value.trim() !== ''
     } else {
@@ -238,8 +263,8 @@ const submitTransaction = async () => {
         const appointmentDate = new Date()
         const formattedAppointmentTime = `${appointmentDate.getFullYear()}-${(appointmentDate.getMonth() + 1 < 10 ? '0' : '')}${appointmentDate.getMonth() + 1}-${(appointmentDate.getDate() < 10 ? '0' : '')}${appointmentDate.getDate()} ${pickupTime.value}:00`
 
-        const payload: RecycleTransaction & { items: { waste_type_id: number; quantity: number; sub_total: number }[] } = {
-            user_id: user.value.id,
+        const payload: RecycleTransaction & { items: { waste_type_id: number; quantity: number; sub_total: number; image?: string }[] } = {
+            user_id: user.value!.id,
             bank_id: isPickup.value ? null : selectedDropOff.value?.id || null,
             pickup_address: isPickup.value ? address.value : null,
             appointment_time: formattedAppointmentTime,
@@ -253,7 +278,8 @@ const submitTransaction = async () => {
             items: cartItems.value.map(item => ({
                 waste_type_id: item.waste_type_id,
                 quantity: item.quantity,
-                sub_total: item.sub_total
+                sub_total: item.sub_total,
+                image: item.image
             }))
         }
 
@@ -285,8 +311,42 @@ const handleAddItem = (item: RecycleTransactionItem) => {
     if (existingItem) {
         existingItem.quantity += item.quantity
         existingItem.sub_total += item.sub_total
+        existingItem.image = existingItem.image || item.image
     } else {
         cartItems.value.push({ ...item, name: getWasteTypeName(item.waste_type_id) })
+    }
+}
+
+const handleFileChange = async (event: Event, wasteTypeId: number) => {
+    const file = (event.target as HTMLInputElement).files?.[0]
+    if (!file) return
+
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif']
+    const maxSize = 5 * 1024 * 1024
+    if (!validTypes.includes(file.type)) {
+        alert('Hanya file JPEG, PNG, atau GIF yang diperbolehkan.')
+        return
+    }
+    if (file.size > maxSize) {
+        alert('Ukuran file maksimum adalah 5MB.')
+        return
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => {
+        previewImages.value[wasteTypeId] = reader.result as string
+    }
+    reader.readAsDataURL(file)
+
+    uploadingItemId.value = wasteTypeId
+    const imageUrl = await uploadToCloudinary(file)
+    uploadingItemId.value = null
+
+    if (imageUrl) {
+        const item = cartItems.value.find(item => item.waste_type_id === wasteTypeId)
+        if (item) {
+            item.image = imageUrl
+        }
     }
 }
 
@@ -298,6 +358,7 @@ const itemToDelete = ref<RecycleTransactionItem | null>(null)
 const confirmDelete = () => {
     if (itemToDelete.value) {
         cartItems.value = cartItems.value.filter(item => item.waste_type_id !== itemToDelete.value.waste_type_id)
+        delete previewImages.value[itemToDelete.value.waste_type_id]
         closeConfirmPopup()
     }
 }
@@ -329,7 +390,7 @@ const updateWeight = (wasteTypeId: number, change: number) => {
 }
 
 const getWasteTypeName = (wasteTypeId: number) => {
-    const wasteType = wasteTypes.value.find(wt => wt.id === wasteTypeId)
+    const wasteType = wasteTypes.value.find(wt => wt.id ===wasteTypeId)
     return wasteType ? wasteType.name : ''
 }
 
@@ -577,5 +638,23 @@ const selectStyle = {
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right 8px center',
     backgroundSize: '16px'
+}
+
+const previewContainerStyle = {
+    marginTop: '12px',
+    textAlign: 'center'
+}
+
+const previewImageStyle = {
+    width: '100px',
+    height: '100px',
+    objectFit: 'cover',
+    borderRadius: '6px'
+}
+
+const uploadingStyle = {
+    marginTop: '8px',
+    fontSize: theme.fonts.size.base,
+    color: theme.colors.darkGrey
 }
 </script>

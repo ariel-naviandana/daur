@@ -7,6 +7,7 @@ export interface RecycleTransactionItem {
     waste_type_id: number
     quantity: number
     sub_total: number
+    image?: string
     created_at?: string
     updated_at?: string
     transaction?: RecycleTransaction
