@@ -21,7 +21,6 @@ class DatabaseSeeder extends Seeder
         DB::table('banks')->delete();
         DB::table('articles')->delete();
 
-        // Banks (Bank Sampah)
         DB::table('banks')->insert([
             [
                 'name' => 'Bank Sampah Induk Jakarta',
@@ -46,7 +45,6 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // Users
         DB::table('users')->insert([
             [
                 'name' => 'user',
@@ -73,8 +71,8 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Budi Hartono',
-                'email' => 'budi@gmail.com',
+                'name' => 'Rudy Tabootie',
+                'email' => 'rudy@gmail.com',
                 'password' => Hash::make('Pass123@'),
                 'phone' => '081112233445',
                 'address' => 'Jl. Gatot Subroto No. 5, Surabaya',
@@ -98,7 +96,6 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // Categories
         DB::table('categories')->insert([
             [
                 'name' => 'Plastik',
@@ -150,7 +147,6 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // Waste Types
         DB::table('waste_types')->insert([
             [
                 'category_id' => 1,
@@ -271,7 +267,6 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // Recycle Transactions
         DB::table('recycle_transactions')->insert([
             [
                 'user_id' => 1,
@@ -294,7 +289,7 @@ class DatabaseSeeder extends Seeder
                 'note' => 'Di depan rumah',
                 'method' => 'dropoff',
                 'status' => 'process',
-                'total_quantity' => 10.00,
+                'total_quantity' => 3.00,
                 'total_amount' => 30000.00,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -307,14 +302,13 @@ class DatabaseSeeder extends Seeder
                 'note' => 'Hubungi sebelum ambil',
                 'method' => 'pickup',
                 'status' => 'success',
-                'total_quantity' => 8.00,
+                'total_quantity' => 20.00,
                 'total_amount' => 40000.00,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
         ]);
 
-        // Recycle Transaction Items
         DB::table('recycle_transaction_items')->insert([
             [
                 'transaction_id' => 1,
@@ -342,35 +336,43 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // Wallets
         DB::table('wallets')->insert([
             [
                 'user_id' => 1,
-                'balance' => 100000.00,
+                'balance' => 90000.00,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'user_id' => 2,
-                'balance' => 200000.00,
+                'balance' => 100000.00,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'user_id' => 3,
-                'balance' => 50000.00,
+                'balance' => 20000.00,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
         ]);
 
-        // Wallet Transactions
         DB::table('wallet_transactions')->insert([
             [
                 'wallet_id' => 1,
                 'amount' => 50000.00,
-                'method' => 'bank',
-                'account_info' => 'Rekening: 1234567890',
+                'method' => null,
+                'account_info' => null,
+                'type' => 'deposit',
+                'status' => 'approved',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'wallet_id' => 1,
+                'amount' => 40000.00,
+                'method' => null,
+                'account_info' => null,
                 'type' => 'deposit',
                 'status' => 'approved',
                 'created_at' => now(),
@@ -379,9 +381,9 @@ class DatabaseSeeder extends Seeder
             [
                 'wallet_id' => 2,
                 'amount' => 100000.00,
-                'method' => 'e-wallet',
-                'account_info' => 'OVO: 081234567890',
-                'type' => 'deposit',
+                'method' => 'ovo',
+                'account_info' => '081234567890',
+                'type' => 'withdrawal',
                 'status' => 'waiting',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -389,16 +391,15 @@ class DatabaseSeeder extends Seeder
             [
                 'wallet_id' => 3,
                 'amount' => 30000.00,
-                'method' => 'bank',
-                'account_info' => 'Rekening: 9876543210',
+                'method' => 'bni',
+                'account_info' => '9876543210',
                 'type' => 'withdrawal',
-                'status' => 'rejected',
+                'status' => 'approved',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
         ]);
 
-        // Articles
         DB::table('articles')->insert([
             [
                 'title' => 'Manfaat Daur Ulang',
@@ -435,7 +436,6 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // Chats
         DB::table('chats')->insert([
             [
                 'sender_id' => 1,

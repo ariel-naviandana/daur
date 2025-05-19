@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('wallet_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 12, 2);
-            $table->enum('method', ['bank', 'e-wallet'])->nullable();
+            $table->enum('method', ['bca', 'bni', 'bri', 'mandiri', 'bsi', 'gopay', 'dana', 'ovo'])->nullable();
             $table->string('account_info')->nullable();
             $table->enum('type', ['deposit', 'withdrawal'])->default('deposit');
             $table->enum('status', ['waiting', 'approved', 'rejected'])->default('waiting');

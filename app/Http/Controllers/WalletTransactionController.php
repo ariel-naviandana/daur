@@ -16,7 +16,7 @@ class WalletTransactionController extends Controller
             'wallet_id' => 'required|exists:wallets,id',
             'amount' => 'required|numeric',
             'type' => 'required|in:deposit,withdrawal',
-            'method' => 'nullable|in:bank,e-wallet',
+            'method' => 'nullable|in:bca,bni,bri,mandiri,bsi,gopay,dana,ovo',
             'account_info' => 'nullable|string',
             'status' => 'required|in:waiting,approved,rejected',
         ]);
