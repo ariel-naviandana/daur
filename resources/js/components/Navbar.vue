@@ -20,6 +20,9 @@
                     <a :href="(isMasterAdmin || isBankAdmin) ? '/admin' : '/'" :style="linkStyle((isMasterAdmin || isBankAdmin) ? '/admin' : '/')">Home</a>
                 </li>
                 <li v-if="isMasterAdmin">
+                    <a href="/admin/users" :style="linkStyle('/admin/users')">User</a>
+                </li>
+                <li v-if="isMasterAdmin">
                     <a href="/admin/sampah" :style="linkStyle('/admin/sampah')">Sampah</a>
                 </li>
                 <li v-if="isMasterAdmin">
@@ -28,17 +31,14 @@
                 <li>
                     <a :href="(isMasterAdmin || isBankAdmin) ? '/admin/recycle' : '/recycle'" :style="linkStyle((isMasterAdmin || isBankAdmin) ? '/admin/recycle' : '/recycle')">Recycle</a>
                 </li>
+                <li v-if="isMasterAdmin">
+                    <a href="/admin/saldo" :style="linkStyle('/admin/saldo')">Saldo</a>
+                </li>
                 <li v-if="!isBankAdmin">
                     <a :href="isMasterAdmin ? '/admin/artikel' : '/artikel'" :style="linkStyle(isMasterAdmin ? '/admin/artikel' : '/artikel')">Artikel</a>
                 </li>
                 <li>
                     <a href="/chat" :style="linkStyle('/chat')">Chat</a>
-                </li>
-                <li v-if="isMasterAdmin">
-                    <a href="/admin/users" :style="linkStyle('/admin/users')">User</a>
-                </li>
-                <li v-if="isMasterAdmin">
-                    <a href="/admin/saldo" :style="linkStyle('/admin/saldo')">Saldo</a>
                 </li>
             </ul>
 
@@ -110,6 +110,9 @@
                     <a :href="(isMasterAdmin || isBankAdmin) ? '/admin' : '/'" @click="toggleSidebar" :style="linkStyle((isMasterAdmin || isBankAdmin) ? '/admin' : '/')">Home</a>
                 </li>
                 <li v-if="isMasterAdmin">
+                    <a href="/admin/users" @click="toggleSidebar" :style="linkStyle('/admin/users')">User</a>
+                </li>
+                <li v-if="isMasterAdmin">
                     <a href="/admin/sampah" @click="toggleSidebar" :style="linkStyle('/admin/sampah')">Sampah</a>
                 </li>
                 <li v-if="isMasterAdmin">
@@ -118,17 +121,14 @@
                 <li>
                     <a :href="(isMasterAdmin || isBankAdmin) ? '/admin/recycle' : '/recycle'" @click="toggleSidebar" :style="linkStyle((isMasterAdmin || isBankAdmin) ? '/admin/recycle' : '/recycle')">Recycle</a>
                 </li>
+                <li v-if="isMasterAdmin">
+                    <a href="/admin/saldo" @click="toggleSidebar" :style="linkStyle('/admin/saldo')">Saldo</a>
+                </li>
                 <li v-if="!isBankAdmin">
                     <a :href="isMasterAdmin ? '/admin/artikel' : '/artikel'" @click="toggleSidebar" :style="linkStyle(isMasterAdmin ? '/admin/artikel' : '/artikel')">Artikel</a>
                 </li>
                 <li>
                     <a href="/chat" @click="toggleSidebar" :style="linkStyle('/chat')">Chat</a>
-                </li>
-                <li v-if="isMasterAdmin">
-                    <a href="/admin/users" @click="toggleSidebar" :style="linkStyle('/admin/users')">User</a>
-                </li>
-                <li v-if="isMasterAdmin">
-                    <a href="/admin/saldo" @click="toggleSidebar" :style="linkStyle('/admin/saldo')">Saldo</a>
                 </li>
                 <li>
                     <a href="/profile" @click="toggleSidebar" :style="linkStyle('/profile')">Profile</a>
