@@ -48,7 +48,7 @@
                                     <div v-if="item.image || previewImages[item.waste_type_id]" :style="previewContainerStyle">
                                         <img :src="item.image || previewImages[item.waste_type_id]" :style="previewImageStyle" />
                                     </div>
-                                    <div v-if="isUploading.value && uploadingItemId?.value === item.waste_type_id" :style="uploadingStyle">
+                                    <div v-if="isUploading.value && uploadingItemId.value === item.waste_type_id" :style="uploadingStyle">
                                         Mengunggah...
                                     </div>
                                 </div>
@@ -113,10 +113,12 @@
                         </div>
 
                         <div :style="{ ...formGroupStyle, flex: 1 }">
-                            <label :style="labelStyle">{{ isPickup ? 'Waktu Penjemputan' : 'Waktu Drop-off' }}</label>
+                            <label :style="labelStyle">{{ isPickup ? 'Waktu Penjemputan (09:00 AM - 05:00 PM)' : 'Waktu Drop-off (09:00 AM - 05:00 PM)' }}</label>
                             <input
                                 v-model="pickupTime"
-                                type="time"
+                                type="datetime-local"
+                                :min="minDateTime"
+                                :max="maxDateTime"
                                 :style="inputStyle"
                                 required
                             />
@@ -201,6 +203,28 @@ const user = ref<User>()
 const previewImages = ref<{ [key: number]: string }>({})
 const uploadingItemId = ref<number | null>(null)
 
+const now = new Date()
+const minDateTime = computed(() => {
+    const minDate = new Date(now)
+    minDate.setHours(minDate.getHours() + 2)
+    return formatDateTimeLocal(minDate)
+})
+const maxDateTime = computed(() => {
+    const maxDate = new Date(now)
+    maxDate.setFullYear(maxDate.getFullYear() + 1)
+    maxDate.setHours(17, 0, 0, 0)
+    return formatDateTimeLocal(maxDate)
+})
+
+const formatDateTimeLocal = (date: Date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
 const fetchBanks = async () => {
     try {
         const response = await fetch('/banks')
@@ -243,10 +267,35 @@ const validateForm = () => {
         return false
     }
     if (isPickup.value) {
-        return address.value.trim() !== '' && pickupTime.value.trim() !== ''
+        if (address.value.trim() === '') {
+            alert('Harap masukkan alamat penjemputan.')
+            return false
+        }
     } else {
-        return selectedDropOff.value?.id != null && pickupTime.value.trim() !== ''
+        if (!selectedDropOff.value?.id) {
+            alert('Harap pilih lokasi drop-off.')
+            return false
+        }
     }
+    if (!pickupTime.value) {
+        alert('Harap pilih waktu penjemputan atau drop-off.')
+        return false
+    }
+    const selectedDateTime = new Date(pickupTime.value)
+    const today = new Date()
+    const isToday = selectedDateTime.toDateString() === today.toDateString()
+    const minTimeToday = new Date(today)
+    minTimeToday.setHours(today.getHours() + 2)
+    const hours = selectedDateTime.getHours()
+    if (hours < 9 || hours >= 17) {
+        alert('Waktu harus antara pukul 09:00 dan 17:00.')
+        return false
+    }
+    if (isToday && selectedDateTime < minTimeToday) {
+        alert('Untuk hari ini, waktu harus setidaknya 2 jam dari sekarang.')
+        return false
+    }
+    return true
 }
 
 const handleConfirmBooking = () => {
@@ -260,14 +309,11 @@ const redirectToRiwayat = () => {
 
 const submitTransaction = async () => {
     try {
-        const appointmentDate = new Date()
-        const formattedAppointmentTime = `${appointmentDate.getFullYear()}-${(appointmentDate.getMonth() + 1 < 10 ? '0' : '')}${appointmentDate.getMonth() + 1}-${(appointmentDate.getDate() < 10 ? '0' : '')}${appointmentDate.getDate()} ${pickupTime.value}:00`
-
         const payload: RecycleTransaction & { items: { waste_type_id: number; quantity: number; sub_total: number; image?: string }[] } = {
             user_id: user.value!.id,
             bank_id: isPickup.value ? null : selectedDropOff.value?.id || null,
             pickup_address: isPickup.value ? address.value : null,
-            appointment_time: formattedAppointmentTime,
+            appointment_time: new Date(pickupTime.value).toISOString(),
             method: isPickup.value ? 'pickup' : 'dropoff',
             status: 'waiting',
             note: note.value,
@@ -390,7 +436,7 @@ const updateWeight = (wasteTypeId: number, change: number) => {
 }
 
 const getWasteTypeName = (wasteTypeId: number) => {
-    const wasteType = wasteTypes.value.find(wt => wt.id ===wasteTypeId)
+    const wasteType = wasteTypes.value.find(wt => wt.id === wasteTypeId)
     return wasteType ? wasteType.name : ''
 }
 
