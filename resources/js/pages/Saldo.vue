@@ -59,7 +59,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { theme } from '@/helpers/theme'
-import SaldoCard from "@/components/SaldoCard.vue";
+import SaldoCard from "@/components/SaldoCard.vue"
 import WithdrawalCard from "@/components/WithdrawalCard.vue"
 
 const showModal = ref(false)

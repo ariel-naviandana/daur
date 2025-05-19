@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts" setup>
-import {defineProps, computed, ref, onMounted} from 'vue'
+import {computed, ref, onMounted} from 'vue'
 import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import {User} from "@/interfaces/User"

@@ -119,8 +119,6 @@ const emit = defineEmits(['close', 'accept', 'reject', 'done'])
 
 const isAdmin = computed(() => props.isAdmin ?? false)
 
-console.log(props.item)
-
 const closeModal = () => {
     emit('close')
 }

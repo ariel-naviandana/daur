@@ -44,7 +44,6 @@
 import { ref } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
-import TransactionCard from "@/components/TransactionCard.vue";
 
 const activeTab = ref<'masuk' | 'keluar' | 'penarikan'>('masuk')
 

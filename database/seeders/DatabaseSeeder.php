@@ -379,7 +379,7 @@ class DatabaseSeeder extends Seeder
             [
                 'wallet_id' => 2,
                 'amount' => 100000.00,
-                'method' => 'ewallet',
+                'method' => 'e-wallet',
                 'account_info' => 'OVO: 081234567890',
                 'type' => 'deposit',
                 'status' => 'waiting',

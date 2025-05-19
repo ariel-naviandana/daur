@@ -13,7 +13,7 @@ class RecycleTransactionController extends Controller
     {
         $user = Auth::user();
 
-        $query = RecycleTransaction::with(['user', 'items.wasteType', 'bank']);
+        $query = RecycleTransaction::with(['user.wallet', 'items.wasteType', 'bank']);
 
         if ($user->role === 'master_admin')
             return $query->get();

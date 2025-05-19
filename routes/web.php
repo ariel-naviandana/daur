@@ -64,11 +64,11 @@ Route::get('/wallets/{id}', [WalletController::class, 'show']);
 Route::put('/wallets/{id}', [WalletController::class, 'update']);
 Route::delete('/wallets/{id}', [WalletController::class, 'destroy']);
 
-Route::get('/wallet_transactions', [WalletTransactionController::class, 'index']);
-Route::post('/wallet_transactions', [WalletTransactionController::class, 'store']);
-Route::get('/wallet_transactions/{id}', [WalletTransactionController::class, 'show']);
-Route::put('/wallet_transactions/{id}', [WalletTransactionController::class, 'update']);
-Route::delete('/wallet_transactions/{id}', [WalletTransactionController::class, 'destroy']);
+Route::get('/wallet-transactions', [WalletTransactionController::class, 'index']);
+Route::post('/wallet-transactions', [WalletTransactionController::class, 'store']);
+Route::get('/wallet-transactions/{id}', [WalletTransactionController::class, 'show']);
+Route::put('/wallet-transactions/{id}', [WalletTransactionController::class, 'update']);
+Route::delete('/wallet-transactions/{id}', [WalletTransactionController::class, 'destroy']);
 
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::post('/categories', [CategoryController::class, 'store']);

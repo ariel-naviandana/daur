@@ -116,7 +116,11 @@ import RecycleCard from '@/components/RecycleCard.vue'
 import PopupDetailRecycle from '@/components/PopupDetailRecycle.vue'
 import { useRecycleTransactionApi } from '@/composables/useRecycleTransactionApi'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
-
+import {useWalletTransactionApi} from "@/composables/useWalletTransactionApi"
+import {WalletTransaction} from "@/interfaces/WalletTransaction"
+import {useWalletApi} from "@/composables/useWalletApi"
+import {Wallet} from "@/interfaces/Wallet"
+const {saveWalletTransaction} = useWalletTransactionApi()
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
 const searchQuery = ref('')
@@ -124,6 +128,7 @@ const showPopup = ref(false)
 const selectedItem = ref<RecycleTransaction | null>(null)
 const history = ref<RecycleTransaction[]>([])
 const { getRecycleTransactions, saveRecycleTransaction } = useRecycleTransactionApi()
+const { saveWallet } = useWalletApi()
 
 const fetchHistory = async () => {
     try {
@@ -180,6 +185,26 @@ const updateStatus = async (newStatus: string) => {
                 status: newStatus
             }
             const success = await saveRecycleTransaction(updatedTransaction)
+            if (newStatus === 'success' && success) {
+                const walletTransaction: WalletTransaction = {
+                    wallet_id: updatedTransaction.user?.wallet?.id,
+                    amount: updatedTransaction.total_amount,
+                    type: 'deposit',
+                    status: 'approved'
+                }
+                const walletSuccess = await saveWalletTransaction(walletTransaction)
+
+                if (walletSuccess) {
+                    const wallet: Wallet = {
+                        id: updatedTransaction.user?.wallet?.id,
+                        balance: Number(updatedTransaction.user?.wallet?.balance) + Number(updatedTransaction.total_amount)
+                    }
+                    await saveWallet(wallet)
+                } else {
+                    alert('Gagal memperbarui saldo dompet')
+                }
+            }
+
             if (success) {
                 history.value = history.value.map(item =>
                     item.id === updatedTransaction.id ? updatedTransaction : item
@@ -188,6 +213,8 @@ const updateStatus = async (newStatus: string) => {
             } else {
                 alert('Gagal memperbarui status transaksi')
             }
+
+            await fetchHistory()
         } catch (error) {
             console.error('Error updating transaction status:', error)
             alert('Terjadi kesalahan saat memperbarui status')

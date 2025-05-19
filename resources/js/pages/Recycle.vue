@@ -239,7 +239,6 @@ const submitTransaction = async () => {
         const formattedAppointmentTime = `${appointmentDate.getFullYear()}-${(appointmentDate.getMonth() + 1 < 10 ? '0' : '')}${appointmentDate.getMonth() + 1}-${(appointmentDate.getDate() < 10 ? '0' : '')}${appointmentDate.getDate()} ${pickupTime.value}:00`
 
         const payload: RecycleTransaction & { items: { waste_type_id: number; quantity: number; sub_total: number }[] } = {
-            id: 0,
             user_id: user.value.id,
             bank_id: isPickup.value ? null : selectedDropOff.value?.id || null,
             pickup_address: isPickup.value ? address.value : null,

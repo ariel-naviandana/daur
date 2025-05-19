@@ -13,7 +13,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue'
 import { Bank } from '@/interfaces/Bank'
 import { theme } from '@/helpers/theme'
 

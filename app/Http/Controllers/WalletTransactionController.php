@@ -15,9 +15,10 @@ class WalletTransactionController extends Controller
         $request->validate([
             'wallet_id' => 'required|exists:wallets,id',
             'amount' => 'required|numeric',
-            'method' => 'required|in:bank,e-wallet',
-            'account_info' => 'required|string',
-            'status' => 'required|in:waiting,process,cancel,success',
+            'type' => 'required|in:deposit,withdrawal',
+            'method' => 'nullable|in:bank,e-wallet',
+            'account_info' => 'nullable|string',
+            'status' => 'required|in:waiting,approved,rejected',
         ]);
 
         return WalletTransaction::create($request->all());

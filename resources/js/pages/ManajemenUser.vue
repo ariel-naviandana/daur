@@ -473,9 +473,9 @@ const popupContainer = {
 const popupOverlay = {
     position: 'absolute',
     inset: 0,
-    backgroundColor: 'rgba(17, 24, 39, 0.5)', // setara dengan bg-gray-900/50
+    backgroundColor: 'rgba(17, 24, 39, 0.5)',
     backdropFilter: 'blur(4px)',
-};
+}
 
 const popupHeader = {
     display: 'flex',
@@ -497,7 +497,7 @@ const profileImage = {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
-};
+}
 
 const btnClosePopup = {
     position: 'absolute',
@@ -558,18 +558,18 @@ const noResultsDescStyle = {
 const labelAktivitas = {
     fontWeight: '600',
     marginBottom: '0.25rem',
-};
+}
 
 const valueAktivitas = {
     color: theme.colors.primary,
     fontWeight: '700',
-};
+}
 
 const iconAktivitas = {
     color: theme.colors.primary,
     display: 'flex',
     justifyContent: 'center',
-};
+}
 </script>
 
 <style scoped>

@@ -80,14 +80,17 @@
   import { useRecycleTransactionApi } from '@/composables/useRecycleTransactionApi'
   import { useUserApi } from '@/composables/useUserApi'
   import { useWalletTransactionApi } from '@/composables/useWalletTransactionApi'
+  import {useWalletApi} from "@/composables/useWalletApi"
   import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
   import {WalletTransaction} from "@/interfaces/WalletTransaction"
   import { User } from '@/interfaces/User'
+  import {Wallet} from "@/interfaces/Wallet"
 
   const users = ref<User[]>([])
   const walletTransactions = ref<WalletTransaction[]>([])
   const { getUsers } = useUserApi()
-  const { getWalletTransactions } = useWalletTransactionApi()
+  const { getWalletTransactions, saveWalletTransaction } = useWalletTransactionApi()
+  const {saveWallet} = useWalletApi()
   const totalUser = ref(0)
   const totalRecycle = ref(0)
   const totalTransactionRecycleRp = ref<Number>(0)
@@ -111,12 +114,11 @@
   const fetchWalletTransactions = async () => {
       try {
           walletTransactions.value = await getWalletTransactions()
+          totalTransactionWithdrawRp.value = 0
           for (const transaction of walletTransactions.value) {
               if (transaction.type === 'withdrawal') {
-                  if (totalTransactionWithdrawRp.value == 0)
-                      totalTransactionWithdrawRp.value = transaction.amount
-                  else
-                      totalTransactionWithdrawRp.value += transaction.amount
+                  if (transaction.status === 'approved')
+                      totalTransactionWithdrawRp.value = Number(totalTransactionWithdrawRp.value || 0) + Number(transaction.amount || 0)
               }
           }
       } catch (error) {
@@ -129,13 +131,10 @@
       try {
           history.value = await getRecycleTransactions()
           totalRecycle.value = history.value.length
+          totalTransactionRecycleRp.value = 0
           for (const transaction of history.value) {
-              if (transaction.status === 'success') {
-                  if (totalTransactionRecycleRp.value == 0)
-                      totalTransactionRecycleRp.value = transaction.total_amount
-                  else
-                      totalTransactionRecycleRp.value += transaction.total_amount
-              }
+              if (transaction.status === 'success')
+                  totalTransactionRecycleRp.value = Number(totalTransactionRecycleRp.value || 0) + Number(transaction.total_amount || 0)
           }
       } catch (error) {
           console.error('Error fetching history:', error)
@@ -170,6 +169,26 @@
                   status: newStatus
               }
               const success = await saveRecycleTransaction(updatedTransaction)
+              if (newStatus === 'success' && success) {
+                  const walletTransaction: WalletTransaction = {
+                      wallet_id: updatedTransaction.user?.wallet?.id,
+                      amount: updatedTransaction.total_amount,
+                      type: 'deposit',
+                      status: 'approved'
+                  }
+                  const walletSuccess = await saveWalletTransaction(walletTransaction)
+
+                  if (walletSuccess) {
+                      const wallet: Wallet = {
+                          id: updatedTransaction.user?.wallet?.id,
+                          balance: Number(updatedTransaction.user?.wallet?.balance) + Number(updatedTransaction.total_amount)
+                      }
+                      await saveWallet(wallet)
+                  } else {
+                      alert('Gagal memperbarui saldo dompet')
+                  }
+              }
+
               if (success) {
                   history.value = history.value.map(item =>
                       item.id === updatedTransaction.id ? updatedTransaction : item
@@ -178,6 +197,9 @@
               } else {
                   alert('Gagal memperbarui status transaksi')
               }
+
+              await fetchHistory()
+              await fetchWalletTransactions()
           } catch (error) {
               console.error('Error updating transaction status:', error)
               alert('Terjadi kesalahan saat memperbarui status')
