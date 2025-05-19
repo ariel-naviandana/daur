@@ -153,7 +153,7 @@ const filteredAndSearchedHistory = computed(() => {
             item.status.toLowerCase() === selectedFilter.value
         )
     if (selectedSort.value === 'latest')
-        filtered = filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        filtered = filtered.sort((a, b) => new Date(b.appointment_time).getTime() - new Date(a.appointment_time).getTime())
     else if (selectedSort.value === 'highest')
         filtered = filtered.sort((a, b) => b.total_amount - a.total_amount)
     else if (selectedSort.value === 'lowest')
@@ -163,7 +163,7 @@ const filteredAndSearchedHistory = computed(() => {
     else if (selectedSort.value === 'alphabet-desc')
         filtered = filtered.sort((a, b) => b.user?.username?.localeCompare(a.user?.username || '') || 0)
     else
-        filtered = filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+        filtered = filtered.sort((a, b) => new Date(a.appointment_time).getTime() - new Date(b.appointment_time).getTime())
     return filtered
 })
 

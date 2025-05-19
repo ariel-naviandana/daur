@@ -113,15 +113,19 @@
                         </div>
 
                         <div :style="{ ...formGroupStyle, flex: 1 }">
-                            <label :style="labelStyle">{{ isPickup ? 'Waktu Penjemputan (09:00 AM - 05:00 PM)' : 'Waktu Drop-off (09:00 AM - 05:00 PM)' }}</label>
+                            <label :style="labelStyle">{{ isPickup ? 'Waktu Penjemputan (09:00–17:00)' : 'Waktu Drop-off (09:00–17:00)' }}</label>
                             <input
                                 v-model="pickupTime"
                                 type="datetime-local"
                                 :min="minDateTime"
                                 :max="maxDateTime"
-                                :style="inputStyle"
-                                required
+                                step="300"
+                            :style="inputStyle"
+                            required
                             />
+                            <div :style="{ fontSize: theme.fonts.size.small, color: theme.colors.darkGrey, marginTop: '4px' }">
+                                Waktu harus antara 09:00–17:00. Jika hari ini, minimal 2 jam dari sekarang.
+                            </div>
                         </div>
                     </div>
 
@@ -206,13 +210,13 @@ const uploadingItemId = ref<number | null>(null)
 const now = new Date()
 const minDateTime = computed(() => {
     const minDate = new Date(now)
-    minDate.setHours(minDate.getHours() + 2)
+    minDate.setHours(minDate.getHours() + 2, 0, 0, 0)
     return formatDateTimeLocal(minDate)
 })
 const maxDateTime = computed(() => {
     const maxDate = new Date(now)
     maxDate.setFullYear(maxDate.getFullYear() + 1)
-    maxDate.setHours(17, 0, 0, 0)
+    maxDate.setHours(16, 55, 0, 0)
     return formatDateTimeLocal(maxDate)
 })
 
@@ -223,6 +227,16 @@ const formatDateTimeLocal = (date: Date) => {
     const hours = String(date.getHours()).padStart(2, '0')
     const minutes = String(date.getMinutes()).padStart(2, '0')
     return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
+const formatToWIB = (date: Date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    const seconds = '00'
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
 const fetchBanks = async () => {
@@ -285,9 +299,10 @@ const validateForm = () => {
     const today = new Date()
     const isToday = selectedDateTime.toDateString() === today.toDateString()
     const minTimeToday = new Date(today)
-    minTimeToday.setHours(today.getHours() + 2)
+    minTimeToday.setHours(today.getHours() + 2, 0, 0, 0)
     const hours = selectedDateTime.getHours()
-    if (hours < 9 || hours >= 17) {
+    const minutes = selectedDateTime.getMinutes()
+    if (hours < 9 || (hours >= 17) || (hours === 16 && minutes > 55)) {
         alert('Waktu harus antara pukul 09:00 dan 17:00.')
         return false
     }
@@ -313,14 +328,14 @@ const submitTransaction = async () => {
             user_id: user.value!.id,
             bank_id: isPickup.value ? null : selectedDropOff.value?.id || null,
             pickup_address: isPickup.value ? address.value : null,
-            appointment_time: new Date(pickupTime.value).toISOString(),
+            appointment_time: formatToWIB(new Date(pickupTime.value)),
             method: isPickup.value ? 'pickup' : 'dropoff',
             status: 'waiting',
             note: note.value,
             total_quantity: null,
             total_amount: totalPrice.value,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            created_at: formatToWIB(new Date()),
+            updated_at: formatToWIB(new Date()),
             items: cartItems.value.map(item => ({
                 waste_type_id: item.waste_type_id,
                 quantity: item.quantity,

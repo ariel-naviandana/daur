@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RecycleTransaction;
 use App\Models\RecycleTransactionItem;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,7 +32,31 @@ class RecycleTransactionController extends Controller
             'bank_id' => 'nullable|exists:banks,id',
             'method' => 'required|in:pickup,dropoff',
             'pickup_address' => 'nullable|string',
-            'appointment_time' => 'nullable|date|date_format:Y-m-d H:i:s',
+            'appointment_time' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $datetime = Carbon::parse($value);
+                    $now = Carbon::now();
+                    $today = $now->startOfDay();
+
+                    if ($datetime->lt($today)) {
+                        $fail('The appointment time cannot be in the past.');
+                    }
+
+                    $hour = $datetime->hour;
+                    if ($hour < 9 || $hour >= 17) {
+                        $fail('The appointment time must be between 09:00 and 17:00.');
+                    }
+
+                    if ($datetime->isSameDay($now)) {
+                        $minTime = $now->copy()->addHours(2);
+                        if ($datetime->lt($minTime)) {
+                            $fail('For today, the appointment time must be at least 2 hours from now.');
+                        }
+                    }
+                },
+            ],
             'note' => 'nullable|string',
             'status' => 'required|in:waiting,process,cancel,success',
             'total_quantity' => 'nullable|numeric',

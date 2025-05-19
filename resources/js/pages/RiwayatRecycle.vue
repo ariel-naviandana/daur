@@ -122,13 +122,13 @@ const filteredHistory = computed(() => {
         filtered = filtered.filter(item => item.status.toLowerCase() === selectedFilter.value)
 
     if (selectedSort.value === 'latest')
-        filtered = filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        filtered = filtered.sort((a, b) => new Date(b.appointment_time).getTime() - new Date(a.appointment_time).getTime())
     else if (selectedSort.value === 'highest')
         filtered = filtered.sort((a, b) => b.total_amount - a.total_amount)
     else if (selectedSort.value === 'lowest')
         filtered = filtered.sort((a, b) => a.total_amount - b.total_amount)
     else
-        filtered = filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+        filtered = filtered.sort((a, b) => new Date(a.appointment_time).getTime() - new Date(b.appointment_time).getTime())
     return filtered
 })
 

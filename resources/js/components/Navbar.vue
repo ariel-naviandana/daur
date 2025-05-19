@@ -80,6 +80,14 @@
                                         @click="showDropdown = false"
                                     >Profile</a>
                                 </li>
+                                <li v-if="!isMasterAdmin && !isBankAdmin">
+                                    <a
+                                        href="/riwayat"
+                                        class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                        @click="toggleSidebar"
+                                        :style="linkStyle('/riwayat')">
+                                        Riwayat</a>
+                                </li>
                                 <li>
                                     <a
                                         href="#"
@@ -132,6 +140,9 @@
                 </li>
                 <li>
                     <a href="/profile" @click="toggleSidebar" :style="linkStyle('/profile')">Profile</a>
+                </li>
+                <li v-if="!isMasterAdmin && !isBankAdmin">
+                    <a href="/riwayat" @click="toggleSidebar" :style="linkStyle('/riwayat')">Riwayat</a>
                 </li>
                 <li v-if="user">
                     <a href="#" @click="logoutAndCloseSidebar" :style="linkStyle('/logout')">Logout</a>
