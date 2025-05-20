@@ -57,6 +57,7 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::put('/users', [UserController::class, 'updateProfile']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
+Route::get('/admins', [UserController::class, 'getAdmins']);
 
 Route::get('/wallets', [WalletController::class, 'index']);
 Route::post('/wallets', [WalletController::class, 'store']);

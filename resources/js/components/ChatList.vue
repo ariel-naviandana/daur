@@ -4,45 +4,49 @@
             <img src="/public/images/ic_search.svg" alt="Search" :style="searchIconStyle" />
             <input
                 v-model="searchQuery"
-                placeholder="Cari nama bank sampah"
+                placeholder="Cari nama kontak"
                 :style="searchInputStyle"
             />
         </div>
-
         <div :style="bankListStyle">
             <div
-                v-for="bank in filteredBanks"
-                :key="bank.id"
-                @click="selectBank(bank)"
-                :style="[bankItemStyle, selectedBank?.id === bank.id ? activeBankStyle : {}]"
+                v-for="contact in filteredContacts"
+                :key="contact.id"
+                @click="selectContact(contact)"
+                :style="[bankItemStyle, selectedContact?.id === contact.id ? activeBankStyle : {}]"
             >
-                <img :src="bank.avatar" alt="avatar" :style="avatarStyle" />
-                <span>{{ bank.name }}</span>
+                <img v-if="contact.profile_picture" :src="contact.profile_picture" alt="avatar" :style="avatarStyle" />
+                <img v-else src="/public/images/profile-icon.svg" alt="avatar" :style="avatarStyle" />
+                <span>{{ contact.name }}</span>
             </div>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
-import {theme} from "@/helpers/theme"
+import { theme } from '@/helpers/theme'
+import { User } from '@/interfaces/User'
 
-const props = defineProps({
-    banks: Array,
-    selectedBank: Object,
-})
-const emits = defineEmits(['select-bank'])
+const props = defineProps<{
+    contacts: User[]
+    selectedContact: User | null
+}>()
+
+const emits = defineEmits<{
+    (e: 'select-contact', contact: User): void
+}>()
 
 const searchQuery = ref('')
 
-const filteredBanks = computed(() => {
-    return props.banks.filter(bank =>
-        bank.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+const filteredContacts = computed(() => {
+    return props.contacts.filter(contact =>
+        contact.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
 })
 
-function selectBank(bank) {
-    emits('select-bank', bank)
+function selectContact(contact: User) {
+    emits('select-contact', contact)
 }
 
 const chatListStyle = {
@@ -103,7 +107,3 @@ const avatarStyle = {
     marginRight: '1rem',
 }
 </script>
-
-<style scoped>
-
-</style>

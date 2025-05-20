@@ -1,35 +1,44 @@
 <template>
-    <div v-if="selectedBank" :style="chatWindow">
+    <div v-if="selectedContact" :style="chatWindow">
         <div :style="chatHeader">
-            <img :src="selectedBank.avatar" alt="avatar" :style="avatar" />
-            <h2>{{ selectedBank.name }}</h2>
+            <img v-if="selectedContact.profile_picture" :src="selectedContact.profile_picture" alt="avatar" :style="avatar" />
+            <img v-else src="/public/images/profile-icon.svg" alt="avatar" :style="avatar" />
+            <h2>{{ selectedContact.name }}</h2>
         </div>
         <div :style="chatMessages">
             <div
-                v-for="(message, index) in messages"
-                :key="index"
-                :style="[messageWrapper, style.message.from === 'me' ? messageWrapperMe : {}]"
+                v-for="message in messages"
+                :key="message.id"
+                :style="[messageWrapper, message.sender_id === currentUser.id ? messageWrapperMe : {}]"
             >
                 <div
                     :style="[
                         style.message,
-                        message.from === 'me' ? style.messageMe : style.messageThem
+                        message.sender_id === currentUser.id ? style.messageMe : style.messageThem
                     ]"
                 >
-                    <p>{{ message.text }}</p>
+                    <p v-if="message.message">{{ message.message }}</p>
+                    <img v-if="message.image_url" :src="message.image_url" :style="messageImage" />
                 </div>
                 <small
                     :style="[
                         style.messageTime,
-                        message.from === 'me' ? { textAlign: 'right', alignSelf: 'flex-end', marginRight: '14px' } : { textAlign: 'left', alignSelf: 'flex-start', marginLeft: '14px' }
+                        message.sender_id === currentUser.id ? { textAlign: 'right', alignSelf: 'flex-end', marginRight: '14px' } : { textAlign: 'left', alignSelf: 'flex-start', marginLeft: '14px' }
                     ]"
                 >
-                    {{ message.time }}
+                    {{ formatTime(message.sent_at) }}
                 </small>
             </div>
         </div>
         <div :style="chatInput">
-            <button :style="iconButton">
+            <input
+                type="file"
+                accept="image/*"
+                ref="fileInput"
+                style="display: none"
+                @change="uploadImage"
+            />
+            <button :style="iconButton" @click="$refs.fileInput.click()" :disabled="isUploading">
                 <img src="/public/images/camera-icon.svg" alt="Camera" :style="iconImg" />
             </button>
             <input
@@ -37,44 +46,106 @@
                 placeholder="Tulis Pesan"
                 @keyup.enter="sendMessage"
                 :style="input"
+                :disabled="isUploading"
             />
-            <button :style="iconButton" @click="sendMessage">
+            <button :style="iconButton" @click="sendMessage" :disabled="isUploading">
                 <img src="/public/images/send-icon.svg" alt="Send" :style="iconImg" />
             </button>
         </div>
     </div>
     <div v-else :style="emptyState">
-        <p>Pilih bank sampah untuk mulai chatting</p>
+        <p>Pilih kontak untuk mulai chatting</p>
     </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import {theme} from "@/helpers/theme"
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue'
+import { theme } from '@/helpers/theme'
+import { useChatApi } from '@/composables/useChatApi'
+import { useImageApi } from '@/composables/useImageApi'
+import { User } from '@/interfaces/User'
+import { Chat } from '@/interfaces/Chat'
 
-const props = defineProps({
-    selectedBank: Object,
+const props = defineProps<{
+    selectedContact: User | null
+    currentUser: User | null
+}>()
+
+const { getChats, saveChat } = useChatApi()
+const { uploadToCloudinary, isUploading } = useImageApi()
+
+const messages = ref<Chat[]>([])
+const newMessage = ref('')
+const fileInput = ref<HTMLInputElement | null>(null)
+
+async function fetchChats() {
+    if (props.selectedContact && props.currentUser) {
+        const chats = await getChats() as Chat[]
+        messages.value = chats.filter(chat =>
+            (chat.sender_id === props.currentUser?.id && chat.receiver_id === props.selectedContact.id) ||
+            (chat.sender_id === props.selectedContact.id && chat.receiver_id === props.currentUser?.id)
+        ).sort((a, b) => new Date(a.sent_at!).getTime() - new Date(b.sent_at!).getTime())
+    } else {
+        messages.value = []
+    }
+}
+
+watch(() => props.selectedContact, fetchChats)
+
+onMounted(() => {
+    fetchChats()
+    setInterval(fetchChats, 5000)
 })
 
-const messages = ref([
-    { from: 'me', text: 'Halo Kak, saya mau bertanya mengenai panduan penggunaan aplikasi DAUR', time: '12.28 PM' },
-    { from: 'them', text: 'Halo, Kak Radit. Terima kasih sudah menghubungi kami...', time: '12.32 PM' },
-    { from: 'me', text: 'Baik, Terima kasih!', time: '12.36 PM' },
-])
-
-const newMessage = ref('')
-
-function sendMessage() {
-    if (newMessage.value.trim() !== '') {
-        messages.value.push({
-            from: 'me',
-            text: newMessage.value,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        })
+async function sendMessage() {
+    if (newMessage.value.trim() === '' && !fileInput.value?.files?.length) return
+    const chat: Chat = {
+        sender_id: props.currentUser!.id,
+        receiver_id: props.selectedContact!.id,
+        message: newMessage.value || null,
+        image_url: null,
+    }
+    const success = await saveChat(chat)
+    if (success) {
+        await fetchChats()
         newMessage.value = ''
     }
 }
 
+async function uploadImage(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0]
+    if (!file) return
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif']
+    const maxSize = 5 * 1024 * 1024
+    if (!validTypes.includes(file.type)) {
+        alert('Hanya file JPEG, PNG, atau GIF yang diperbolehkan.')
+        return
+    }
+    if (file.size > maxSize) {
+        alert('Ukuran file maksimum adalah 5MB.')
+        return
+    }
+    const imageUrl = await uploadToCloudinary(file)
+    if (imageUrl) {
+        const chat: Chat = {
+            sender_id: props.currentUser!.id,
+            receiver_id: props.selectedContact!.id,
+            message: null,
+            image_url: imageUrl,
+        }
+        const success = await saveChat(chat)
+        if (success) {
+            await fetchChats()
+            fileInput.value!.value = ''
+        }
+    }
+}
+
+function formatTime(sentAt?: string) {
+    if (!sentAt) return ''
+    const date = new Date(sentAt)
+    return isNaN(date.getTime()) ? '' : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
 
 const chatWindow = {
     flex: 1,
@@ -84,6 +155,7 @@ const chatWindow = {
     borderBottom: '1px solid #ccc',
     borderRight: '1px solid #ccc',
 }
+
 const chatHeader = {
     display: 'flex',
     height: '60px',
@@ -91,12 +163,14 @@ const chatHeader = {
     padding: '20px',
     borderBottom: '1px solid #ccc',
 }
+
 const avatar = {
     width: '36px',
     height: '36px',
     borderRadius: '50%',
     marginRight: '1rem',
 }
+
 const chatMessages = {
     flex: 1,
     display: 'flex',
@@ -105,15 +179,18 @@ const chatMessages = {
     overflowY: 'auto',
     backgroundColor: '#fafafa',
 }
+
 const messageWrapper = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
     marginBottom: '1rem',
 }
+
 const messageWrapperMe = {
     alignItems: 'flex-end',
 }
+
 const style = {
     message: {
         display: 'inline-block',
@@ -140,13 +217,20 @@ const style = {
     messageThem: {
         alignSelf: 'flex-start',
         backgroundColor: '#eeeeee',
-    }
+    },
+}
+
+const messageImage = {
+    maxWidth: '100%',
+    borderRadius: '8px',
+    marginTop: '8px',
 }
 
 const chatInput = {
     display: 'flex',
     padding: '1rem',
 }
+
 const input = {
     flex: 1,
     marginLeft: '10px',
@@ -158,6 +242,7 @@ const input = {
     fontSize: '20px',
     height: '50px',
 }
+
 const iconButton = {
     background: 'none',
     border: 'none',
@@ -166,6 +251,7 @@ const iconButton = {
     alignItems: 'center',
     justifyContent: 'center',
 }
+
 const iconImg = {
     width: '40px',
     height: '40px',
@@ -177,9 +263,4 @@ const emptyState = {
     alignItems: 'center',
     justifyContent: 'center',
 }
-
 </script>
-
-<style scoped>
-
-</style>

@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Chat;
+use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
     public function index() {
-        return Chat::with(['sender', 'receiver'])->get();
+        $userId = Auth::id();
+        return Chat::with(['sender', 'receiver'])
+            ->where('sender_id', $userId)
+            ->orWhere('receiver_id', $userId)
+            ->get();
     }
 
     public function store(Request $request) {

@@ -55,10 +55,21 @@ export function useUserApi() {
         }
     }
 
+    const getAdmins = async (): Promise<User[]> => {
+        try {
+            const response = await axios.get('/admins')
+            return response.data
+        } catch (error) {
+            console.error('Error fetching admins:', error)
+            return []
+        }
+    }
+
     return {
         getUsers,
         getUser,
         saveUser,
         deleteUser,
+        getAdmins,
     }
 }

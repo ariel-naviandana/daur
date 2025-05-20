@@ -46,5 +46,15 @@ class UserController extends Controller
         User::findOrFail($id)->delete();
         return response()->json(['message' => 'User deleted']);
     }
+
+    public function getAdmins()
+    {
+        return User::whereIn('role', ['master_admin', 'bank_admin'])
+            ->select('id', 'name', 'role', 'bank_id')
+            ->with(['bank' => function ($query) {
+                $query->select('id', 'name');
+            }])
+            ->get();
+    }
 }
 
