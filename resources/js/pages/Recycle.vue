@@ -79,13 +79,19 @@
 
                 <div :style="pickupTypeStyle">
                     <button
-                        :style="{ ...pickupButtonStyle, backgroundColor: isPickup ? theme.colors.primary : 'white', color: isPickup ? 'white' : theme.colors.darkGrey }"
-                        @click="isPickup = true">
+                        :style="getButtonStyle(true)"
+                        @click="isPickup = true"
+                        @mouseover="hoverPickup = true"
+                        @mouseleave="hoverPickup = false"
+                    >
                         Pick-up
                     </button>
+
                     <button
-                        :style="{ ...pickupButtonStyle, backgroundColor: !isPickup ? theme.colors.primary : 'white', color: !isPickup ? 'white' : theme.colors.darkGrey }"
+                        :style="getButtonStyle(false)"
                         @click="isPickup = false"
+                        @mouseover="hoverDropoff = true"
+                        @mouseleave="hoverDropoff = false"
                     >
                         Drop-off
                     </button>
@@ -224,6 +230,34 @@ const user = ref<User>()
 const previewImages = ref<{ [key: number]: string }>({})
 const uploadingItemId = ref<number | null>(null)
 const isHover = ref(false)
+const hoverPickup = ref(false)
+const hoverDropoff = ref(false)
+
+function getButtonStyle(isPick: boolean) {
+    const active = isPick ? isPickup.value : !isPickup.value
+    const hover = isPick ? hoverPickup.value : hoverDropoff.value
+
+    if (active) {
+        return {
+            ...pickupButtonStyle,
+            backgroundColor: theme.colors.primary,
+            color: 'white',
+            borderColor: theme.colors.primary,
+        }
+    } else if (hover) {
+        return {
+            ...pickupButtonStyle,
+            backgroundColor: theme.colors.lightGrey,
+        }
+    } else {
+        return {
+            ...pickupButtonStyle,
+            backgroundColor: 'white',
+            color: theme.colors.darkGrey,
+            borderColor: theme.colors.lightGrey,
+        }
+    }
+}
 
 const now = new Date()
 const minDateTime = computed(() => {

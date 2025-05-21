@@ -43,8 +43,9 @@
                             @mouseover="isHoverAdd = true"
                             @mouseleave="isHoverAdd = false"
                             class="btn_tambah"
-                            @click="openCreateForm">
-                            <img src="/public/images/icon_plus.svg" alt="Tambah" />
+                            @click="openCreateForm"
+                        >
+                            <img src="/public/images/icon_plus.svg" alt="Tambah Artikel" />
                             Tambah
                         </button>
                         <div :style="searchWrapperStyle">
@@ -113,10 +114,8 @@ import { useArticleApi } from '@/composables/useArticleApi'
 import ManajemenArtikelCard from '@/components/ManajemenArtikelCard.vue'
 import type { Article } from '@/interfaces/Article'
 
-const { getArticles, deleteArticle } = useArticleApi()
+const { getArticles } = useArticleApi()
 const isHoverAdd = ref(false)
-const isHoverEdit = ref(false)
-const isHoverDelete = ref(false)
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -135,7 +134,6 @@ const headingContainerStyle = {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    size: theme.fonts.size.subheading,
     marginBottom: '20px',
 }
 
@@ -210,7 +208,6 @@ const selectStyle = {
 }
 
 const addButtonStyle = {
-    radius: '30px',
     height: '40px',
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
@@ -229,35 +226,6 @@ const addButtonStyle = {
 
 const buttonHoverStyleAdd = {
     backgroundColor: '#2d862d',
-    transform: 'scale(1.05)',
-}
-
-const editButtonStyle = {
-    backgroundColor: theme.colors.yellow,
-    color: theme.colors.whiteElement,
-    fontSize: theme.fonts.size.base,
-    borderRadius: '8px',
-    height: '30px',
-    width: '70px',
-}
-
-const buttonHoverStyleEdit = {
-    backgroundColor: '#AC6600',
-    transform: 'scale(1.05)',
-}
-
-const deleteButtonStyle = {
-    backgroundColor: theme.colors.red,
-    color: theme.colors.whiteElement,
-    fontSize: theme.fonts.size.base,
-    borderRadius: '8px',
-    height: '30px',
-    width: '70px',
-    marginRight: '6px',
-}
-
-const buttonHoverStyleDelete = {
-    backgroundColor: '#B5271D',
     transform: 'scale(1.05)',
 }
 
@@ -292,14 +260,9 @@ const onArticleSaved = () => {
     fetchArticles()
 }
 
-const formatDate = (dateStr?: string) => {
-    if (!dateStr) return ''
-    const date = new Date(dateStr)
-    return date.toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-    })
+const deleteArticle = async (id: number) => {
+    await useArticleApi().deleteArticle(id)
+    await fetchArticles() // refresh daftar artikel
 }
 
 const sorting = {
@@ -316,51 +279,10 @@ const rightControl = {
     justifyContent: 'flex-end',
     alignItems: 'center',
 }
-
-const articleContainer = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '1rem',
-    marginBottom: '1rem',
-    borderRadius: '24px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    backgroundColor: theme.colors.whiteElement,
-}
-
-const articleIcon = {
-    width: '40px',
-    height: '40px',
-    overflow: 'hidden',
-    border: 'none',
-    marginRight: '1rem',
-}
-
-const articleTitle = {
-    fontWeight: theme.fonts.weight.semibold,
-    fontSize: theme.fonts.size.base,
-    margin: 0,
-}
-
-const articleDate = {
-    fontSize: theme.fonts.size.sm,
-    color: theme.colors.green,
-    margin: 0,
-}
 </script>
 
 <style scoped>
 ::-webkit-scrollbar {
-    display: none
-}
-
-.btn_tambah:hover {
-}
-
-.btn_edit:hover {
-}
-
-.btn_hapus:hover {
-    color: #dc2626
+    display: none;
 }
 </style>

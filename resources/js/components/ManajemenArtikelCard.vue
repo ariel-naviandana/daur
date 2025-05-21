@@ -5,20 +5,23 @@
                 v-if="article.image_url"
                 :src="article.image_url"
                 alt="cover"
-                class="rounded-lg"
+                :style="imageStyle"
+                @error="onImageError"
             />
-            <img v-else src="/public/images/icon_article.svg" alt="Artikel" />
+            <img
+                v-else
+                src="/public/images/icon_article.svg"
+                alt="Artikel"
+                :style="imageStyle"
+            />
         </div>
-        <div class="flex-grow">
-            <h3 class="font-semibold" :style="articleTitle">{{ article.title }}</h3>
-            <p class="text-sm text-green-600" :style="articleDate">
-                {{ formatDate(article.created_at) }}
-            </p>
+        <div :style="contentStyle">
+            <h3 :style="articleTitle">{{ article.title }}</h3>
+            <p :style="articleDate">{{ formatDate(article.created_at) }}</p>
         </div>
-        <div class="flex space-x-2">
+        <div :style="buttonGroupStyle">
             <button
                 @click="$emit('edit', article)"
-                class="btn_edit"
                 :style="[editButtonStyle, isHoverEdit ? buttonHoverStyleEdit : {}]"
                 @mouseover="isHoverEdit = true"
                 @mouseleave="isHoverEdit = false"
@@ -27,7 +30,6 @@
             </button>
             <button
                 @click="$emit('delete', article.id)"
-                class="btn_hapus"
                 :style="[deleteButtonStyle, isHoverDelete ? buttonHoverStyleDelete : {}]"
                 @mouseover="isHoverDelete = true"
                 @mouseleave="isHoverDelete = false"
@@ -65,10 +67,16 @@ const formatDate = (dateStr?: string) => {
     })
 }
 
+const onImageError = (event: Event) => {
+    const target = event.target as HTMLImageElement
+    target.src = '/images/icon_article.svg'
+}
+
+// Style Definitions
 const articleContainer = {
     display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
     padding: '1rem',
     marginBottom: '1rem',
     borderRadius: '24px',
@@ -82,6 +90,19 @@ const articleIcon = {
     overflow: 'hidden',
     border: 'none',
     marginRight: '1rem',
+    flexShrink: 0,
+}
+
+const imageStyle = {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    borderRadius: '12px',
+}
+
+const contentStyle = {
+    flex: 1,
+    marginRight: '1rem',
 }
 
 const articleTitle = {
@@ -92,8 +113,13 @@ const articleTitle = {
 
 const articleDate = {
     fontSize: theme.fonts.size.sm,
-    color: theme.colors.green,
+    color: theme.colors.primary,
     margin: 0,
+}
+
+const buttonGroupStyle = {
+    display: 'flex',
+    gap: '12px',
 }
 
 const editButtonStyle = {
@@ -101,8 +127,12 @@ const editButtonStyle = {
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
     borderRadius: '8px',
-    height: '30px',
-    width: '70px',
+    padding: '8px',
+    width: '90px',
+    border: 'none',
+    cursor: 'pointer',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: 'all 0.2s ease-in-out',
 }
 
 const buttonHoverStyleEdit = {
@@ -115,9 +145,13 @@ const deleteButtonStyle = {
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
     borderRadius: '8px',
-    height: '30px',
-    width: '70px',
-    marginRight: '6px',
+    padding: '8px',
+    width: '90px',
+    marginRight: '4px',
+    border: 'none',
+    cursor: 'pointer',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: 'all 0.2s ease-in-out',
 }
 
 const buttonHoverStyleDelete = {
