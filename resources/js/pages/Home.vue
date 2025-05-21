@@ -284,12 +284,12 @@ const buttonStyle = {
     borderRadius: '999px',
     padding: '10px 30px',
     cursor: 'pointer',
+    transition: '0.2s ease-in-out',
 }
 
 const buttonHoverStyle = {
     backgroundColor: '#2d862d',
     transform: 'scale(1.05)',
-    transition: '0.2s ease-in-out',
 }
 </script>
 

@@ -170,6 +170,7 @@ const backButtonStyle = {
     fontWeight: theme.fonts.weight.medium,
     fontSize: theme.fonts.size.small,
     marginBottom: '20px',
+    transition: '0.2s ease-in-out',
 }
 const noResultsStyle = {
     display: 'flex',
@@ -234,7 +235,6 @@ const infoStyle = {
 
 const buttonHoverStyle = {
     transform: 'scale(1.05)',
-    transition: '0.2s ease-in-out',
 }
 onMounted(fetchArticles)
 </script>

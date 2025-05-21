@@ -734,7 +734,8 @@ const submitButtonStyle = {
     color: 'white',
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.medium,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    transition: '0.2s ease-in-out',
 }
 
 const buttonStyle = {
@@ -751,6 +752,5 @@ const buttonStyle = {
 const buttonHoverStyle = {
     backgroundColor: '#2d862d',
     transform: 'scale(1.05)',
-    transition: '0.2s ease-in-out',
 }
 </script>

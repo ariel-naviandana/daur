@@ -4,10 +4,16 @@
             <p :style="saldoLabelStyle">Saldo DAUR</p>
             <p :style="saldoAmountStyle">Rp. 25,000</p>
         </div>
-        <button :style="[penarikanButtonStyle, isHover ? penarikanHoverStyle : {}]" @mouseover="isHover = true"
-                @mouseleave="isHover = false" @click="tarikSaldo">
-            <img src="/public/images/withdraw-icon.svg" alt="" style="margin-right: 10px" />
-            Penarikan dana
+        <button
+            :style="[penarikanButtonStyle, isHover ? penarikanHoverStyle : {}]"
+            @mouseover="isHover = true"
+            @mouseleave="isHover = false"
+            @click="tarikSaldo"
+        >
+            <img src="/public/images/withdraw-icon.svg" alt=""/>
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <span>Penarikan dana</span>
+            </div>
         </button>
     </div>
 </template>
@@ -16,8 +22,10 @@
 import { ref } from 'vue'
 import { theme } from '@/helpers/theme'
 
+const isHover = ref(false)
+
 const penarikanButtonStyle = {
-    width: '300px',
+    width: '220px',
     height: '50px',
     backgroundColor: theme.colors.primary,
     color: 'white',
@@ -29,7 +37,10 @@ const penarikanButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     marginBottom:'10px',
-    gap: '10px'
+    gap: '10px',
+    justifyContent: 'center',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const saldoCardStyle = {
