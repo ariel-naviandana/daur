@@ -1,7 +1,7 @@
 <template>
     <div :style="layoutStyle">
         <Navbar />
-        <div :style="mainContentStyle">
+        <div :style="mainContentStyle" >
             <div class="home-page">
                 <section class="hero">
                     <img src="/public/images/hero-image.png" alt="Hero Image" :style="heroImgStyle" />
@@ -53,7 +53,15 @@
                             </div>
                         </div>
                     </div>
-                    <button class="send-button" :style="sendButtonStyle" @click="goToRecycle">Kirim Sampah</button>
+                    <button
+                        class="send-button"
+                        @mouseover="isHover = true"
+                        @mouseleave="isHover = false"
+                        :style="[buttonStyle, isHover ? buttonHoverStyle : {}]"
+                        @click="goToRecycle"
+                    >
+                        Kirim Sampah
+                    </button>
                 </section>
                 <h2 :style="titleHeadingStyle">Jenis Sampah</h2>
                 <CategoryList @category-clicked="openPopup"/>
@@ -78,6 +86,7 @@ import { Category } from '@/interfaces/Category'
 
 const isPopupOpen = ref(false)
 const selectedCategory = ref<Category | null>(null)
+const isHover = ref(false)
 
 const openPopup = (category: Category) => {
     selectedCategory.value = category
@@ -162,6 +171,7 @@ const missionParagraphStyle = {
 
 const containerStyle = {
     marginTop: '20px',
+    marginBottom: '20px',
     display: 'flex',
     justifyContent: 'center',
     gap: '50px',
@@ -263,6 +273,23 @@ const labelJenisStyle = {
     fontWeight: 500,
     color: '#222222',
     marginTop: '16px'
+}
+
+const buttonStyle = {
+    backgroundColor: theme.colors.primary,
+    color: 'white',
+    fontWeight: theme.fonts.weight.semibold,
+    fontSize: theme.fonts.size.base,
+    border: 'none',
+    borderRadius: '999px',
+    padding: '10px 30px',
+    cursor: 'pointer',
+}
+
+const buttonHoverStyle = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
+    transition: '0.2s ease-in-out',
 }
 </script>
 

@@ -78,8 +78,17 @@
                 </h2>
 
                 <div :style="pickupTypeStyle">
-                    <button :style="{ ...pickupButtonStyle, backgroundColor: isPickup ? theme.colors.primary : 'white', color: isPickup ? 'white' : theme.colors.darkGrey }" @click="isPickup = true">Pick-up</button>
-                    <button :style="{ ...pickupButtonStyle, backgroundColor: !isPickup ? theme.colors.primary : 'white', color: !isPickup ? 'white' : theme.colors.darkGrey }" @click="isPickup = false">Drop-off</button>
+                    <button
+                        :style="{ ...pickupButtonStyle, backgroundColor: isPickup ? theme.colors.primary : 'white', color: isPickup ? 'white' : theme.colors.darkGrey }"
+                        @click="isPickup = true">
+                        Pick-up
+                    </button>
+                    <button
+                        :style="{ ...pickupButtonStyle, backgroundColor: !isPickup ? theme.colors.primary : 'white', color: !isPickup ? 'white' : theme.colors.darkGrey }"
+                        @click="isPickup = false"
+                    >
+                        Drop-off
+                    </button>
                 </div>
 
                 <form @submit.prevent="openConfirmBookingPopup" :style="formStyle">
@@ -138,7 +147,15 @@
                         ></textarea>
                     </div>
 
-                    <button type="submit" :style="submitButtonStyle" :disabled="isUploading.value">Konfirmasi</button>
+                    <button
+                        type="submit"
+                        @mouseover="isHover = true"
+                        @mouseleave="isHover = false"
+                        :style="[submitButtonStyle, isHover ? buttonHoverStyle : {}]"
+                        :disabled="isUploading.value"
+                    >
+                        Konfirmasi
+                    </button>
                 </form>
             </div>
         </div>
@@ -206,6 +223,7 @@ const wasteTypes = ref<WasteType[]>([])
 const user = ref<User>()
 const previewImages = ref<{ [key: number]: string }>({})
 const uploadingItemId = ref<number | null>(null)
+const isHover = ref(false)
 
 const now = new Date()
 const minDateTime = computed(() => {
@@ -673,19 +691,6 @@ const textareaStyle = {
     resize: 'vertical'
 }
 
-const submitButtonStyle = {
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    padding: '12px 24px',
-    borderRadius: '24px',
-    border: 'none',
-    backgroundColor: theme.colors.primary,
-    color: 'white',
-    fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.medium,
-    cursor: 'pointer'
-}
-
 const selectStyle = {
     width: '100%',
     padding: '8px 12px',
@@ -717,5 +722,35 @@ const uploadingStyle = {
     marginTop: '8px',
     fontSize: theme.fonts.size.base,
     color: theme.colors.darkGrey
+}
+
+const submitButtonStyle = {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    padding: '12px 24px',
+    borderRadius: '24px',
+    border: 'none',
+    backgroundColor: theme.colors.primary,
+    color: 'white',
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.medium,
+    cursor: 'pointer'
+}
+
+const buttonStyle = {
+    backgroundColor: theme.colors.primary,
+    color: 'white',
+    fontWeight: theme.fonts.weight.semibold,
+    fontSize: theme.fonts.size.base,
+    border: 'none',
+    borderRadius: '999px',
+    padding: '10px 30px',
+    cursor: 'pointer',
+}
+
+const buttonHoverStyle = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
+    transition: '0.2s ease-in-out',
 }
 </script>

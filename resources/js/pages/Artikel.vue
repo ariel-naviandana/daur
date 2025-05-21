@@ -1,4 +1,4 @@
-<template>
+ <template>
     <div :style="layoutStyle">
         <Navbar />
         <div :style="contentStyle" class="p-6">
@@ -52,7 +52,9 @@
                 <div style="max-width: 800px; margin: 0 auto">
                     <button
                         @click="selectedArtikel = null"
-                        :style="backButtonStyle"
+                        @mouseover="isHover = true"
+                        @mouseleave="isHover = false"
+                        :style="[backButtonStyle, isHover ? buttonHoverStyle : {}]"
                         aria-label="Kembali"
                     >
                         <svg
@@ -103,6 +105,7 @@ const { getArticles } = useArticleApi()
 const articles = ref<Article[]>([])
 const selectedArtikel = ref<Article | null>(null)
 const searchQuery = ref('')
+const isHover = ref(false)
 
 const fetchArticles = async () => {
     articles.value = await getArticles(searchQuery.value, 'newest')
@@ -229,5 +232,9 @@ const infoStyle = {
     lineHeight: '1.5',
 }
 
+const buttonHoverStyle = {
+    transform: 'scale(1.05)',
+    transition: '0.2s ease-in-out',
+}
 onMounted(fetchArticles)
 </script>
