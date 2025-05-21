@@ -108,7 +108,14 @@
             </div>
 
             <div v-if="!isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
-                <button @click="handleReject" :style="rejectButtonStyle">Batalkan</button>
+                <button
+                    @click="handleReject"
+                    :style="[rejectButtonStyle, isHover ? buttonHoverStyle : {}]"
+                    @mouseover="isHover = true"
+                    @mouseleave="isHover = false"
+                >
+                    Batalkan
+                </button>
             </div>
         </div>
     </div>
@@ -131,6 +138,7 @@ import { computed, ref } from 'vue'
 import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
+const isHover = ref(false)
 
 const props = defineProps<{
     isOpen: boolean
@@ -445,7 +453,7 @@ const buttonBaseStyle = {
     padding: '6px 28px',
     borderRadius: '30px',
     fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.medium,
+    fontWeight: theme.fonts.weight.semibold,
     color: theme.colors.whiteElement,
     cursor: 'pointer',
     border: 'none'
@@ -453,7 +461,10 @@ const buttonBaseStyle = {
 
 const rejectButtonStyle = {
     ...buttonBaseStyle,
-    backgroundColor: theme.colors.red
+    backgroundColor: theme.colors.red,
+
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const acceptButtonStyle = {
@@ -497,6 +508,13 @@ const fullScreenCloseButtonStyle = {
     cursor: 'pointer',
     padding: '4px',
     color: theme.colors.whiteElement
+}
+
+const buttonHoverStyle = {
+    transform: 'scale(1.05)',
+    backgroundColor: '#B5271D',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
 }
 </script>
 

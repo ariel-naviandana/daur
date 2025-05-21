@@ -197,6 +197,7 @@ const headingStyle = {
 
 const selectStyle = {
     padding: '8px 12px',
+    paddingLeft: '24px',
     paddingRight: '36px',
     fontSize: theme.fonts.size.base,
     borderRadius: '36px',

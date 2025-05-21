@@ -144,14 +144,15 @@ export const inputStyle = {
 
 export const buttonRowStyle = {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     gap: '1rem'
 }
 
 export const cancelBtnStyle = {
     backgroundColor: '#ccc',
     color: '#000',
-    padding: '10px 20px',
+    padding: '10px',
+    width: '160px',
     borderRadius: '999px',
     border: 'none',
     fontWeight: theme.fonts.weight.semibold,
@@ -163,7 +164,8 @@ export const cancelBtnStyle = {
 export const confirmBtnStyle = {
     backgroundColor: theme.colors.primary,
     color: '#fff',
-    padding: '10px 20px',
+    padding: '10px',
+    width: '160px',
     borderRadius: '999px',
     border: 'none',
     fontWeight: theme.fonts.weight.semibold,
