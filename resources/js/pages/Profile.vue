@@ -93,8 +93,8 @@
       <div :style="buttonContainerStyle">
         <button
           type="submit"
-          @mouseover="isHover = true"
-          @mouseleave="isHover = false"
+          @mouseover="isHoverAdd = true"
+          @mouseleave="isHoverAdd = false"
           :style="[buttonStyle, isHover ? buttonHoverStyle : {}]"
         >
           Simpan

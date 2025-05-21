@@ -176,7 +176,5 @@ export const confirmBtnStyle = {
 
 const buttonHoverStyle = {
     transform: 'scale(1.05)',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
 }
 </script>

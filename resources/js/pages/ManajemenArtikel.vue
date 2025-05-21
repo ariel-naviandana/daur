@@ -38,7 +38,12 @@
                         <option value="oldest">Terlama</option>
                     </select>
                     <div :style="rightControl">
-                        <button :style="btn_tambah" class="btn_tambah" @click="openCreateForm">
+                        <button
+                            :style="[addButtonStyle, isHoverAdd ? buttonHoverStyleAdd : {}]"
+                            @mouseover="isHoverAdd = true"
+                            @mouseleave="isHoverAdd = false"
+                            class="btn_tambah"
+                            @click="openCreateForm">
                             <img src="/public/images/icon_plus.svg" alt="Tambah" />
                             Tambah
                         </button>
@@ -87,35 +92,13 @@
                     <p :style="noResultsDescStyle">Coba sesuaikan filter atau kata kunci pencarian Anda</p>
                 </div>
 
-                <div v-for="article in articles" :key="article.id" :style="articleContainer">
-                    <div :style="articleIcon">
-                        <img
-                            v-if="article.image_url"
-                            :src="article.image_url"
-                            alt="cover"
-                            class="rounded-lg"
-                        />
-                        <img v-else src="/public/images/icon_article.svg" alt="Artikel" />
-                    </div>
-                    <div class="flex-grow">
-                        <h3 class="font-semibold" :style="articleTitle">{{ article.title }}</h3>
-                        <p class="text-sm text-green-600" :style="articleDate">
-                            {{ formatDate(article.created_at) }}
-                        </p>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button @click="openEditForm(article)" class="btn_edit" :style="btn_edit">
-                            Edit
-                        </button>
-                        <button
-                            @click="deleteArticle(article.id)"
-                            class="btn_hapus"
-                            :style="btn_hapus"
-                        >
-                            Hapus
-                        </button>
-                    </div>
-                </div>
+                <ManajemenArtikelCard
+                    v-for="article in articles"
+                    :key="article.id"
+                    :article="article"
+                    @edit="openEditForm"
+                    @delete="deleteArticle"
+                />
             </div>
         </div>
     </div>
@@ -127,9 +110,13 @@ import FormArticle from '@/components/FormArticle.vue'
 import { theme } from '@/helpers/theme'
 import { ref, onMounted } from 'vue'
 import { useArticleApi } from '@/composables/useArticleApi'
+import ManajemenArtikelCard from '@/components/ManajemenArtikelCard.vue'
 import type { Article } from '@/interfaces/Article'
 
 const { getArticles, deleteArticle } = useArticleApi()
+const isHoverAdd = ref(false)
+const isHoverEdit = ref(false)
+const isHoverDelete = ref(false)
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -212,7 +199,7 @@ const selectStyle = {
     padding: '8px 16px',
     paddingRight: '36px',
     fontSize: theme.fonts.size.base,
-    borderRadius: '16px',
+    borderRadius: '8px',
     border: `1px solid ${theme.colors.lightGrey}`,
     fontFamily: theme.fonts.family,
     appearance: 'none',
@@ -222,7 +209,7 @@ const selectStyle = {
     backgroundSize: '16px',
 }
 
-const btn_tambah = {
+const addButtonStyle = {
     radius: '30px',
     height: '40px',
     backgroundColor: theme.colors.primary,
@@ -236,9 +223,16 @@ const btn_tambah = {
     gap: '6px',
     paddingLeft: '10px',
     paddingRight: '14px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
 }
 
-const btn_edit = {
+const buttonHoverStyleAdd = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
+}
+
+const editButtonStyle = {
     backgroundColor: theme.colors.yellow,
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
@@ -247,7 +241,12 @@ const btn_edit = {
     width: '70px',
 }
 
-const btn_hapus = {
+const buttonHoverStyleEdit = {
+    backgroundColor: '#AC6600',
+    transform: 'scale(1.05)',
+}
+
+const deleteButtonStyle = {
     backgroundColor: theme.colors.red,
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
@@ -255,6 +254,11 @@ const btn_hapus = {
     height: '30px',
     width: '70px',
     marginRight: '6px',
+}
+
+const buttonHoverStyleDelete = {
+    backgroundColor: '#B5271D',
+    transform: 'scale(1.05)',
 }
 
 const articles = ref<Article[]>([])

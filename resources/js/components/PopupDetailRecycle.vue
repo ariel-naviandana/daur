@@ -99,20 +99,41 @@
             </div>
 
             <div v-if="isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
-                <button @click="handleReject" :style="rejectButtonStyle">Tolak</button>
-                <button @click="handleAccept" :style="acceptButtonStyle">Terima</button>
+                <button
+                    @click="handleReject"
+                    :style="[rejectButtonStyle, isHoverReject ? buttonHoverStyleReject : {}]"
+                    @mouseover="isHoverReject = true"
+                    @mouseleave="isHoverReject = false"
+                >
+                    Tolak
+                </button>
+                <button
+                    @click="handleAccept"
+                    :style="[acceptButtonStyle, isHoverAccept ? buttonHoverStyleAccept : {}]"
+                    @mouseover="isHoverAccept = true"
+                    @mouseleave="isHoverAccept = false"
+                >
+                    Terima
+                </button>
             </div>
 
             <div v-if="isAdmin && item.status === 'process'" :style="actionButtonsContainer">
-                <button @click="handleDone" :style="acceptButtonStyle">Selesai</button>
+                <button
+                    @click="handleDone"
+                    :style="[acceptButtonStyle, isHoverAccept ? buttonHoverStyleAccept : {}]"
+                    @mouseover="isHoverAccept = true"
+                    @mouseleave="isHoverAccept = false"
+                >
+                    Selesai
+                </button>
             </div>
 
             <div v-if="!isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
                 <button
                     @click="handleReject"
-                    :style="[rejectButtonStyle, isHover ? buttonHoverStyle : {}]"
-                    @mouseover="isHover = true"
-                    @mouseleave="isHover = false"
+                    :style="[rejectButtonStyle, isHoverReject ? buttonHoverStyleReject : {}]"
+                    @mouseover="isHoverReject = true"
+                    @mouseleave="isHoverReject = false"
                 >
                     Batalkan
                 </button>
@@ -138,7 +159,8 @@ import { computed, ref } from 'vue'
 import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
-const isHover = ref(false)
+const isHoverReject = ref(false)
+const isHoverAccept = ref(false)
 
 const props = defineProps<{
     isOpen: boolean
@@ -462,14 +484,15 @@ const buttonBaseStyle = {
 const rejectButtonStyle = {
     ...buttonBaseStyle,
     backgroundColor: theme.colors.red,
-
     transition: '0.2s ease-in-out',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const acceptButtonStyle = {
     ...buttonBaseStyle,
-    backgroundColor: theme.colors.primary
+    backgroundColor: theme.colors.primary,
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const fullScreenOverlayStyle = {
@@ -510,11 +533,14 @@ const fullScreenCloseButtonStyle = {
     color: theme.colors.whiteElement
 }
 
-const buttonHoverStyle = {
+const buttonHoverStyleReject = {
     transform: 'scale(1.05)',
     backgroundColor: '#B5271D',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
+}
+
+const buttonHoverStyleAccept = {
+    transform: 'scale(1.05)',
+    backgroundColor: '#2d862d',
 }
 </script>
 

@@ -6,8 +6,22 @@
             <p :style="nameStyle">{{ wasteType.name }} ({{ wasteType.unit }})</p>
             <p :style="priceStyle">Rp{{ wasteType.price_per_unit.toLocaleString('id-ID') }}/{{ wasteType.unit }}</p>
             <div :style="actionsStyle">
-                <button :style="editButtonStyle" @click="$emit('edit', wasteType)">Edit</button>
-                <button :style="deleteButtonStyle" @click="$emit('delete', wasteType)">Hapus</button>
+                <button
+                    :style="[editButtonStyle, isHoverEdit ? buttonHoverStyleEdit : {}]"
+                    @mouseover="isHoverEdit = true"
+                    @mouseleave="isHoverEdit = false"
+                    @click="$emit('edit', wasteType)"
+                >
+                    Edit
+                </button>
+                <button
+                    :style="[deleteButtonStyle, isHoverDelete ? buttonHoverStyleDelete : {}]"
+                    @mouseover="isHoverDelete = true"
+                    @mouseleave="isHoverDelete = false"
+                    @click="$emit('delete', wasteType)"
+                >
+                    Hapus
+                </button>
             </div>
         </div>
     </div>
@@ -16,12 +30,16 @@
 <script lang="ts" setup>
 import { WasteType } from '@/interfaces/WasteType'
 import { theme } from '@/helpers/theme'
+import {ref} from "vue";
+
+const isHoverEdit = ref(false)
+const isHoverDelete = ref(false)
 
 const props = defineProps<{ wasteType: WasteType }>()
 
 const cardStyle = {
     backgroundColor: theme.colors.whiteElement,
-    borderRadius: '6px',
+    borderRadius: '16px',
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
     overflow: 'hidden',
     display: 'flex',
@@ -66,20 +84,36 @@ const actionsStyle = {
 const editButtonStyle = {
     backgroundColor: theme.colors.blue,
     color: theme.colors.whiteElement,
-    padding: '6px 12px',
-    borderRadius: '4px',
+    padding: '6px',
+    width: '88px',
+    borderRadius: '6px',
     fontSize: theme.fonts.size.small,
     cursor: 'pointer',
     border: 'none',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
 }
 
 const deleteButtonStyle = {
     backgroundColor: theme.colors.red,
     color: theme.colors.whiteElement,
-    padding: '6px 12px',
-    borderRadius: '4px',
+    padding: '6px',
+    width: '88px',
+    borderRadius: '6px',
     fontSize: theme.fonts.size.small,
     cursor: 'pointer',
     border: 'none',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
+}
+
+const buttonHoverStyleEdit = {
+    backgroundColor: '#226EAA',
+    transform: 'scale(1.05)',
+}
+
+const buttonHoverStyleDelete = {
+    backgroundColor: '#B5271D',
+    transform: 'scale(1.05)',
 }
 </script>
