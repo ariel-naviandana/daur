@@ -81,6 +81,5 @@ if (el) {
 
   if (component) {
     createApp(component).mount('#app')
-    console.log(`Mounted ${page} component`)
   }
 }

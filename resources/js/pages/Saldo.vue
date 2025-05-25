@@ -65,8 +65,6 @@ import WithdrawalCard from "@/components/WithdrawalCard.vue"
 const showModal = ref(false)
 
 const handleWithdraw = (data: { destination: string; amount: string }) => {
-    console.log('Penarikan ke:', data.destination)
-    console.log('Jumlah:', data.amount)
     showModal.value = false
 }
 
