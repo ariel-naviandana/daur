@@ -16,6 +16,7 @@ import ManajemenSaldo from "./pages/ManajemenSaldo.vue"
 import ManajemenArtikel from "./pages/ManajemenArtikel.vue"
 import ManajemenSampah from "./pages/ManajemenSampah.vue"
 import ManajemenBank from "./pages/ManajemenBank.vue"
+import 'leaflet/dist/leaflet.css'
 
 const el = document.getElementById('app')
 
