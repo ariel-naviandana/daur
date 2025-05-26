@@ -4,13 +4,22 @@
             <div :style="header">
                 <h2 :style="headerText">{{ isEdit ? 'Edit Artikel' : 'Tambah Artikel Baru' }}</h2>
                 <div :style="buttonContainer">
-                    <button @click="backToList" :style="headerCancel">Batal</button>
+                    <button
+                        @click="backToList"
+                        :style="[headerCancel, isHoverCancel ? buttonHoverStyleCancel : {}]"
+                        @mouseover="isHoverCancel = true"
+                        @mouseleave="isHoverCancel = false"
+                    >
+                        Batal
+                    </button>
                     <span v-if="isUploading" :style="spinnerStyle" class="spinner"></span>
                     <button
                         v-if="!isUploading"
                         type="button"
                         @click="submitForm"
-                        :style="headerSave"
+                        :style="[headerSave, isHoverSave ? buttonHoverStyleSave : {}]"
+                        @mouseover="isHoverSave = true"
+                        @mouseleave="isHoverSave = false"
                     >
                         Simpan
                     </button>
@@ -46,7 +55,12 @@
                         :style="{ display: 'none' }"
                         ref="fileInput"
                     />
-                    <button @click="$refs.fileInput.click()" :style="btnTambahGambar">
+                    <button
+                        @click="$refs.fileInput.click()"
+                        :style="[btnTambahGambar, isHoverTambahGambar ? buttonHoverStyleTambahGambar : {}]"
+                        @mouseover="isHoverTambahGambar = true"
+                        @mouseleave="isHoverTambahGambar = false"
+                    >
                         {{ isEdit && previewImage ? 'Ubah Gambar' : 'Tambah Gambar' }}
                     </button>
                 </div>
@@ -107,12 +121,15 @@
 
 <script setup lang="ts">
 import { theme } from '@/helpers/theme'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useArticleApi } from '@/composables/useArticleApi'
 import type { Article } from '@/interfaces/Article'
 
 const { saveArticle } = useArticleApi()
 const isUploading = ref(false)
+const isHoverCancel = ref(false)
+const isHoverSave = ref(false)
+const isHoverTambahGambar = ref(false)
 
 const props = defineProps<{
     article: Article | null
@@ -135,6 +152,13 @@ const form = ref<Partial<Article>>({
     sumber: null,
 })
 const previewImage = ref<string | null>(null)
+
+watch(() => props.article, (newVal) => {
+    if (newVal) {
+        form.value = { ...newVal }
+        previewImage.value = newVal.image_url || null
+    }
+}, { immediate: true })
 
 if (props.article) {
     form.value = { ...props.article }
@@ -247,6 +271,13 @@ const headerCancel = {
     borderRadius: '30px',
     fontSize: theme.fonts.size.base,
     marginRight: '8px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
+}
+
+const buttonHoverStyleCancel = {
+    backgroundColor: '#B5271D',
+    transform: 'scale(1.05)',
 }
 
 const headerSave = {
@@ -257,6 +288,13 @@ const headerSave = {
     fontSize: theme.fonts.size.base,
     cursor: 'pointer',
     opacity: isUploading.value ? 0.5 : 1,
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
+}
+
+const buttonHoverStyleSave = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
 }
 
 const inputContainer = { marginBottom: '16px' }
@@ -316,6 +354,13 @@ const btnTambahGambar = {
     borderRadius: '9999px',
     fontSize: theme.fonts.size.base,
     cursor: 'pointer',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
+}
+
+const buttonHoverStyleTambahGambar = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
 }
 
 const spinnerStyle = {

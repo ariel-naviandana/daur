@@ -3,17 +3,17 @@
         <div :style="upperSection">
             <!-- Tombol Kembali -->
             <a href="/profile">
-                <button
-                    :style="[backButtonStyle, isHover ? buttonHoverStyle : {}]"
-                    @mouseover="isHover = true"
-                    @mouseleave="isHover = false"
-                    @click=""
-                >
-                    <img src="/public/images/back-btn.svg" alt="">
-                    <div style="display: flex; justify-content: center; align-items: center;">
-                        <span>Kembali ke profile</span>
-                    </div>
-                </button>
+            <button
+                :style="[backButtonStyle, isHover ? buttonHoverStyle : {}]"
+                @mouseover="isHover = true"
+                @mouseleave="isHover = false"
+                @click=""
+            >
+                <img src="/public/images/back-btn.svg" alt="">
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <span>Kembali ke profile</span>
+                </div>
+            </button>
             </a>
 
             <!-- TODO : Buat lebih dinamis -->
@@ -98,6 +98,13 @@ const userId = ref<number | null>(null)
 const user = ref<any>(null)
 const wallet = ref<Wallet | null>(null)
 const transactions = ref([])
+const isHover = ref(false)
+
+const handleWithdraw = (data: { destination: string; amount: string }) => {
+    console.log('Penarikan ke:', data.destination)
+    console.log('Jumlah:', data.amount)
+    showModal.value = false
+}
 
 const isHoverDownload = ref(false)
 const isHoverFilter = ref(false)
@@ -292,9 +299,6 @@ const mutasiAmountMinusStyle = {
     color: theme.colors.red,
     fontWeight: theme.fonts.weight.bold,
 }
-
-
-
 </script>
 
 <style scoped></style>

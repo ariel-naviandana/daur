@@ -78,8 +78,23 @@
                 </h2>
 
                 <div :style="pickupTypeStyle">
-                    <button :style="{ ...pickupButtonStyle, backgroundColor: isPickup ? theme.colors.primary : 'white', color: isPickup ? 'white' : theme.colors.darkGrey }" @click="isPickup = true">Pick-up</button>
-                    <button :style="{ ...pickupButtonStyle, backgroundColor: !isPickup ? theme.colors.primary : 'white', color: !isPickup ? 'white' : theme.colors.darkGrey }" @click="isPickup = false">Drop-off</button>
+                    <button
+                        :style="getButtonStyle(true)"
+                        @click="isPickup = true"
+                        @mouseover="hoverPickup = true"
+                        @mouseleave="hoverPickup = false"
+                    >
+                        Pick-up
+                    </button>
+
+                    <button
+                        :style="getButtonStyle(false)"
+                        @click="isPickup = false"
+                        @mouseover="hoverDropoff = true"
+                        @mouseleave="hoverDropoff = false"
+                    >
+                        Drop-off
+                    </button>
                 </div>
 
                 <form @submit.prevent="openConfirmBookingPopup" :style="formStyle">
@@ -138,7 +153,15 @@
                         ></textarea>
                     </div>
 
-                    <button type="submit" :style="submitButtonStyle" :disabled="isUploading.value">Konfirmasi</button>
+                    <button
+                        type="submit"
+                        @mouseover="isHover = true"
+                        @mouseleave="isHover = false"
+                        :style="[submitButtonStyle, isHover ? buttonHoverStyle : {}]"
+                        :disabled="isUploading.value"
+                    >
+                        Konfirmasi
+                    </button>
                 </form>
             </div>
         </div>
@@ -206,6 +229,35 @@ const wasteTypes = ref<WasteType[]>([])
 const user = ref<User>()
 const previewImages = ref<{ [key: number]: string }>({})
 const uploadingItemId = ref<number | null>(null)
+const isHover = ref(false)
+const hoverPickup = ref(false)
+const hoverDropoff = ref(false)
+
+function getButtonStyle(isPick: boolean) {
+    const active = isPick ? isPickup.value : !isPickup.value
+    const hover = isPick ? hoverPickup.value : hoverDropoff.value
+
+    if (active) {
+        return {
+            ...pickupButtonStyle,
+            backgroundColor: theme.colors.primary,
+            color: 'white',
+            borderColor: theme.colors.primary,
+        }
+    } else if (hover) {
+        return {
+            ...pickupButtonStyle,
+            backgroundColor: theme.colors.lightGrey,
+        }
+    } else {
+        return {
+            ...pickupButtonStyle,
+            backgroundColor: 'white',
+            color: theme.colors.darkGrey,
+            borderColor: theme.colors.lightGrey,
+        }
+    }
+}
 
 const now = new Date()
 const minDateTime = computed(() => {
@@ -673,19 +725,6 @@ const textareaStyle = {
     resize: 'vertical'
 }
 
-const submitButtonStyle = {
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    padding: '12px 24px',
-    borderRadius: '24px',
-    border: 'none',
-    backgroundColor: theme.colors.primary,
-    color: 'white',
-    fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.medium,
-    cursor: 'pointer'
-}
-
 const selectStyle = {
     width: '100%',
     padding: '8px 12px',
@@ -717,5 +756,36 @@ const uploadingStyle = {
     marginTop: '8px',
     fontSize: theme.fonts.size.base,
     color: theme.colors.darkGrey
+}
+
+const submitButtonStyle = {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    padding: '12px 24px',
+    borderRadius: '24px',
+    border: 'none',
+    backgroundColor: theme.colors.primary,
+    color: 'white',
+    fontSize: theme.fonts.size.base,
+    fontWeight: theme.fonts.weight.semibold,
+    cursor: 'pointer',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+}
+
+const buttonStyle = {
+    backgroundColor: theme.colors.primary,
+    color: 'white',
+    fontWeight: theme.fonts.weight.semibold,
+    fontSize: theme.fonts.size.base,
+    border: 'none',
+    borderRadius: '999px',
+    padding: '10px 30px',
+    cursor: 'pointer',
+}
+
+const buttonHoverStyle = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
 }
 </script>
