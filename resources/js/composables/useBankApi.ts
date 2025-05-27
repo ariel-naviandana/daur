@@ -1,10 +1,13 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { Bank } from '../interfaces/Bank'
 
 export function useBankApi() {
+    const { initCsrf } = useCsrf()
+
     const getBanks = async (): Promise<Bank[]> => {
         try {
-            const response = await axios.get('/banks')
+            const response = await apiClient.get('/banks')
             return response.data
         } catch (error) {
             console.error('Error fetching banks:', error)
@@ -14,7 +17,7 @@ export function useBankApi() {
 
     const getBank = async (id: number): Promise<Bank | null> => {
         try {
-            const response = await axios.get(`/banks/${id}`)
+            const response = await apiClient.get(`/banks/${id}`)
             return response.data
         } catch (error) {
             console.error('Error fetching bank:', error)
@@ -24,15 +27,11 @@ export function useBankApi() {
 
     const saveBank = async (form: Bank): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
+            await initCsrf()
             if (form.id) {
-                await axios.put(`/banks/${form.id}`, form, config)
+                await apiClient.put(`/banks/${form.id}`, form)
             } else {
-                await axios.post('/banks', form, config)
+                await apiClient.post('/banks', form)
             }
             return true
         } catch (error) {
@@ -43,11 +42,8 @@ export function useBankApi() {
 
     const deleteBank = async (id: number): Promise<boolean> => {
         try {
-            await axios.delete(`/banks/${id}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            })
+            await initCsrf()
+            await apiClient.delete(`/banks/${id}`)
             return true
         } catch (error) {
             console.error('Error deleting bank:', error)

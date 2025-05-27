@@ -1,10 +1,13 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { Category } from '../interfaces/Category'
 
 export function useCategoryApi() {
+    const { initCsrf } = useCsrf()
+
     const getCategories = async (): Promise<Category[]> => {
         try {
-            const response = await axios.get('/categories')
+            const response = await apiClient.get('/categories')
             return response.data
         } catch (error) {
             console.error('Error fetching categories:', error)
@@ -14,7 +17,7 @@ export function useCategoryApi() {
 
     const getCategory = async (id: number): Promise<Category | null> => {
         try {
-            const response = await axios.get(`/categories/${id}`)
+            const response = await apiClient.get(`/categories/${id}`)
             return response.data
         } catch (error) {
             console.error('Error fetching category:', error)
@@ -24,15 +27,11 @@ export function useCategoryApi() {
 
     const saveCategory = async (form: Category): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
+            await initCsrf()
             if (form.id) {
-                await axios.put(`/categories/${form.id}`, form, config)
+                await apiClient.put(`/categories/${form.id}`, form)
             } else {
-                await axios.post('/categories', form, config)
+                await apiClient.post('/categories', form)
             }
             return true
         } catch (error) {
@@ -43,11 +42,8 @@ export function useCategoryApi() {
 
     const deleteCategory = async (id: number): Promise<boolean> => {
         try {
-            await axios.delete(`/categories/${id}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            })
+            await initCsrf()
+            await apiClient.delete(`/categories/${id}`)
             return true
         } catch (error) {
             console.error('Error deleting category:', error)

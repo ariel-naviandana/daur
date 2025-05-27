@@ -1,15 +1,14 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { User } from '../interfaces/User'
 
 export function useAuthApi() {
+    const { initCsrf } = useCsrf()
+
     const register = async (form: User): Promise<User | null> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
-            const response = await axios.post('/register', form, config)
+            await initCsrf()
+            const response = await apiClient.post('/register', form)
             const user = response.data.user
             if (user) {
                 window.location.href = user.role === 'master_admin' || user.role === 'bank_admin' ? '/admin' : '/'
@@ -23,12 +22,8 @@ export function useAuthApi() {
 
     const login = async (credentials: { email: string; password: string }): Promise<User | null> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
-            const response = await axios.post('/login', credentials, config)
+            await initCsrf()
+            const response = await apiClient.post('/login', credentials)
             const user = response.data.user
             if (user) {
                 window.location.href = user.role === 'master_admin' || user.role === 'bank_admin' ? '/admin' : '/'
@@ -43,12 +38,8 @@ export function useAuthApi() {
 
     const logout = async (): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
-            await axios.post('/logout', {}, config)
+            await initCsrf()
+            await apiClient.post('/logout')
             window.location.href = '/login'
             window.history.pushState({}, '', '/login')
             return true
@@ -60,7 +51,7 @@ export function useAuthApi() {
 
     const getCurrentUser = async (): Promise<User | null> => {
         try {
-            const response = await axios.get('/me')
+            const response = await apiClient.get('/me')
             return response.data.user
         } catch (error) {
             console.error('Error fetching current user:', error)
@@ -70,12 +61,8 @@ export function useAuthApi() {
 
     const updateProfile = async (data: { name?: string; address?: string; phone?: string; profile_picture?: string }): Promise<User | null> => {
         try {
-            const config = {
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-            },
-            }
-            const response = await axios.put('/users', data, config)
+            await initCsrf()
+            const response = await apiClient.put('/users', data)
             return response.data.user
         } catch (error) {
             console.error('Error updating profile:', error)

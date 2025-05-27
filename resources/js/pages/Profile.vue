@@ -110,8 +110,11 @@ import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
 import { useAuthApi } from '@/composables/useAuthApi'
 import { useImageApi } from '@/composables/useImageApi'
+import {useAuthStore} from "@/stores/auth"
 
-const { getCurrentUser, updateProfile } = useAuthApi()
+const authStore = useAuthStore()
+
+const { updateProfile } = useAuthApi()
 const { uploadToCloudinary } = useImageApi()
 
 const fileInputRef = ref<HTMLInputElement | null>(null)
@@ -133,13 +136,13 @@ const triggerFileInput = () => {
 }
 
 onMounted(async () => {
-  const user = await getCurrentUser()
+  const user = await authStore.user
   if (user) {
     nama.value = user.name || ''
     alamat.value = user.address || ''
     phone.value = user.phone || ''
     userProfileImage.value = user.profile_picture || null
-    userId.value = user.id 
+    userId.value = user.id
   }
 })
 

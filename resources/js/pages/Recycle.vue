@@ -205,12 +205,13 @@ import { Category } from '@/interfaces/Category'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
 import { WasteType } from '@/interfaces/WasteType'
-import { useAuthApi } from '@/composables/useAuthApi'
 import { User } from "@/interfaces/User"
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import {useAuthStore} from "@/stores/auth"
 
-const { getCurrentUser } = useAuthApi()
+const authStore = useAuthStore()
+
 const { getWasteTypes } = useWasteTypeApi()
 const { saveRecycleTransaction } = useRecycleTransactionApi()
 const { isUploading, uploadToCloudinary } = useImageApi()
@@ -225,7 +226,7 @@ const cartItems = ref<RecycleTransactionItem[]>([])
 const dropOffLocations = ref<Bank[]>([])
 const selectedDropOff = ref<Bank | null>(null)
 const wasteTypes = ref<WasteType[]>([])
-const user = ref<User>()
+const user = ref<User | null>(null)
 const previewImages = ref<{ [key: number]: string }>({})
 const uploadingItemId = ref<number | null>(null)
 
@@ -277,7 +278,7 @@ const fetchWasteTypes = async () => {
 }
 
 onMounted(async () => {
-    user.value = await getCurrentUser()
+    user.value = await authStore.user
     await fetchBanks()
     await fetchWasteTypes()
     setTimeout(() => {

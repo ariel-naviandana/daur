@@ -1,10 +1,13 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { RecycleTransactionItem } from '../interfaces/RecycleTransactionItem'
 
 export function useRecycleTransactionItemApi() {
+    const { initCsrf } = useCsrf()
+
     const getRecycleTransactionItems = async (): Promise<RecycleTransactionItem[]> => {
         try {
-            const response = await axios.get('/recycle-transaction-items')
+            const response = await apiClient.get('/recycle-transaction-items')
             return response.data
         } catch (error) {
             console.error('Error fetching recycle transaction items:', error)
@@ -14,7 +17,7 @@ export function useRecycleTransactionItemApi() {
 
     const getRecycleTransactionItem = async (id: number): Promise<RecycleTransactionItem | null> => {
         try {
-            const response = await axios.get(`/recycle-transaction-items/${id}`)
+            const response = await apiClient.get(`/recycle-transaction-items/${id}`)
             return response.data
         } catch (error) {
             console.error('Error fetching recycle transaction item:', error)
@@ -24,7 +27,7 @@ export function useRecycleTransactionItemApi() {
 
     const getRecycleTransactionItemsByTransaction = async (transactionId: number): Promise<RecycleTransactionItem[]> => {
         try {
-            const response = await axios.get(`/recycle-transaction-items/transaction/${transactionId}`)
+            const response = await apiClient.get(`/recycle-transaction-items/transaction/${transactionId}`)
             return response.data
         } catch (error) {
             console.error('Error fetching recycle transaction items by transaction:', error)
@@ -34,15 +37,11 @@ export function useRecycleTransactionItemApi() {
 
     const saveRecycleTransactionItem = async (form: RecycleTransactionItem): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
+            await initCsrf()
             if (form.id) {
-                await axios.put(`/recycle-transaction-items/${form.id}`, form, config)
+                await apiClient.put(`/recycle-transaction-items/${form.id}`, form)
             } else {
-                await axios.post('/recycle-transaction-items', form, config)
+                await apiClient.post('/recycle-transaction-items', form)
             }
             return true
         } catch (error) {
@@ -53,11 +52,8 @@ export function useRecycleTransactionItemApi() {
 
     const deleteRecycleTransactionItem = async (id: number): Promise<boolean> => {
         try {
-            await axios.delete(`/recycle-transaction-items/${id}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            })
+            await initCsrf()
+            await apiClient.delete(`/recycle-transaction-items/${id}`)
             return true
         } catch (error) {
             console.error('Error deleting recycle transaction item:', error)

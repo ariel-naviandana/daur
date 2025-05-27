@@ -1,10 +1,13 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { User } from '../interfaces/User'
 
 export function useUserApi() {
+    const { initCsrf } = useCsrf()
+
     const getUsers = async (): Promise<User[]> => {
         try {
-            const response = await axios.get('/users')
+            const response = await apiClient.get('/users')
             return response.data
         } catch (error) {
             console.error('Error fetching users:', error)
@@ -14,7 +17,7 @@ export function useUserApi() {
 
     const getUser = async (id: number): Promise<User | null> => {
         try {
-            const response = await axios.get(`/users/${id}`)
+            const response = await apiClient.get(`/users/${id}`)
             return response.data
         } catch (error) {
             console.error('Error fetching user:', error)
@@ -24,15 +27,11 @@ export function useUserApi() {
 
     const saveUser = async (form: User): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
+            await initCsrf()
             if (form.id) {
-                await axios.put(`/users/${form.id}`, form, config)
+                await apiClient.put(`/users/${form.id}`, form)
             } else {
-                await axios.post('/users', form, config)
+                await apiClient.post('/users', form)
             }
             return true
         } catch (error) {
@@ -43,11 +42,8 @@ export function useUserApi() {
 
     const deleteUser = async (id: number): Promise<boolean> => {
         try {
-            await axios.delete(`/users/${id}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            })
+            await initCsrf()
+            await apiClient.delete(`/users/${id}`)
             return true
         } catch (error) {
             console.error('Error deleting user:', error)
@@ -57,7 +53,7 @@ export function useUserApi() {
 
     const getAdmins = async (): Promise<User[]> => {
         try {
-            const response = await axios.get('/admins')
+            const response = await apiClient.get('/admins')
             return response.data
         } catch (error) {
             console.error('Error fetching admins:', error)

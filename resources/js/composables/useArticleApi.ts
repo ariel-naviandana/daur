@@ -1,11 +1,14 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { Article } from '../interfaces/Article'
 
 export function useArticleApi() {
+    const { initCsrf } = useCsrf()
+
     const getArticles = async (search?: string, sort: 'newest' | 'oldest' = 'newest'): Promise<Article[]> => {
         try {
             const params = { search, sort }
-            const response = await axios.get('/articles', { params })
+            const response = await apiClient.get('/articles', { params })
             return response.data
         } catch (error) {
             console.error('Error fetching articles:', error)
@@ -15,7 +18,7 @@ export function useArticleApi() {
 
     const getArticle = async (id: number): Promise<Article | null> => {
         try {
-            const response = await axios.get(`/articles/${id}`)
+            const response = await apiClient.get(`/articles/${id}`)
             return response.data
         } catch (error) {
             console.error('Error fetching article:', error)
@@ -25,15 +28,11 @@ export function useArticleApi() {
 
     const saveArticle = async (form: Article): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
+            await initCsrf()
             if (form.id) {
-                await axios.put(`/articles/${form.id}`, form, config)
+                await apiClient.put(`/articles/${form.id}`, form)
             } else {
-                await axios.post('/articles', form, config)
+                await apiClient.post('/articles', form)
             }
             return true
         } catch (error) {
@@ -44,11 +43,8 @@ export function useArticleApi() {
 
     const deleteArticle = async (id: number): Promise<boolean> => {
         try {
-            await axios.delete(`/articles/${id}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            })
+            await initCsrf()
+            await apiClient.delete(`/articles/${id}`)
             return true
         } catch (error) {
             console.error('Error deleting article:', error)

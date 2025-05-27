@@ -1,10 +1,13 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { WasteType } from '../interfaces/WasteType'
 
 export function useWasteTypeApi() {
+    const { initCsrf } = useCsrf()
+
     const getWasteTypes = async (): Promise<WasteType[]> => {
         try {
-            const response = await axios.get('/waste-types')
+            const response = await apiClient.get('/waste-types')
             return response.data
         } catch (error) {
             console.error('Error fetching waste types:', error)
@@ -14,7 +17,7 @@ export function useWasteTypeApi() {
 
     const getWasteType = async (id: number): Promise<WasteType | null> => {
         try {
-            const response = await axios.get(`/waste-types/${id}`)
+            const response = await apiClient.get(`/waste-types/${id}`)
             return response.data
         } catch (error) {
             console.error('Error fetching waste type:', error)
@@ -24,7 +27,7 @@ export function useWasteTypeApi() {
 
     const getWasteTypesByCategory = async (categoryId: number): Promise<WasteType[]> => {
         try {
-            const response = await axios.get(`/waste-types/category/${categoryId}`)
+            const response = await apiClient.get(`/waste-types/category/${categoryId}`)
             return response.data
         } catch (error) {
             console.error('Error fetching waste types by category:', error)
@@ -34,15 +37,11 @@ export function useWasteTypeApi() {
 
     const saveWasteType = async (form: WasteType): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
+            await initCsrf()
             if (form.id) {
-                await axios.put(`/waste-types/${form.id}`, form, config)
+                await apiClient.put(`/waste-types/${form.id}`, form)
             } else {
-                await axios.post('/waste-types', form, config)
+                await apiClient.post('/waste-types', form)
             }
             return true
         } catch (error) {
@@ -53,11 +52,8 @@ export function useWasteTypeApi() {
 
     const deleteWasteType = async (id: number): Promise<boolean> => {
         try {
-            await axios.delete(`/waste-types/${id}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            })
+            await initCsrf()
+            await apiClient.delete(`/waste-types/${id}`)
             return true
         } catch (error) {
             console.error('Error deleting waste type:', error)

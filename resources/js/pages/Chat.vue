@@ -18,13 +18,14 @@ import ChatList from '@/components/ChatList.vue'
 import ChatWindow from '@/components/ChatWindow.vue'
 import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
-import { useAuthApi } from '@/composables/useAuthApi'
 import { useUserApi } from '@/composables/useUserApi'
 import { useChatApi } from '@/composables/useChatApi'
 import { User } from '@/interfaces/User'
 import { Chat } from '@/interfaces/Chat'
+import {useAuthStore} from "@/stores/auth"
 
-const { getCurrentUser } = useAuthApi()
+const authStore = useAuthStore()
+
 const { getAdmins } = useUserApi()
 const { getChats } = useChatApi()
 
@@ -33,7 +34,7 @@ const contacts = ref<User[]>([])
 const selectedContact = ref<User | null>(null)
 
 onMounted(async () => {
-    currentUser.value = await getCurrentUser()
+    currentUser.value = await authStore.user
     if (currentUser.value?.role === 'user') {
         contacts.value = (await getAdmins()).map(user => ({
             ...user,
