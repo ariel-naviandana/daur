@@ -6,8 +6,22 @@
                 Apakah Anda yakin ingin menghapus item <strong>{{ itemName }}</strong>?
             </p>
             <div :style="buttonContainerStyle">
-                <button @click="onClose" :style="cancelButtonStyle">Batal</button>
-                <button @click="onConfirm" :style="confirmButtonStyle">Hapus</button>
+                <button
+                    @click="onClose"
+                    :style="[cancelButtonStyle, isHoverCancel ? buttonHoverStyleCancel : {}]"
+                    @mouseover="isHoverCancel = true"
+                    @mouseleave="isHoverCancel = false"
+                >
+                    Batal
+                </button>
+                <button
+                    @click="onConfirm"
+                    :style="[confirmButtonStyle, isHoverConfirm ? buttonHoverStyleConfirm : {}]"
+                    @mouseover="isHoverConfirm = true"
+                    @mouseleave="isHoverConfirm = false"
+                >
+                    Hapus
+                </button>
             </div>
         </div>
     </div>
@@ -15,6 +29,10 @@
 
 <script lang="ts" setup>
 import { theme } from "@/helpers/theme"
+import {ref} from "vue";
+
+const isHoverCancel = ref(false)
+const isHoverConfirm = ref(false)
 
 const props = defineProps<{
     isOpen: boolean
@@ -80,6 +98,8 @@ const confirmButtonStyle = {
     fontWeight: theme.fonts.weight.medium,
     borderRadius: "24px",
     cursor: "pointer",
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const cancelButtonStyle = {
@@ -91,5 +111,17 @@ const cancelButtonStyle = {
     fontWeight: theme.fonts.weight.medium,
     borderRadius: "24px",
     cursor: "pointer",
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+}
+
+const buttonHoverStyleConfirm = {
+    backgroundColor: '#B5271D',
+    transform: 'scale(1.05)',
+}
+
+const buttonHoverStyleCancel = {
+    backgroundColor: theme.colors.grey,
+    transform: 'scale(1.05)',
 }
 </script>

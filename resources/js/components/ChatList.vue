@@ -65,7 +65,7 @@ const searchInputWrapperStyle = {
 const searchIconStyle = {
     position: 'absolute',
     top: '50%',
-    left: '20px',
+    left: '16px',
     transform: 'translateY(-50%)',
     width: '20px',
     height: '20px',
@@ -76,6 +76,7 @@ const searchInputStyle = {
     width: '300px',
     height: '40px',
     paddingLeft: '40px',
+    paddingBottom: '4px',
     border: '1px solid #888888',
     borderRadius: '30px',
     fontSize: '16px',

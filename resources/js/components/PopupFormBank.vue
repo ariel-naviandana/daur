@@ -43,8 +43,23 @@
                     <input v-model="form.phone" type="text" :style="inputStyle" />
                 </div>
                 <div :style="buttonGroupStyle">
-                    <button type="button" :style="cancelButtonStyle" @click="$emit('close')">Batal</button>
-                    <button type="submit" :style="saveButtonStyle">Simpan</button>
+                    <button
+                        type="button"
+                        :style="[cancelButtonStyle, isHoverCancel ? buttonHoverStyleCancel : {}]"
+                        @mouseover="isHoverCancel = true"
+                        @mouseleave="isHoverCancel = false"
+                        @click="$emit('close')"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="submit"
+                        :style="[saveButtonStyle, isHoverSave ? buttonHoverStyleSave : {}]"
+                        @mouseover="isHoverSave = true"
+                        @mouseleave="isHoverSave = false"
+                    >
+                        Simpan
+                    </button>
                 </div>
             </form>
         </div>
@@ -60,6 +75,9 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 const OPENCAGE_API_KEY = 'e5f8659f848545f486b84de646bd104d'
+
+const isHoverCancel = ref(false)
+const isHoverSave = ref(false)
 
 const props = defineProps<{ bank?: Bank | null }>()
 const emit = defineEmits(['close', 'saved'])
@@ -338,22 +356,36 @@ const buttonGroupStyle = {
 
 const cancelButtonStyle = {
     padding: '8px 16px',
-    borderRadius: '6px',
+    borderRadius: '8px',
     backgroundColor: theme.colors.lightGrey,
     color: theme.colors.darkGrey,
     fontSize: theme.fonts.size.base,
     border: 'none',
     cursor: 'pointer',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
 }
 
 const saveButtonStyle = {
     padding: '8px 16px',
-    borderRadius: '6px',
+    borderRadius: '8px',
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
     border: 'none',
     cursor: 'pointer',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
+}
+
+const buttonHoverStyleCancel = {
+    backgroundColor: theme.colors.grey,
+    transform: 'scale(1.05)',
+}
+
+const buttonHoverStyleSave = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
 }
 </script>
 

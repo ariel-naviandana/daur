@@ -293,13 +293,15 @@ const buttonContainerStyle = {
 }
 
 const buttonStyle = {
-  backgroundColor: theme.colors.primary,
-  color: 'white',
-  fontWeight: theme.fonts.weight.semibold,
-  fontSize: theme.fonts.size.base,
-  border: 'none',
-  borderRadius: '999px',
-  padding: '10px 30px',
-  cursor: 'pointer',
+    backgroundColor: theme.colors.primary,
+    color: 'white',
+    fontWeight: theme.fonts.weight.semibold,
+    fontSize: theme.fonts.size.base,
+    border: 'none',
+    borderRadius: '999px',
+    padding: '10px 30px',
+    cursor: 'pointer',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 </script>
