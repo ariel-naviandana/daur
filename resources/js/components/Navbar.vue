@@ -88,6 +88,14 @@
                                         :style="linkStyle('/riwayat')">
                                         Riwayat</a>
                                 </li>
+                                <li v-if="!isMasterAdmin && !isBankAdmin">
+                                    <a
+                                        href="/saldo"
+                                        class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                        @click="toggleSidebar"
+                                        :style="linkStyle('/saldo')">
+                                        Saldo</a>
+                                </li>
                                 <li>
                                     <a
                                         href="#"
@@ -143,6 +151,9 @@
                 </li>
                 <li v-if="!isMasterAdmin && !isBankAdmin">
                     <a href="/riwayat" @click="toggleSidebar" :style="linkStyle('/riwayat')">Riwayat</a>
+                </li>
+                <li v-if="!isMasterAdmin && !isBankAdmin">
+                    <a href="/saldo" @click="toggleSidebar" :style="linkStyle('/saldo')">Saldo</a>
                 </li>
                 <li v-if="user">
                     <a href="#" @click="logoutAndCloseSidebar" :style="linkStyle('/logout')">Logout</a>
