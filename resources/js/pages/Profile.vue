@@ -30,13 +30,13 @@
         <div :style="columnStyle" @mouseover="hoverSaldo = true" @mouseleave="hoverSaldo = false">
           <h2 :style="headingStyle">Saldo DAUR</h2>
           <div :style="[textStatStyle, hoverSaldo ? hoverCardStyle : {}]">
-            <a href="/saldo">Rp. 25.000</a>
+            <a href="/saldo">Rp. {{ saldoDaur.toLocaleString('id-ID') }}</a>
           </div>
         </div>
 
         <div :style="columnStyle">
           <h2 :style="headingStyle">Total Sampah</h2>
-          <div :style="textStatStyle">15 Kg</div>
+          <div :style="textStatStyle">{{ totalSampah }} Kg</div>
         </div>
 
         <div :style="columnStyle" @mouseover="hoverRiwayat = true" @mouseleave="hoverRiwayat = false">
@@ -110,11 +110,11 @@ import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
 import { useAuthApi } from '@/composables/useAuthApi'
 import { useImageApi } from '@/composables/useImageApi'
-import {useAuthStore} from "@/stores/auth"
 
-const authStore = useAuthStore()
+const saldoDaur = ref<number>(0)
+const totalSampah = ref<number>(0)
 
-const { updateProfile } = useAuthApi()
+const { getCurrentUser, updateProfile } = useAuthApi()
 const { uploadToCloudinary } = useImageApi()
 
 const fileInputRef = ref<HTMLInputElement | null>(null)
@@ -136,13 +136,15 @@ const triggerFileInput = () => {
 }
 
 onMounted(async () => {
-  const user = await authStore.user
+  const user = await getCurrentUser()
   if (user) {
     nama.value = user.name || ''
     alamat.value = user.address || ''
     phone.value = user.phone || ''
     userProfileImage.value = user.profile_picture || null
     userId.value = user.id
+    saldoDaur.value = user.wallet?.balance ?? 0
+    totalSampah.value = user.recycleTransactions?.reduce((sum, tx) => sum + (tx.total_quantity ?? 0), 0) ?? 0
   }
 })
 
