@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import { Category } from '@/interfaces/Category'
 import { theme } from '@/helpers/theme'
-import {ref} from "vue";
+import {ref} from "vue"
 
 const isHoverEdit = ref(false)
 const isHoverDelete = ref(false)
