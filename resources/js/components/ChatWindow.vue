@@ -236,11 +236,12 @@ const input = {
     marginLeft: '10px',
     marginRight: '10px',
     paddingLeft: '20px',
+    paddingBottom: '4px',
     borderRadius: '30px',
     border: 'none',
     backgroundColor: '#fafafa',
-    fontSize: '20px',
-    height: '50px',
+    fontSize: theme.fonts.size.base,
+    height: '40px',
 }
 
 const iconButton = {

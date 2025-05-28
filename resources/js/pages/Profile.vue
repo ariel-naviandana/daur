@@ -112,10 +112,9 @@ import { useAuthApi } from '@/composables/useAuthApi'
 import { useImageApi } from '@/composables/useImageApi'
 import {useAuthStore} from "@/stores/auth"
 
-const authStore = useAuthStore()
-
 const { updateProfile } = useAuthApi()
 const { uploadToCloudinary } = useImageApi()
+const authStore = useAuthStore()
 
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const selectedImage = ref<File | null>(null)
@@ -132,170 +131,171 @@ const hoverRiwayat = ref(false)
 const isHover = ref(false)
 
 const triggerFileInput = () => {
-  fileInputRef.value?.click()
+    fileInputRef.value?.click()
 }
 
 onMounted(async () => {
-  const user = await authStore.user
-  if (user) {
-    nama.value = user.name || ''
-    alamat.value = user.address || ''
-    phone.value = user.phone || ''
-    userProfileImage.value = user.profile_picture || null
-    userId.value = user.id
+    const user = await authStore.user
+    if (user) {
+        nama.value = user.name || ''
+        alamat.value = user.address || ''
+        phone.value = user.phone || ''
+        userProfileImage.value = user.profile_picture || null
+        userId.value = user.id
   }
 })
 
 const handleImageChange = (event: Event) => {
-  const file = (event.target as HTMLInputElement)?.files?.[0]
-  if (file) {
-    selectedImage.value = file
-    previewImage.value = URL.createObjectURL(file)
-  }
+    const file = (event.target as HTMLInputElement)?.files?.[0]
+    if (file) {
+        selectedImage.value = file
+        previewImage.value = URL.createObjectURL(file)
+      }
 }
 
 const simpanProfil = async () => {
-  let imageUrl = userProfileImage.value
+    let imageUrl = userProfileImage.value
 
-  if (selectedImage.value) {
-    const uploadedUrl = await uploadToCloudinary(selectedImage.value)
-    if (!uploadedUrl) {
-      alert('Gagal upload gambar!')
-      return
+    if (selectedImage.value) {
+        const uploadedUrl = await uploadToCloudinary(selectedImage.value)
+        if (!uploadedUrl) {
+            alert('Gagal upload gambar!')
+            return
+        }
+        imageUrl = uploadedUrl
     }
-    imageUrl = uploadedUrl
-  }
 
-  const updatedUser = await updateProfile({
-    id: userId.value,
-    name: nama.value,
-    address: alamat.value,
-    phone: phone.value,
-    profile_picture: imageUrl,
-  })
+    const updatedUser = await updateProfile({
+        id: userId.value,
+        name: nama.value,
+        address: alamat.value,
+        phone: phone.value,
+        profile_picture: imageUrl,
+    })
 
-  if (updatedUser) {
-    userProfileImage.value = updatedUser.image || imageUrl
-    previewImage.value = null
-    selectedImage.value = null
-    alert('Profil berhasil diperbarui!')
-  } else {
-    alert('Gagal menyimpan profil.')
-  }
+    if (updatedUser) {
+        userProfileImage.value = updatedUser.image || imageUrl
+        previewImage.value = null
+        selectedImage.value = null
+        alert('Profil berhasil diperbarui!')
+    } else {
+        alert('Gagal menyimpan profil.')
+    }
 }
 
 const hoverCardStyle = {
-  transform: 'scale(1.05)',
-  transition: '0.2s ease-in-out',
+    transform: 'scale(1.05)',
+    transition: '0.2s ease-in-out',
 }
 
 const hoverIconStyle = {
-  transform: 'scale(1.1)',
-  transition: '0.2s ease-in-out',
+    transform: 'scale(1.1)',
+    transition: '0.2s ease-in-out',
 }
 
 const buttonHoverStyle = {
-  backgroundColor: '#2d862d',
-  transform: 'scale(1.05)',
-  transition: '0.2s ease-in-out',
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
 }
 
 const layoutStyle = {
-  backgroundColor: theme.colors.whiteBg,
-  minHeight: '100vh',
-  fontFamily: theme.fonts.family,
-  padding: '2rem',
+    backgroundColor: theme.colors.whiteBg,
+    minHeight: '100vh',
+    fontFamily: theme.fonts.family,
+    padding: '2rem',
 }
 
 const topSectionStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: '30px',
-  flexWrap: 'wrap',
-  marginBottom: '40px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '30px',
+    flexWrap: 'wrap',
+    marginBottom: '40px',
 }
 
 const containerStyle = {
-  backgroundColor: theme.colors.whiteElement,
-  minHeight: '180px',
-  width: '90%',
-  maxWidth: '540px',
-  display: 'flex',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-  borderRadius: '16px',
-  padding: '24px',
-  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+    backgroundColor: theme.colors.whiteElement,
+    minHeight: '180px',
+    width: '90%',
+    maxWidth: '540px',
+    display: 'flex',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderRadius: '16px',
+    padding: '24px',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
 }
 
 const imgStyle = {
-  width: '190px',
-  height: '190px',
-  border: '2px solid #3a9e3a',
-  borderRadius: '50%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+    width: '190px',
+    height: '190px',
+    border: '2px solid #3a9e3a',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
 }
 
 const columnStyle = {
-  textAlign: 'center',
+    textAlign: 'center',
 }
 
 const headingStyle = {
-  fontSize: theme.fonts.size.subheading,
-  fontWeight: theme.fonts.weight.bold,
-  color: theme.colors.darkGrey,
-  marginBottom: '10px',
+    fontSize: theme.fonts.size.subheading,
+    fontWeight: theme.fonts.weight.bold,
+    color: theme.colors.darkGrey,
+    marginBottom: '10px',
 }
 
 const textStatStyle = {
-  fontSize: theme.fonts.size.subheading,
-  fontWeight: theme.fonts.weight.bold,
-  color: theme.colors.primary,
+    fontSize: theme.fonts.size.subheading,
+    fontWeight: theme.fonts.weight.bold,
+    color: theme.colors.primary,
 }
 
 const labelStyle = {
-  display: 'block',
-  fontSize: theme.fonts.size.medium,
-  fontWeight: theme.fonts.weight.bold,
-  color: theme.colors.darkGrey,
-  marginBottom: '10px',
+    display: 'block',
+    fontSize: theme.fonts.size.medium,
+    fontWeight: theme.fonts.weight.bold,
+    color: theme.colors.darkGrey,
+    marginBottom: '10px',
 }
 
 const inputStyle = {
-  backgroundColor: theme.colors.whiteElement,
-  width: '100%',
-  border: '1px solid #ccc',
-  padding: '10px 16px',
+    backgroundColor: theme.colors.whiteElement,
+    width: '100%',
+    border: '1px solid #ccc',
+    padding: '10px 16px',
   borderRadius: '999px',
-  fontSize: theme.fonts.size.base,
-  fontFamily: theme.fonts.family,
-  color: theme.colors.darkGrey,
+    fontSize: theme.fonts.size.base,
+    fontFamily: theme.fonts.family,
+    color: theme.colors.darkGrey,
 }
 
 const iconStyle = {
-  width: '40px',
-  height: '40px',
-  objectFit: 'contain',
-  margin: 'auto',
+    width: '40px',
+    height: '40px',
+    objectFit: 'contain',
+    margin: 'auto',
 }
 
 const buttonContainerStyle = {
-  display: 'flex',
-  justifyContent: 'flex-end',
-  marginTop: '20px',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginTop: '20px',
 }
 
 const buttonStyle = {
-  backgroundColor: theme.colors.primary,
-  color: 'white',
-  fontWeight: theme.fonts.weight.semibold,
-  fontSize: theme.fonts.size.base,
-  border: 'none',
-  borderRadius: '999px',
-  padding: '10px 30px',
-  cursor: 'pointer',
+    backgroundColor: theme.colors.primary,
+    color: 'white',
+    fontWeight: theme.fonts.weight.semibold,
+    fontSize: theme.fonts.size.base,
+    border: 'none',
+    borderRadius: '999px',
+    padding: '10px 30px',
+    cursor: 'pointer',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 </script>

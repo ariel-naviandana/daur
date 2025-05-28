@@ -55,7 +55,12 @@
                         />
                     </div>
                 </div>
-                <button :style="addButtonStyle" @click="openCreatePopup">
+                <button
+                    :style="[addButtonStyle, isHover ? buttonHoverStyle : {}]"
+                    @mouseover="isHover = true"
+                    @mouseleave="isHover = false"
+                    @click="openCreatePopup"
+                >
                     Tambah
                 </button>
             </div>
@@ -125,6 +130,7 @@ const searchQuery = ref<string>('')
 const showFormPopup = ref(false)
 const showDeletePopup = ref(false)
 const { getBanks, deleteBank } = useBankApi()
+const isHover = ref(false)
 
 const fetchBanks = async () => {
     try {
@@ -227,11 +233,18 @@ const addButtonStyle = {
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
     padding: '8px 16px',
-    borderRadius: '6px',
+    borderRadius: '8px',
     fontSize: theme.fonts.size.base,
     cursor: 'pointer',
     border: 'none',
     marginLeft: 'auto',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
+}
+
+const buttonHoverStyle = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
 }
 
 const filtersWrapperStyle = {
@@ -274,7 +287,7 @@ const selectStyle = {
     padding: '8px 12px',
     paddingRight: '36px',
     fontSize: theme.fonts.size.base,
-    borderRadius: '6px',
+    borderRadius: '8px',
     border: `1px solid ${theme.colors.lightGrey}`,
     fontFamily: theme.fonts.family,
     appearance: 'none',

@@ -3,12 +3,17 @@
         <div :style="upperSection">
             <!-- Tombol Kembali -->
             <a href="/profile">
-            <div :style="backButtonStyle">
+            <button
+                :style="[backButtonStyle, isHover ? buttonHoverStyle : {}]"
+                @mouseover="isHover = true"
+                @mouseleave="isHover = false"
+                @click=""
+            >
                 <img src="/public/images/back-btn.svg" alt="">
-                <button @click="">
-                    Kembali ke profile
-                </button>
-            </div>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <span>Kembali ke profile</span>
+                </div>
+            </button>
             </a>
 
             <!-- Nama User -->
@@ -63,6 +68,7 @@ import SaldoCard from "@/components/SaldoCard.vue"
 import WithdrawalCard from "@/components/WithdrawalCard.vue"
 
 const showModal = ref(false)
+const isHover = ref(false)
 
 const handleWithdraw = (data: { destination: string; amount: string }) => {
     showModal.value = false
@@ -87,7 +93,7 @@ const layoutStyle = {
 }
 
 const backButtonStyle = {
-    width: '300px',
+    width: '230px',
     height: '50px',
     backgroundColor: 'transparent',
     color: theme.colors.primary,
@@ -98,7 +104,10 @@ const backButtonStyle = {
     padding: '8px 20px',
     cursor: 'pointer',
     marginBottom: '1rem',
-    gap: '10px'
+    gap: '10px',
+    justifyContent: 'center',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const userNameStyle = {
@@ -141,15 +150,16 @@ const filterDownloadButtonStyle = {
     color: 'white',
     border: 'none',
     borderRadius: '999px',
-    padding: '8px 16px',
+    padding: '8px',
+    width: '130px',
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.medium,
     cursor: 'pointer',
     transition: '0.2s ease',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const buttonHoverStyle = {
-    backgroundColor: '#2d862d',
     transform: 'scale(1.05)',
 }
 
@@ -196,7 +206,6 @@ const mutasiAmountPlusStyle = {
     color: theme.colors.primary,
     fontWeight: theme.fonts.weight.bold,
 }
-
 </script>
 
 <style scoped></style>

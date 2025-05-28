@@ -28,8 +28,22 @@
             />
 
             <div :style="buttonRowStyle">
-                <button :style="cancelBtnStyle" @click="$emit('close')">Batal</button>
-                <button :style="confirmBtnStyle" @click="confirm">Konfirmasi</button>
+                <button
+                    :style="[cancelBtnStyle, isHoverClose ? buttonHoverStyle : {}]"
+                    @mouseover="isHoverClose = true"
+                    @mouseleave="isHoverClose = false"
+                    @click="$emit('close')"
+                >
+                    Batal
+                </button>
+                <button
+                    :style="[confirmBtnStyle, isHoverConfirm ? buttonHoverStyle : {}]"
+                    @mouseover="isHoverConfirm = true"
+                    @mouseleave="isHoverConfirm = false"
+                    @click="confirm"
+                >
+                    Konfirmasi
+                </button>
             </div>
         </div>
     </div>
@@ -44,6 +58,8 @@ const emit = defineEmits(['close', 'submit'])
 
 const selectedOption = ref('')
 const amount = ref('')
+const isHoverClose = ref(false)
+const isHoverConfirm = ref(false)
 
 const options = [
     { name: 'Gopay', number: '081291219002' },
@@ -128,27 +144,37 @@ export const inputStyle = {
 
 export const buttonRowStyle = {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     gap: '1rem'
 }
 
 export const cancelBtnStyle = {
     backgroundColor: '#ccc',
     color: '#000',
-    padding: '10px 20px',
+    padding: '10px',
+    width: '160px',
     borderRadius: '999px',
     border: 'none',
     fontWeight: theme.fonts.weight.semibold,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 export const confirmBtnStyle = {
     backgroundColor: theme.colors.primary,
     color: '#fff',
-    padding: '10px 20px',
+    padding: '10px',
+    width: '160px',
     borderRadius: '999px',
     border: 'none',
     fontWeight: theme.fonts.weight.semibold,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+}
+
+const buttonHoverStyle = {
+    transform: 'scale(1.05)',
 }
 </script>
