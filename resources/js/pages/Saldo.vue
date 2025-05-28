@@ -59,7 +59,7 @@
                 :style="mutasiCardStyle"
             >
                 <div :style="mutasiIconWrapperStyle">
-                    <img :src="item.type === 'withdrawal' ? '/public/images/money-out.svg' : '/public/images/money-in.svg'" />
+                    <img :src="item.type === 'withdrawal' ? '/images/money-out.svg' : '/images/money-in.svg'" />
                 </div>
                 <div :style="mutasiInfoStyle">
                     <p :style="mutasiTitleTextStyle">
