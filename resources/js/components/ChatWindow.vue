@@ -56,6 +56,12 @@
     <div v-else :style="emptyState">
         <p>Pilih kontak untuk mulai chatting</p>
     </div>
+    <PopupNotifikasi
+        :isOpen="showNotification"
+        :title="notificationTitle"
+        :message="notificationMessage"
+        @close="showNotification = false"
+    />
 </template>
 
 <script setup lang="ts">
@@ -65,6 +71,17 @@ import { useChatApi } from '@/composables/useChatApi'
 import { useImageApi } from '@/composables/useImageApi'
 import { User } from '@/interfaces/User'
 import { Chat } from '@/interfaces/Chat'
+import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
+
+const showNotification = ref(false)
+const notificationTitle = ref('')
+const notificationMessage = ref('')
+
+const showAlert = (title: string, message: string) => {
+    notificationTitle.value = title
+    notificationMessage.value = message
+    showNotification.value = true
+}
 
 const props = defineProps<{
     selectedContact: User | null
@@ -118,11 +135,11 @@ async function uploadImage(event: Event) {
     const validTypes = ['image/jpeg', 'image/png', 'image/gif']
     const maxSize = 5 * 1024 * 1024
     if (!validTypes.includes(file.type)) {
-        alert('Hanya file JPEG, PNG, atau GIF yang diperbolehkan.')
+        showAlert('Tipe File Tidak Didukung', 'Hanya file JPEG, PNG, atau GIF yang diperbolehkan.')
         return
     }
     if (file.size > maxSize) {
-        alert('Ukuran file maksimum adalah 5MB.')
+        showAlert('Ukuran File Terlalu Besar', 'Ukuran file maksimum adalah 5MB.')
         return
     }
     const imageUrl = await uploadToCloudinary(file)

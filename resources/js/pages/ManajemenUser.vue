@@ -179,6 +179,12 @@
                 </div>
             </div>
         </div>
+        <PopupNotifikasi
+            :title="popup.title"
+            :message="popup.message"
+            :isOpen="popup.isOpen"
+            @close="tutupPopup"
+        />
     </div>
 </template>
 
@@ -187,9 +193,32 @@ import { ref, computed } from 'vue'
 import { theme } from '@/helpers/theme'
 import Navbar from "@/components/Navbar.vue"
 import { onMounted, onUnmounted } from 'vue'
+import PopupNotifikasi from "@/components/PopupNotifikasi.vue";
 
 const dropdownRefs = {}
 const isHoverClose = ref(false)
+
+const popup = ref({
+    isOpen: false,
+    title: '',
+    message: '',
+})
+
+const tampilkanPopup = (title, message) => {
+    popup.value = {
+        isOpen: true,
+        title,
+        message
+    }
+}
+
+const tutupPopup = () => {
+    popup.value.isOpen = false
+}
+
+const eksekusiAksi = () => {
+    popup.value.isOpen = false
+}
 
 const handleClickOutside = (event) => {
     const openDropdown = dropdownOpenId.value
@@ -261,6 +290,9 @@ const selectedUser = ref(null)
 
 const openUserPopup = (user) => {
     selectedUser.value = user
+    setTimeout(() => {
+        console.log('Popup mount check:', selectedUser.value)
+    }, 500)
 }
 
 const closePopup = () => {
@@ -277,12 +309,9 @@ const handleAction = (action, user) => {
     if (action === 'lihat') {
         openUserPopup(user)
     } else if (action === 'edit') {
-        alert(`Edit user: ${user.name}`)
+        tampilkanPopup('Edit User', `Fitur edit user ${user.name} belum tersedia.`)
     } else if (action === 'block') {
-        const confirmed = confirm(`Blokir user ${user.name}?`)
-        if (confirmed) {
-            users.value = users.value.filter(u => u.id !== user.id)
-        }
+        tampilkanPopup('Blokir User', `Fitur blokir user belum tersedia.`)
     }
     dropdownOpenId.value = null
 }

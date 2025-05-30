@@ -1,12 +1,15 @@
 <template>
     <div :style="overlayStyle">
         <div :style="popupStyle">
-            <h2 :style="titleStyle">{{ wasteType?.id ? 'Edit Jenis Sampah' : 'Tambah Jenis Sampah' }}</h2>
+            <h2 :style="titleStyle">
+                {{ form.id ? 'Edit Jenis Sampah' : 'Tambah Jenis Sampah' }}
+            </h2>
             <form @submit.prevent="save">
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Nama Jenis Sampah</label>
                     <input v-model="form.name" type="text" :style="inputStyle" required />
                 </div>
+
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Kategori</label>
                     <select v-model="form.category_id" :style="selectStyle" required>
@@ -15,10 +18,12 @@
                         </option>
                     </select>
                 </div>
+
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Satuan</label>
-                    <input v-model="form.unit" type="text" :style="inputStyle" placeholder="Contoh: kg, liter, dll." required />
+                    <input v-model="form.unit" type="text" :style="inputStyle" required />
                 </div>
+
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Harga per Satuan</label>
                     <input
@@ -26,10 +31,10 @@
                         type="number"
                         step="0.01"
                         :style="inputStyle"
-                        placeholder="Contoh: 2000"
                         required
                     />
                 </div>
+
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Gambar (Opsional)</label>
                     <input type="file" accept="image/*" @change="handleFileChange" :style="inputStyle" />
@@ -37,6 +42,7 @@
                         <img :src="previewImage" :style="previewImageStyle" />
                     </div>
                 </div>
+
                 <div :style="buttonGroupStyle">
                     <button
                         type="button"
@@ -59,32 +65,47 @@
                 </div>
             </form>
         </div>
+
+        <!-- Konfirmasi sebelum menyimpan jika mode edit -->
+        <PopupEdit
+            v-if="showConfirmSavePopup"
+            :is-open="showConfirmSavePopup"
+            :item-name="form.name"
+            @close="cancelConfirm"
+            @confirm="confirmSave"
+        />
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 import { theme } from '@/helpers/theme'
 import { useWasteTypeApi } from '@/composables/useWasteTypeApi'
 import { useImageApi } from '@/composables/useImageApi'
 import { WasteType } from '@/interfaces/WasteType'
 import { Category } from '@/interfaces/Category'
+import PopupEdit from './PopupEdit.vue'
 
-const isHoverCancel = ref(false)
-const isHoverSave = ref(false)
-
-const props = defineProps<{ wasteType?: WasteType | null, categories: Category[] }>()
+const props = defineProps<{
+    wasteType?: WasteType | null
+    categories: Category[]
+}>()
 const emit = defineEmits(['close', 'saved'])
 
 const form = ref<WasteType>({
     id: 0,
-    category_id: props.categories[0]?.id || 0,
     name: '',
     unit: '',
     price_per_unit: 0,
-    image: ''
+    image: '',
+    category_id: props.categories[0]?.id || 0
 })
+
+const isHoverCancel = ref(false)
+const isHoverSave = ref(false)
 const previewImage = ref<string | null>(null)
+const showConfirmSavePopup = ref(false)
+
 const { saveWasteType } = useWasteTypeApi()
 const { isUploading, uploadToCloudinary } = useImageApi()
 
@@ -93,7 +114,14 @@ watch(
     (newVal) => {
         form.value = newVal
             ? { ...newVal }
-            : { id: 0, category_id: props.categories[0]?.id || 0, name: '', unit: '', price_per_unit: 0, image: '' }
+            : {
+                id: 0,
+                name: '',
+                unit: '',
+                price_per_unit: 0,
+                image: '',
+                category_id: props.categories[0]?.id || 0
+            }
         previewImage.value = newVal?.image || null
     },
     { immediate: true }
@@ -109,25 +137,32 @@ const handleFileChange = async (event: Event) => {
     }
     reader.readAsDataURL(file)
 
-    const imageUrl = await uploadToCloudinary(file)
-    if (imageUrl) form.value.image = imageUrl
+    const url = await uploadToCloudinary(file)
+    if (url) form.value.image = url
 }
 
-const save = async () => {
-    try {
-        const success = await saveWasteType(form.value)
-        if (success) {
-            emit('saved')
-            emit('close')
-        } else {
-            alert('Gagal menyimpan jenis sampah')
-        }
-    } catch (error) {
-        console.error('Error saving waste type:', error)
-        alert('Terjadi kesalahan saat menyimpan')
+const save = () => {
+    if (form.value.id !== 0) {
+        showConfirmSavePopup.value = true
+    } else {
+        confirmSave()
     }
 }
 
+const confirmSave = async () => {
+    showConfirmSavePopup.value = false
+    const saved = await saveWasteType(form.value)
+    if (saved) {
+        emit('saved')
+        emit('close')
+    }
+}
+
+const cancelConfirm = () => {
+    showConfirmSavePopup.value = false
+}
+
+// Styles (inline to maintain consistency)
 const overlayStyle = {
     position: 'fixed',
     top: 0,
@@ -146,7 +181,7 @@ const popupStyle = {
     borderRadius: '16px',
     padding: '24px',
     width: '90%',
-    maxWidth: '400px',
+    maxWidth: '450px',
     maxHeight: '90vh',
     overflowY: 'auto',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
@@ -206,7 +241,8 @@ const buttonGroupStyle = {
 }
 
 const cancelButtonStyle = {
-    padding: '8px 16px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '8px',
     backgroundColor: theme.colors.lightGrey,
     color: theme.colors.darkGrey,
@@ -214,11 +250,12 @@ const cancelButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
+    transition: '0.2s ease-in-out'
 }
 
 const saveButtonStyle = {
-    padding: '8px 16px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '8px',
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
@@ -226,22 +263,22 @@ const saveButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
+    transition: '0.2s ease-in-out'
 }
 
 const buttonHoverStyleCancel = {
     backgroundColor: theme.colors.grey,
-    transform: 'scale(1.05)',
+    transform: 'scale(1.05)'
 }
 
 const buttonHoverStyleSave = {
     backgroundColor: '#2d862d',
-    transform: 'scale(1.05)',
+    transform: 'scale(1.05)'
 }
 </script>
 
 <style scoped>
 ::-webkit-scrollbar {
-    display: none
+    display: none;
 }
 </style>

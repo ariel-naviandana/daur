@@ -101,6 +101,22 @@
         </button>
       </div>
     </form>
+
+
+      <PopupSimpanProfile
+          :isOpen="showConfirmPopup"
+          itemName="profil"
+          title="Konfirmasi Perubahan"
+          @close="showConfirmPopup = false"
+          @confirm="() => { showConfirmPopup = false; simpanData() }"
+      />
+
+      <PopupNotifikasi
+          :isOpen="showNotifPopup"
+          :title="notifTitle"
+          :message="notifMessage"
+          @close="showNotifPopup = false"
+      />
   </div>
 </template>
 
@@ -110,6 +126,8 @@ import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
 import { useAuthApi } from '@/composables/useAuthApi'
 import { useImageApi } from '@/composables/useImageApi'
+import PopupSimpanProfile from '@/components/PopupSimpanProfile.vue'
+import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
 
 const { getCurrentUser, updateProfile } = useAuthApi()
 const { uploadToCloudinary } = useImageApi()
@@ -127,6 +145,10 @@ const userId = ref<number | null>(null)
 const hoverSaldo = ref(false)
 const hoverRiwayat = ref(false)
 const isHover = ref(false)
+const showConfirmPopup = ref(false)
+const showNotifPopup = ref(false)
+const notifTitle = ref('')
+const notifMessage = ref('')
 
 const triggerFileInput = () => {
     fileInputRef.value?.click()
@@ -151,13 +173,17 @@ const handleImageChange = (event: Event) => {
       }
 }
 
-const simpanProfil = async () => {
+const simpanProfil = () => {
+    showConfirmPopup.value = true
+}
+
+const simpanData = async () => {
     let imageUrl = userProfileImage.value
 
     if (selectedImage.value) {
         const uploadedUrl = await uploadToCloudinary(selectedImage.value)
         if (!uploadedUrl) {
-            alert('Gagal upload gambar!')
+            showNotif('Upload Gagal', 'Gagal upload gambar!')
             return
         }
         imageUrl = uploadedUrl
@@ -168,17 +194,23 @@ const simpanProfil = async () => {
         name: nama.value,
         address: alamat.value,
         phone: phone.value,
-        profile_picture: imageUrl,
+        profile_picture: imageUrl
     })
 
     if (updatedUser) {
         userProfileImage.value = updatedUser.image || imageUrl
         previewImage.value = null
         selectedImage.value = null
-        alert('Profil berhasil diperbarui!')
+        showNotif('Berhasil!', 'Profil berhasil diperbarui!')
     } else {
-        alert('Gagal menyimpan profil.')
+        showNotif('Gagal!', 'Gagal menyimpan profil.')
     }
+}
+
+const showNotif = (title: string, message: string) => {
+    notifTitle.value = title
+    notifMessage.value = message
+    showNotifPopup.value = true
 }
 
 const hoverCardStyle = {

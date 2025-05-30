@@ -1,7 +1,7 @@
 <template>
     <div :style="overlayStyle">
         <div :style="popupStyle">
-            <h2 :style="titleStyle">{{ bank ? 'Edit Bank Sampah' : 'Tambah Bank Sampah' }}</h2>
+            <h2 :style="titleStyle">{{ form.id !== 0 ? 'Edit Bank Sampah' : 'Tambah Bank Sampah' }}</h2>
             <form @submit.prevent="save">
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Nama Bank Sampah</label>
@@ -36,6 +36,15 @@
                 </div>
             </form>
         </div>
+
+        <!-- Popup konfirmasi edit -->
+        <PopupEdit
+            v-if="showConfirmSavePopup"
+            :is-open="showConfirmSavePopup"
+            :item-name="form.name"
+            @close="cancelConfirm"
+            @confirm="confirmSave"
+        />
     </div>
 </template>
 
@@ -44,12 +53,14 @@ import { ref, watch } from 'vue'
 import { theme } from '@/helpers/theme'
 import { useBankApi } from '@/composables/useBankApi'
 import { Bank } from '@/interfaces/Bank'
-
-const isHoverCancel = ref(false)
-const isHoverSave = ref(false)
+import PopupEdit from './PopupEdit.vue'
 
 const props = defineProps<{ bank?: Bank | null }>()
 const emit = defineEmits(['close', 'saved'])
+
+const isHoverCancel = ref(false)
+const isHoverSave = ref(false)
+const showConfirmSavePopup = ref(false)
 
 const form = ref<Bank>({ id: 0, name: '', address: '', phone: '' })
 const { saveBank } = useBankApi()
@@ -62,7 +73,16 @@ watch(
     { immediate: true }
 )
 
-const save = async () => {
+const save = () => {
+    if (form.value.id !== 0) {
+        showConfirmSavePopup.value = true
+    } else {
+        confirmSave()
+    }
+}
+
+const confirmSave = async () => {
+    showConfirmSavePopup.value = false
     try {
         await saveBank(form.value)
         emit('saved')
@@ -72,6 +92,11 @@ const save = async () => {
     }
 }
 
+const cancelConfirm = () => {
+    showConfirmSavePopup.value = false
+}
+
+// Styles
 const overlayStyle = {
     position: 'fixed',
     top: 0,
@@ -82,7 +107,7 @@ const overlayStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1000,
+    zIndex: 1000
 }
 
 const popupStyle = {
@@ -93,27 +118,27 @@ const popupStyle = {
     maxWidth: '400px',
     maxHeight: '90vh',
     overflowY: 'auto',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
 }
 
 const titleStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
     marginBottom: '16px',
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const formGroupStyle = {
     marginBottom: '16px',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
 }
 
 const labelStyle = {
     fontSize: theme.fonts.size.base,
     marginBottom: '8px',
     color: theme.colors.darkGrey,
-    fontWeight: theme.fonts.weight.medium,
+    fontWeight: theme.fonts.weight.medium
 }
 
 const inputStyle = {
@@ -122,17 +147,18 @@ const inputStyle = {
     borderRadius: '6px',
     border: `1px solid ${theme.colors.lightGrey}`,
     outline: 'none',
-    fontFamily: theme.fonts.family,
+    fontFamily: theme.fonts.family
 }
 
 const buttonGroupStyle = {
     display: 'flex',
     justifyContent: 'flex-end',
-    gap: '12px',
+    gap: '12px'
 }
 
 const cancelButtonStyle = {
-    padding: '8px 16px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '8px',
     backgroundColor: theme.colors.lightGrey,
     color: theme.colors.darkGrey,
@@ -140,11 +166,12 @@ const cancelButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
+    transition: '0.2s ease-in-out'
 }
 
 const saveButtonStyle = {
-    padding: '8px 16px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '8px',
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
@@ -152,17 +179,17 @@ const saveButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
+    transition: '0.2s ease-in-out'
 }
 
 const buttonHoverStyleCancel = {
     backgroundColor: theme.colors.grey,
-    transform: 'scale(1.05)',
+    transform: 'scale(1.05)'
 }
 
 const buttonHoverStyleSave = {
     backgroundColor: '#2d862d',
-    transform: 'scale(1.05)',
+    transform: 'scale(1.05)'
 }
 </script>
 

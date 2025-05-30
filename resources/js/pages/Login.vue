@@ -9,7 +9,7 @@
                 <!-- Form Login -->
                 <form :style="formStyle" @submit.prevent="handleLogin">
                     <label>Email</label>
-                    <input type="email" v-model="email" placeholder="Masukkan email" required />
+                    <input type="email" v-model="email" placeholder="Masukkan email"  />
                     <label>Kata sandi</label>
                     <input type="password" v-model="password" placeholder="Masukkan kata sandi" required />
 
@@ -21,17 +21,38 @@
                 <p :style="footerStyle">Belum memiliki akun? <a href="/register" style="color: #4CAF50">Daftar</a></p>
             </div>
         </div>
+
+        <!-- Komponen popup notifikasi -->
+        <PopupNotifikasi
+            :isOpen="popup.isOpen"
+            :title="popup.title"
+            :message="popup.message"
+            @close="popup.isOpen = false"
+        />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useAuthApi } from '@/composables/useAuthApi'
+import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
 
 const { login, getCurrentUser } = useAuthApi()
 
 const email = ref('')
 const password = ref('')
+
+const popup = reactive({
+    isOpen: false,
+    title: '',
+    message: ''
+})
+
+const showPopup = (title: string, message: string) => {
+    popup.title = title
+    popup.message = message
+    popup.isOpen = true
+}
 
 onMounted(async () => {
     const user = await getCurrentUser()
@@ -43,7 +64,7 @@ onMounted(async () => {
 
 const handleLogin = async () => {
     if (!email.value || !password.value) {
-        alert('Mohon lengkapi semua data.')
+        showPopup('Peringatan', 'Mohon lengkapi semua data.')
         return
     }
 
@@ -54,10 +75,37 @@ const handleLogin = async () => {
 
     const user = await login(credentials)
     if (!user) {
-        alert('Email atau kata sandi salah!')
+        showPopup('Gagal', 'Email atau kata sandi salah!')
     }
 }
+</script>
 
+<style scoped>
+input {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 24px;
+    background-color: #f0f0f0;
+    font-size: 14px;
+}
+
+button {
+    padding: 14px;
+    border: none;
+    border-radius: 24px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #43a047;
+}
+</style>
+
+<script lang="ts">
 const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -125,28 +173,3 @@ const layoutStyle = {
     backgroundColor: '#F9F9F9',
 }
 </script>
-
-<style scoped>
-input {
-    padding: 12px 16px;
-    border: none;
-    border-radius: 24px;
-    background-color: #f0f0f0;
-    font-size: 14px;
-}
-
-button {
-    padding: 14px;
-    border: none;
-    border-radius: 24px;
-    background-color: #4CAF50;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-button:hover {
-    background-color: #43a047;
-}
-</style>
