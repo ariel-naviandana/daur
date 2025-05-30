@@ -124,7 +124,12 @@
         <div v-if="selectedUser" :style="popupDetail">
             <div :style="popupOverlay" @click="closePopup"></div>
             <div :style="popupContainer">
-                <button @click="closePopup" :style="btnClosePopup">
+                <button
+                    @click="closePopup"
+                    @mouseover="isHoverClose = true"
+                    @mouseleave="isHoverClose = false"
+                    :style="[btnClosePopup, isHoverClose ? hoverCloseStyle : {}]"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
                          stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -184,6 +189,7 @@ import Navbar from "@/components/Navbar.vue"
 import { onMounted, onUnmounted } from 'vue'
 
 const dropdownRefs = {}
+const isHoverClose = ref(false)
 
 const handleClickOutside = (event) => {
     const openDropdown = dropdownOpenId.value
@@ -503,7 +509,7 @@ const btnClosePopup = {
     position: 'absolute',
     top: '22px',
     right: '22px',
-    color: '#000',
+    color: theme.colors.darkGrey,
     background: 'none',
     border: 'none',
     cursor: 'pointer',
@@ -569,6 +575,11 @@ const iconAktivitas = {
     color: theme.colors.primary,
     display: 'flex',
     justifyContent: 'center',
+}
+
+const hoverCloseStyle = {
+    color: theme.colors.black,
+    transform: 'scale(1.05)',
 }
 </script>
 

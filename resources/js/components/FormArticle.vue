@@ -267,7 +267,8 @@ const buttonContainer = {
 const headerCancel = {
     backgroundColor: theme.colors.red,
     color: theme.colors.whiteElement,
-    padding: '8px 28px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '30px',
     fontSize: theme.fonts.size.base,
     marginRight: '8px',
@@ -283,7 +284,8 @@ const buttonHoverStyleCancel = {
 const headerSave = {
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
-    padding: '8px 30px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '30px',
     fontSize: theme.fonts.size.base,
     cursor: 'pointer',

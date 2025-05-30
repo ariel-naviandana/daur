@@ -1,5 +1,5 @@
 <template>
-    <div :style="cardStyle">
+    <div :style="cardStyle" class="article-card">
         <img :src="article.image_url ? article.image_url : '/images/artikel2.jpg'" alt="artikel" :style="imageStyle" />
         <div :style="contentStyle">
             <h2 :style="titleStyle">{{ article.title }}</h2>
@@ -77,4 +77,12 @@ const dateStyle = {
 </script>
 
 <style scoped>
+.article-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.article-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
 </style>

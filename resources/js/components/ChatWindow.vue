@@ -38,7 +38,7 @@
                 style="display: none"
                 @change="uploadImage"
             />
-            <button :style="iconButton" @click="$refs.fileInput.click()" :disabled="isUploading">
+            <button class="icon-btn" :style="iconButton" @click="$refs.fileInput.click()" :disabled="isUploading">
                 <img src="/public/images/camera-icon.svg" alt="Camera" :style="iconImg" />
             </button>
             <input
@@ -48,7 +48,7 @@
                 :style="input"
                 :disabled="isUploading"
             />
-            <button :style="iconButton" @click="sendMessage" :disabled="isUploading">
+            <button class="icon-btn" :style="iconButton" @click="sendMessage" :disabled="isUploading">
                 <img src="/public/images/send-icon.svg" alt="Send" :style="iconImg" />
             </button>
         </div>
@@ -265,3 +265,15 @@ const emptyState = {
     justifyContent: 'center',
 }
 </script>
+
+<style scoped>
+.icon-btn {
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    border-radius: 50%;
+}
+
+.icon-btn:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.1);
+}
+</style>
