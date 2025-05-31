@@ -182,8 +182,10 @@ import { ref, computed } from 'vue'
 import { theme } from '@/helpers/theme'
 import Navbar from "@/components/Navbar.vue"
 import { onMounted, onUnmounted } from 'vue'
+import { useUserApi } from '@/composables/useUserApi'
 
 const dropdownRefs = {}
+const { getUsers } = useUserApi()
 
 const handleClickOutside = (event) => {
     const openDropdown = dropdownOpenId.value
@@ -205,36 +207,15 @@ onUnmounted(() => {
 // State untuk filter & pencarian
 const search = ref('')
 const sort = ref('name_asc')
+const users = ref([])
 
-// Data dummy user
-const users = ref([
-    {
-        id: 1,
-        name: 'Rudy Tabootie',
-        email: 'rudytabootie@gmail.com',
-        address: 'Jl. Mawar No. 10, Malang',
-        saldo: 25000,
-        totalSampah: 15,
-    },
-    {
-        id: 2,
-        name: 'Anna Zakaria',
-        email: 'anna.zakaria@example.com',
-        address: 'Jl. Soekarno-Hatta No. 21, Malang',
-    },
-    {
-        id: 3,
-        name: 'Budi Santoso',
-        email: 'budi.santoso@example.com',
-        address: 'Jl. Veteran No. 3, Malang',
-    },
-    {
-        id: 4,
-        name: 'Citra Lestari',
-        email: 'citra.lestari@example.com',
-        address: 'Jl. Gajayana No. 12, Malang',
-    },
-])
+onMounted(async () => {
+    try {
+        users.value = await getUsers()
+    } catch (error) {
+        console.error('Gagal mengambil data users:', error)
+    }
+})
 
 // Filter dan sortir
 const filteredUsers = computed(() => {
