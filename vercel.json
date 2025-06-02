@@ -10,11 +10,11 @@
             }
         },
         {
-            "src": "resources/js/**/*",
+            "src": "package.json",
             "use": "@vercel/static-build",
             "config": {
-                "installCommand": "cd resources/js && npm install",
-                "buildCommand": "cd resources/js && npm run build",
+                "installCommand": "npm install",
+                "buildCommand": "npm run build",
                 "outputDirectory": "public"
             }
         }
