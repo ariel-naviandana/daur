@@ -11,12 +11,6 @@
             "dest": "/api/index.php"
         }
     ],
-    "builds": [
-        {
-            "src": "api/index.php",
-            "use": "@vercel/php"
-        }
-    ],
     "outputDirectory": "public",
     "env": {
         "APP_NAME": "Laravel",
