@@ -14,9 +14,9 @@
     "outputDirectory": "public",
     "env": {
         "APP_NAME": "Laravel",
-        "APP_ENV": "production",
+        "APP_ENV": "local",
         "APP_KEY": "base64:hKzV7EcXOGwErHetAUsTdDoVFBO5OuYe2sEHR+22erU=",
-        "APP_DEBUG": "false",
+        "APP_DEBUG": "true",
         "APP_URL": "https://your-project-name.vercel.app",
         "OPENCAGE_API_KEY": "e5f8659f848545f486b84de646bd104d",
 
