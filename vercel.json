@@ -12,7 +12,7 @@
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
     "outputDirectory": "public",
-    "buildCommand": "cd resources/js && npm install && npm run build && cd ../.. && composer install --no-dev && php artisan config:cache && php artisan route:cache",
+    "buildCommand": "cd resources/js && npm install && npm run build && cd ../..",
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
