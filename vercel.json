@@ -1,10 +1,5 @@
 {
     "version": 2,
-    "functions": {
-        "api/index.php": {
-            "runtime": "vercel-php@0.7.3"
-        }
-    },
     "builds": [
         {
             "src": "public/index.php",
@@ -28,7 +23,7 @@
         { "src": "/js/(.*)", "dest": "/public/js/$1" },
         { "src": "/css/(.*)", "dest": "/public/css/$1" },
         { "src": "/dist/(.*)", "dest": "/public/dist/$1" },
-        { "src": "/(.*)", "dest": "/api/index.php" }
+        { "src": "/(.*)", "dest": "/public/index.php" }
     ],
     "env": {
         "APP_ENV": "local",
