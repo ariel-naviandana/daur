@@ -2,7 +2,7 @@
     <div :style="layoutStyle">
         <Navbar />
         <div :style="mainContentStyle">
-            <CategoryList @category-clicked="openPopup"/>
+            <CategoryList @category-clicked="openPopup" />
 
             <div :style="cartContainerStyle">
                 <h2 :style="sectionTitleStyle">
@@ -24,13 +24,13 @@
                                 <span :style="itemNameStyle">{{ getWasteTypeName(item.waste_type_id) }}</span>
                                 <div :style="weightContainerStyle">
                                     <button :style="minusButtonStyle" @click="updateWeight(item.waste_type_id, -1)">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                             <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                         </svg>
                                     </button>
                                     <div :style="weightBadgeStyle">{{ item.quantity }} {{ getWasteTypeUnit(item.waste_type_id) }}</div>
                                     <button :style="plusButtonStyle" @click="updateWeight(item.waste_type_id, 1)">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                             <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                         </svg>
                                     </button>
@@ -98,23 +98,46 @@
                 </div>
 
                 <form @submit.prevent="openConfirmBookingPopup" :style="formStyle">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.4490029217627!2d112.61110207401013!3d-7.952464992072013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78827f2d620975%3A0xf19b7459bbee5ed5!2sUniversitas%20Brawijaya!5e0!3m2!1sid!2sid!4v1746149712107!5m2!1sid!2sid" width="400" height="300" style="width:100%" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <div style="margin: 18px 0;">
+                        <div v-if="isPickup" style="height: 250px; width: 100%; border-radius: 8px; overflow: hidden; background: #eee;">
+                            <div id="pickup-map" style="height: 100%; width: 100%;"></div>
+                        </div>
+                        <div v-else style="height: 250px; width: 100%; border-radius: 8px; overflow: hidden; background: #eee;">
+                            <div id="dropoff-map" style="height: 100%; width: 100%;"></div>
+                        </div>
+                    </div>
                     <div :style="formRowStyle">
-                        <div :style="{ ...formGroupStyle, flex: 1.5 }">
+                        <div :style="{ ...formGroupStyle, flex: 1.5, position: 'relative' }">
                             <label :style="labelStyle">
                                 {{ isPickup ? 'Alamat Penjemputan' : 'Pilih Alamat Drop-off' }}
                             </label>
                             <div>
                                 <input
                                     v-if="isPickup"
-                                    v-model="address"
+                                    v-model="addressInput"
                                     type="text"
                                     :style="inputStyle"
-                                    placeholder="Masukkan alamat lengkap penjemputan"
+                                    @input="onAddressInput"
+                                    @focus="showAutocomplete = true"
+                                    @blur="onAddressBlur"
+                                    @keydown.enter.prevent="searchAddress"
+                                    placeholder="Cari atau klik map"
+                                    autocomplete="off"
+                                    ref="addressInputRef"
                                     required
                                 />
+                                <ul v-if="isPickup && showAutocomplete && addressSuggestions.length" :style="autocompleteListStyle">
+                                    <li
+                                        v-for="(suggestion, idx) in addressSuggestions"
+                                        :key="idx"
+                                        :style="autocompleteItemStyle"
+                                        @mousedown.prevent="selectSuggestion(suggestion)"
+                                    >
+                                        {{ suggestion.formatted }}
+                                    </li>
+                                </ul>
                                 <select
-                                    v-else
+                                    v-if="!isPickup"
                                     v-model="selectedDropOff"
                                     :style="selectStyle"
                                     required
@@ -135,15 +158,14 @@
                                 :min="minDateTime"
                                 :max="maxDateTime"
                                 step="300"
-                            :style="inputStyle"
-                            required
+                                :style="inputStyle"
+                                required
                             />
                             <div :style="{ fontSize: theme.fonts.size.small, color: theme.colors.darkGrey, marginTop: '4px' }">
                                 Waktu harus antara 09:00–17:00. Jika hari ini, minimal 2 jam dari sekarang.
                             </div>
                         </div>
                     </div>
-
                     <div :style="formGroupStyle">
                         <label :style="labelStyle">Catatan</label>
                         <textarea
@@ -152,7 +174,6 @@
                             placeholder="Tambahkan catatan untuk driver"
                         ></textarea>
                     </div>
-
                     <button
                         type="submit"
                         @mouseover="isHover = true"
@@ -192,7 +213,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue'
 import { theme } from '@/helpers/theme'
 import Navbar from '@/components/Navbar.vue'
 import CategoryList from '@/components/CategoryList.vue'
@@ -207,17 +228,19 @@ import { Category } from '@/interfaces/Category'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
 import { WasteType } from '@/interfaces/WasteType'
-import { useAuthApi } from '@/composables/useAuthApi'
 import { User } from "@/interfaces/User"
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import {useAuthStore} from "@/stores/auth"
 
-const { getCurrentUser } = useAuthApi()
+const authStore = useAuthStore()
+
 const { getWasteTypes } = useWasteTypeApi()
 const { saveRecycleTransaction } = useRecycleTransactionApi()
 const { isUploading, uploadToCloudinary } = useImageApi()
 
 const isConfirmBookingOpen = ref(false)
 const isPickup = ref(true)
-const address = ref('')
 const pickupTime = ref('')
 const note = ref('')
 const isPopupOpen = ref(false)
@@ -226,7 +249,7 @@ const cartItems = ref<RecycleTransactionItem[]>([])
 const dropOffLocations = ref<Bank[]>([])
 const selectedDropOff = ref<Bank | null>(null)
 const wasteTypes = ref<WasteType[]>([])
-const user = ref<User>()
+const user = ref<User | null>(null)
 const previewImages = ref<{ [key: number]: string }>({})
 const uploadingItemId = ref<number | null>(null)
 const isHover = ref(false)
@@ -296,7 +319,6 @@ const fetchBanks = async () => {
         const response = await fetch('/banks')
         dropOffLocations.value = await response.json()
     } catch (error) {
-        console.error('Error fetching banks:', error)
     }
 }
 
@@ -304,14 +326,17 @@ const fetchWasteTypes = async () => {
     try {
         wasteTypes.value = await getWasteTypes()
     } catch (error) {
-        console.error('Error fetching waste types:', error)
     }
 }
 
 onMounted(async () => {
-    user.value = await getCurrentUser()
+    user.value = await authStore.user
     await fetchBanks()
     await fetchWasteTypes()
+    setTimeout(() => {
+        if (isPickup.value) initializePickupMap()
+        else initializeDropoffMap()
+    }, 100)
 })
 
 const openConfirmBookingPopup = () => {
@@ -333,7 +358,7 @@ const validateForm = () => {
         return false
     }
     if (isPickup.value) {
-        if (address.value.trim() === '') {
+        if (addressInput.value.trim() === '') {
             alert('Harap masukkan alamat penjemputan.')
             return false
         }
@@ -379,7 +404,9 @@ const submitTransaction = async () => {
         const payload: RecycleTransaction & { items: { waste_type_id: number; quantity: number; sub_total: number; image?: string }[] } = {
             user_id: user.value!.id,
             bank_id: isPickup.value ? null : selectedDropOff.value?.id || null,
-            pickup_address: isPickup.value ? address.value : null,
+            pickup_address: isPickup.value ? addressInput.value : null,
+            latitude: isPickup.value ? pickupLat.value : dropoffLat.value,
+            longitude: isPickup.value ? pickupLng.value : dropoffLng.value,
             appointment_time: formatToWIB(new Date(pickupTime.value)),
             method: isPickup.value ? 'pickup' : 'dropoff',
             status: 'waiting',
@@ -404,7 +431,6 @@ const submitTransaction = async () => {
             alert('Gagal membuat transaksi. Silakan coba lagi.')
         }
     } catch (error) {
-        console.error('Error submitting transaction:', error)
         alert('Terjadi kesalahan saat membuat transaksi. Silakan coba lagi.')
     }
 }
@@ -489,7 +515,6 @@ const updateWeight = (wasteTypeId: number, change: number) => {
     const wasteType = wasteTypes.value.find(wt => wt.id === wasteTypeId)
 
     if (!wasteType) {
-        console.error('WasteType tidak ditemukan untuk waste_type_id:', wasteTypeId)
         return
     }
 
@@ -516,6 +541,183 @@ const getWasteTypeUnit = (wasteTypeId: number) => {
     const wasteType = wasteTypes.value.find(wt => wt.id === wasteTypeId)
     return wasteType ? wasteType.unit : ''
 }
+
+let pickupMap: L.Map | null = null
+let dropoffMap: L.Map | null = null
+let pickupMarker: L.Marker | null = null
+let dropoffMarker: L.Marker | null = null
+
+const pickupLat = ref(-6.2)
+const pickupLng = ref(106.816666)
+const dropoffLat = ref<number|null>(null)
+const dropoffLng = ref<number|null>(null)
+
+const OPENCAGE_API_KEY = 'e5f8659f848545f486b84de646bd104d'
+const addressInput = ref('')
+const addressSuggestions = ref<{ formatted: string, lat: number, lng: number }[]>([])
+const showAutocomplete = ref(false)
+const addressInputRef = ref<HTMLInputElement | null>(null)
+let autocompleteTimeout: any = null
+
+const geocode = async (address: string) => {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${OPENCAGE_API_KEY}&language=id&countrycode=id&limit=5`
+    const res = await fetch(url)
+    const data = await res.json()
+    return data.results?.map((r: any) => ({
+        formatted: r.formatted,
+        lat: r.geometry.lat,
+        lng: r.geometry.lng
+    })) ?? []
+}
+
+const reverseGeocode = async (lat: number, lng: number) => {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${OPENCAGE_API_KEY}&language=id&countrycode=id&limit=1`
+    const res = await fetch(url)
+    const data = await res.json()
+    if (data.results && data.results.length > 0) {
+        return data.results[0].formatted
+    }
+    return ''
+}
+
+const setPickupLatLng = (lat: number, lng: number) => {
+    pickupLat.value = +lat.toFixed(7)
+    pickupLng.value = +lng.toFixed(7)
+    pickupMarker?.setLatLng([lat, lng])
+    pickupMap?.setView([lat, lng])
+}
+
+const selectSuggestion = (suggestion: { formatted: string, lat: number, lng: number }) => {
+    addressInput.value = suggestion.formatted
+    setPickupLatLng(suggestion.lat, suggestion.lng)
+    showAutocomplete.value = false
+}
+
+const onAddressInput = async () => {
+    clearTimeout(autocompleteTimeout)
+    autocompleteTimeout = setTimeout(async () => {
+        if (addressInput.value.length > 2) {
+            const results = await geocode(addressInput.value)
+            addressSuggestions.value = results
+            showAutocomplete.value = true
+        } else {
+            addressSuggestions.value = []
+            showAutocomplete.value = false
+        }
+    }, 300)
+}
+
+const onAddressBlur = () => {
+    setTimeout(() => {
+        showAutocomplete.value = false
+    }, 200)
+}
+
+const searchAddress = async () => {
+    if (addressInput.value.length > 2) {
+        const results = await geocode(addressInput.value)
+        addressSuggestions.value = results
+        if (results.length > 0) {
+            selectSuggestion(results[0])
+        }
+    }
+}
+
+const getCurrentPosition = (): Promise<{ lat: number, lng: number }> => {
+    return new Promise((resolve) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    resolve({
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude
+                    })
+                },
+                () => {
+                    resolve({
+                        lat: pickupLat.value,
+                        lng: pickupLng.value
+                    })
+                },
+                { enableHighAccuracy: true, timeout: 5000 }
+            )
+        } else {
+            resolve({
+                lat: pickupLat.value,
+                lng: pickupLng.value
+            })
+        }
+    })
+}
+
+const initializePickupMap = async () => {
+    await nextTick()
+    if (pickupMap) return
+    const pos = await getCurrentPosition()
+    pickupLat.value = pos.lat
+    pickupLng.value = pos.lng
+    pickupMap = L.map('pickup-map').setView([pickupLat.value, pickupLng.value], 15)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(pickupMap)
+    pickupMarker = L.marker([pickupLat.value, pickupLng.value], { draggable: true }).addTo(pickupMap)
+    pickupMarker.on('dragend', async () => {
+        const pos = pickupMarker!.getLatLng()
+        setPickupLatLng(pos.lat, pos.lng)
+        const addressStr = await reverseGeocode(pos.lat, pos.lng)
+        if (addressStr) addressInput.value = addressStr
+    })
+    pickupMap.on('click', async (e: any) => {
+        setPickupLatLng(e.latlng.lat, e.latlng.lng)
+        const addressStr = await reverseGeocode(e.latlng.lat, e.latlng.lng)
+        if (addressStr) addressInput.value = addressStr
+    })
+}
+
+const initializeDropoffMap = async () => {
+    await nextTick()
+    if (dropoffMap) return
+    let bank = selectedDropOff.value || dropOffLocations.value[0]
+    let lat = bank?.latitude ?? -6.2
+    let lng = bank?.longitude ?? 106.816666
+    dropoffLat.value = lat
+    dropoffLng.value = lng
+    dropoffMap = L.map('dropoff-map').setView([lat, lng], 15)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(dropoffMap)
+    dropoffMarker = L.marker([lat, lng], { draggable: false }).addTo(dropoffMap)
+}
+
+watch(selectedDropOff, async (bank) => {
+    if (!dropoffMap || !bank) return
+    dropoffLat.value = bank.latitude
+    dropoffLng.value = bank.longitude
+    dropoffMap.setView([bank.latitude, bank.longitude], 15)
+    dropoffMarker?.setLatLng([bank.latitude, bank.longitude])
+}, { immediate: false })
+
+watch(isPickup, async (val) => {
+    await nextTick()
+    if (val) {
+        setTimeout(() => {
+            if (!pickupMap) initializePickupMap()
+            setTimeout(() => { pickupMap?.invalidateSize() }, 100)
+        }, 100)
+    } else {
+        setTimeout(() => {
+            if (!dropoffMap) initializeDropoffMap()
+            setTimeout(() => { dropoffMap?.invalidateSize() }, 100)
+        }, 100)
+    }
+})
+
+onUnmounted(() => {
+    pickupMap?.remove()
+    dropoffMap?.remove()
+    pickupMap = null
+    dropoffMap = null
+})
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -715,6 +917,30 @@ const inputStyle = {
     boxSizing: 'border-box'
 }
 
+const autocompleteListStyle = {
+    position: 'absolute',
+    top: '44px',
+    left: 0,
+    right: 0,
+    background: '#fff',
+    border: `1px solid ${theme.colors.lightGrey}`,
+    zIndex: 10,
+    listStyle: 'none',
+    margin: 0,
+    padding: 0,
+    borderRadius: '0 0 8px 8px',
+    maxHeight: '180px',
+    overflowY: 'auto'
+}
+
+const autocompleteItemStyle = {
+    padding: '8px 12px',
+    cursor: 'pointer',
+    borderBottom: `1px solid ${theme.colors.lightGrey}`,
+    background: '#fff',
+    fontSize: theme.fonts.size.base,
+}
+
 const textareaStyle = {
     padding: '12px',
     borderRadius: '8px',
@@ -789,3 +1015,10 @@ const buttonHoverStyle = {
     transform: 'scale(1.05)',
 }
 </script>
+
+<style scoped>
+@import "leaflet/dist/leaflet.css";
+::-webkit-scrollbar {
+    display: none;
+}
+</style>

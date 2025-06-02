@@ -7,6 +7,8 @@ export interface RecycleTransaction {
     user_id: number
     bank_id?: number | null
     pickup_address?: string | null
+    latitude?: number | null
+    longitude?: number | null
     appointment_time: string
     note?: string | null
     method: 'pickup' | 'dropoff'

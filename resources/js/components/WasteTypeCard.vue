@@ -30,7 +30,7 @@
 <script lang="ts" setup>
 import { WasteType } from '@/interfaces/WasteType'
 import { theme } from '@/helpers/theme'
-import {ref} from "vue";
+import {ref} from "vue"
 
 const isHoverEdit = ref(false)
 const isHoverDelete = ref(false)

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Bank extends Model
 {
-    protected $fillable = ['name', 'address', 'phone'];
+    protected $fillable = ['name', 'address', 'phone', 'latitude', 'longitude'];
 
     public function recycleTransactions(): HasMany
     {

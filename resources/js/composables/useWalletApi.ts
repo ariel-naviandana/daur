@@ -1,10 +1,13 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { Wallet } from '../interfaces/Wallet'
 
 export function useWalletApi() {
+    const { initCsrf } = useCsrf()
+
     const getWallets = async (): Promise<Wallet[]> => {
         try {
-            const response = await axios.get('/wallets')
+            const response = await apiClient.get('/wallets')
             return response.data
         } catch (error) {
             console.error('Error fetching wallets:', error)
@@ -14,7 +17,7 @@ export function useWalletApi() {
 
     const getWallet = async (id: number): Promise<Wallet | null> => {
         try {
-            const response = await axios.get(`/wallets/${id}`)
+            const response = await apiClient.get(`/wallets/${id}`)
             return response.data
         } catch (error) {
             console.error('Error fetching wallet:', error)
@@ -24,15 +27,11 @@ export function useWalletApi() {
 
     const saveWallet = async (form: Wallet): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
+            await initCsrf()
             if (form.id) {
-                await axios.put(`/wallets/${form.id}`, form, config)
+                await apiClient.put(`/wallets/${form.id}`, form)
             } else {
-                await axios.post('/wallets', form, config)
+                await apiClient.post('/wallets', form)
             }
             return true
         } catch (error) {
@@ -43,11 +42,8 @@ export function useWalletApi() {
 
     const deleteWallet = async (id: number): Promise<boolean> => {
         try {
-            await axios.delete(`/wallets/${id}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            })
+            await initCsrf()
+            await apiClient.delete(`/wallets/${id}`)
             return true
         } catch (error) {
             console.error('Error deleting wallet:', error)

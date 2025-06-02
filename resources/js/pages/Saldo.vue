@@ -86,12 +86,14 @@
 import { ref , computed} from 'vue'
 import { onMounted } from "vue";
 import { theme } from '@/helpers/theme'
-import { WalletTransaction } from "@/interfaces/WalletTransaction";
-import { useWalletTransactionApi } from "@/composables/useWalletTransactionApi";
-import { useWalletApi } from "@/composables/useWalletApi";
-import { useAuthApi } from "@/composables/useAuthApi";
+import { WalletTransaction } from "@/interfaces/WalletTransaction"
+import { useWalletTransactionApi } from "@/composables/useWalletTransactionApi"
+import { useWalletApi } from "@/composables/useWalletApi"
 import SaldoCard from "@/components/SaldoCard.vue"
 import WithdrawalCard from "@/components/WithdrawalCard.vue"
+import {Wallet} from "@/interfaces/Wallet"
+import {useAuthStore} from "@/stores/auth"
+import {User} from "@/interfaces/User"
 
 const showModal = ref(false)
 const userId = ref<number | null>(null)
@@ -109,10 +111,12 @@ const handleWithdraw = (data: { destination: string; amount: string }) => {
 const isHoverDownload = ref(false)
 const isHoverFilter = ref(false)
 const isHover = ref(false)
+const filterMonth = ref('this')
 
 const { getCurrentUser } = useAuthApi()
+const authStore = useAuthStore()
 const { getWallet } = useWalletApi()
-const { saveWalletTransaction } = useWalletTransactionApi();
+const { saveWalletTransaction } = useWalletTransactionApi()
 const { getWalletTransactions } = useWalletTransactionApi()
 
 onMounted(async () => {
@@ -121,11 +125,11 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    user.value = await getCurrentUser()
+    user.value = await authStore.user
     userId.value = user.value.id
     wallet.value = await getWallet(userId.value)
     await fetchWalletTransaction()
-});
+})
 
 const fetchWalletTransaction = async () => {
     transactions.value = await getWalletTransactions()
@@ -136,11 +140,11 @@ const transactionById = computed(() => {
     return transactions.value.filter(t => t.wallet_id === wallet.value.id)
 })
 
-const handleWithdraw = async (payload) => {
+const handleWithdraw = async (payload: WalletTransaction) => {
     // Pastikan wallet sudah ready
     if (!wallet.value?.id) {
-        alert("Wallet tidak ditemukan");
-        return;
+        alert("Wallet tidak ditemukan")
+        return
     }
     payload.wallet_id = wallet.value.id
     payload.type = "withdrawal"
@@ -149,11 +153,11 @@ const handleWithdraw = async (payload) => {
     const success = await saveWalletTransaction(payload)
     if (success) {
         showModal.value = false
-        alert("Permintaan penarikan berhasil dikirim!");
+        alert("Permintaan penarikan berhasil dikirim!")
         await reloadWallet()
         await fetchWalletTransaction()
     } else {
-        alert("Transfer gagal");
+        alert("Transfer gagal")
     }
 }
 
@@ -299,6 +303,9 @@ const mutasiAmountMinusStyle = {
     color: theme.colors.red,
     fontWeight: theme.fonts.weight.bold,
 }
+
+
+
 </script>
 
 <style scoped></style>

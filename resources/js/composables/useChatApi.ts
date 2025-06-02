@@ -1,10 +1,13 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { Chat } from '../interfaces/Chat'
 
 export function useChatApi() {
+    const { initCsrf } = useCsrf()
+
     const getChats = async (): Promise<Chat[]> => {
         try {
-            const response = await axios.get('/chats')
+            const response = await apiClient.get('/chats')
             return response.data
         } catch (error) {
             console.error('Error fetching chats:', error)
@@ -14,7 +17,7 @@ export function useChatApi() {
 
     const getChat = async (id: number): Promise<Chat | null> => {
         try {
-            const response = await axios.get(`/chats/${id}`)
+            const response = await apiClient.get(`/chats/${id}`)
             return response.data
         } catch (error) {
             console.error('Error fetching chat:', error)
@@ -24,15 +27,11 @@ export function useChatApi() {
 
     const saveChat = async (form: Chat): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
+            await initCsrf()
             if (form.id) {
-                await axios.put(`/chats/${form.id}`, form, config)
+                await apiClient.put(`/chats/${form.id}`, form)
             } else {
-                await axios.post('/chats', form, config)
+                await apiClient.post('/chats', form)
             }
             return true
         } catch (error) {
@@ -43,11 +42,8 @@ export function useChatApi() {
 
     const deleteChat = async (id: number): Promise<boolean> => {
         try {
-            await axios.delete(`/chats/${id}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            })
+            await initCsrf()
+            await apiClient.delete(`/chats/${id}`)
             return true
         } catch (error) {
             console.error('Error deleting chat:', error)

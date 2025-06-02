@@ -93,6 +93,11 @@
                 </div>
             </div>
 
+            <div :style="{ marginBottom: '24px' }">
+                <h3 :style="sectionTitleStyle">Lokasi di Map</h3>
+                <div id="detail-recycle-map" style="height: 250px; width: 100%; border-radius: 8px; overflow: hidden; background: #eee;"></div>
+            </div>
+
             <div :style="addressContainerStyle">
                 <h3 :style="sectionTitleStyle">Catatan</h3>
                 <p :style="addressStyle">{{ item.note || 'Tidak ada catatan' }}</p>
@@ -155,10 +160,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
 const isHoverReject = ref(false)
 const isHoverAccept = ref(false)
 
@@ -251,6 +259,43 @@ const getWasteTypeImage = (item: RecycleTransactionItem) => {
 const getWasteTypeUnit = (item: RecycleTransactionItem) => {
     return item.waste_type?.unit || ''
 }
+
+let map: L.Map | null = null
+let marker: L.Marker | null = null
+
+const initMap = async () => {
+    await nextTick()
+    if (!props.item.latitude || !props.item.longitude) return
+    if (map) return
+    map = L.map('detail-recycle-map', { attributionControl: false, zoomControl: true }).setView([props.item.latitude, props.item.longitude], 15)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map)
+    marker = L.marker([props.item.latitude, props.item.longitude], { draggable: false }).addTo(map)
+}
+
+const destroyMap = () => {
+    if (map) {
+        map.remove()
+        map = null
+        marker = null
+    }
+}
+
+watch(
+    () => props.isOpen,
+    value => {
+        if (value) setTimeout(() => initMap(), 200)
+        else destroyMap()
+    }
+)
+
+onMounted(() => {
+    if (props.isOpen) setTimeout(() => initMap(), 200)
+})
+onUnmounted(() => {
+    destroyMap()
+})
 
 const overlayStyle = {
     position: 'fixed',
@@ -545,6 +590,7 @@ const buttonHoverStyleAccept = {
 </script>
 
 <style scoped>
+@import "leaflet/dist/leaflet.css";
 ::-webkit-scrollbar {
     display: none
 }

@@ -92,7 +92,9 @@ import { theme } from '@/helpers/theme'
 import { useRecycleTransactionApi } from '@/composables/useRecycleTransactionApi'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import {User} from "@/interfaces/User"
-import {useAuthApi} from "@/composables/useAuthApi"
+import {useAuthStore} from "@/stores/auth"
+
+const authStore = useAuthStore()
 
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
@@ -100,8 +102,7 @@ const showPopup = ref(false)
 const selectedItem = ref<RecycleTransaction | null>(null)
 const history = ref<RecycleTransaction[]>([])
 const { getRecycleTransactionsByUser, saveRecycleTransaction } = useRecycleTransactionApi()
-const { getCurrentUser } = useAuthApi()
-const user = ref<User>()
+const user = ref<User | null>(null)
 
 const fetchHistory = async () => {
     try {
@@ -112,8 +113,8 @@ const fetchHistory = async () => {
 }
 
 onMounted(async () => {
-    user.value = await getCurrentUser()
-    fetchHistory()
+    user.value = await authStore.user
+    await fetchHistory()
 })
 
 const filteredHistory = computed(() => {

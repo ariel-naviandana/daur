@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { theme } from "@/helpers/theme"
-import {ref} from "vue";
+import {ref} from "vue"
 
 const isHoverCancel = ref(false)
 const isHoverConfirm = ref(false)

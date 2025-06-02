@@ -63,8 +63,7 @@
 <script setup lang="ts">
 import { ref} from 'vue'
 import { theme } from '@/helpers/theme'
-import { Wallet } from "@/interfaces/Wallet";
-import { WalletTransaction } from "@/interfaces/WalletTransaction";
+import { Wallet } from "@/interfaces/Wallet"
 
 const props = defineProps<{ visible: boolean, wallet: Wallet | null }>()
 const emit = defineEmits(['close', 'submit'])
@@ -133,7 +132,6 @@ const modalStyle = {
     padding: '2rem',
     borderRadius: '24px',
     width: '650px',
-    borderRadius: '30px',
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
 }
 
