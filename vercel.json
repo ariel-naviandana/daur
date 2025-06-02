@@ -5,20 +5,54 @@
             "runtime": "vercel-php@0.7.3"
         }
     },
+    "builds": [
+        {
+            "src": "public/index.php",
+            "use": "@vercel/php",
+            "config": {
+                "installCommand": "composer install --no-dev --optimize-autoloader",
+                "outputDirectory": "public"
+            }
+        },
+        {
+            "src": "resources/js/**/*",
+            "use": "@vercel/static-build",
+            "config": {
+                "installCommand": "cd resources/js && npm install",
+                "buildCommand": "cd resources/js && npm run build",
+                "outputDirectory": "public"
+            }
+        }
+    ],
     "routes": [
         { "src": "/js/(.*)", "dest": "/public/js/$1" },
         { "src": "/css/(.*)", "dest": "/public/css/$1" },
         { "src": "/dist/(.*)", "dest": "/public/dist/$1" },
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
-    "outputDirectory": "public",
-    "buildCommand": "cd resources/js && npm install && npm run build && cd ../..",
     "env": {
         "APP_ENV": "local",
         "APP_DEBUG": "true",
+        "APP_SERVICES_CACHE": "/tmp/services.php",
+        "APP_PACKAGES_CACHE": "/tmp/packages.php",
+        "APP_CONFIG_CACHE": "/tmp/config.php",
+        "APP_ROUTES_CACHE": "/tmp/routes.php",
+        "APP_EVENTS_CACHE": "/tmp/events.php",
+        "APP_MAINTENANCE_DRIVER": "file",
+        "PHP_CLI_SERVER_WORKERS": "4",
         "LOG_CHANNEL": "errorlog",
+        "LOG_STACK": "single",
+        "LOG_DEPRECATIONS_CHANNEL": "null",
+        "LOG_LEVEL": "info",
         "SESSION_DRIVER": "cookie",
+        "SESSION_LIFETIME": "120",
+        "SESSION_ENCRYPT": "true",
+        "SESSION_PATH": "/",
+        "SESSION_DOMAIN": "null",
+        "BROADCAST_CONNECTION": "log",
+        "FILESYSTEM_DISK": "local",
         "QUEUE_CONNECTION": "sync",
-        "CACHE_STORE": "array"
+        "CACHE_STORE": "array",
+        "VITE_APP_NAME": "Laravel"
     }
 }
