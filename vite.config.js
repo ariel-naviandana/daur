@@ -24,7 +24,7 @@ export default defineConfig({
     build: {
         outDir: 'public/build',
         emptyOutDir: true,
-        manifest: true,
+        manifest: 'manifest.json',
         rollupOptions: {
             output: {
                 chunkFileNames: 'js/[name]-[hash].js',
