@@ -10,12 +10,15 @@ class ForceHttps
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->secure() && env('APP_ENV') === 'production') {
-            return redirect()->secure($request->getRequestUri());
-        }
-
+        // Force HTTPS scheme for URL generation
         URL::forceScheme('https');
 
-        return $next($request);
+        // Skip redirection if already secure or in production on Vercel
+        if ($request->secure() || env('APP_ENV') === 'production') {
+            return $next($request);
+        }
+
+        // Redirect to HTTPS only if not secure (for non-Vercel environments)
+        return redirect()->secure($request->getRequestUri());
     }
 }
