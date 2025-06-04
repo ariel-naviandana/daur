@@ -233,15 +233,14 @@ import {useAuthStore} from "@/stores/auth"
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-delete (L.Icon.Default.prototype as any)._getIconUrl
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: '/images/marker-icon-2x.png',
+const leafletIcon = L.icon({
     iconUrl: '/images/marker-icon.png',
+    iconRetinaUrl: '/images/marker-icon-2x.png',
     shadowUrl: '/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowSize: [41, 41],
+    shadowSize: [41, 41]
 })
 
 const authStore = useAuthStore()
@@ -671,7 +670,7 @@ const initializePickupMap = async () => {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
     }).addTo(pickupMap)
-    pickupMarker = L.marker([pickupLat.value, pickupLng.value], { draggable: true }).addTo(pickupMap)
+    pickupMarker = L.marker([pickupLat.value, pickupLng.value], { draggable: true, icon: leafletIcon }).addTo(pickupMap)
     pickupMarker.on('dragend', async () => {
         const pos = pickupMarker!.getLatLng()
         setPickupLatLng(pos.lat, pos.lng)
@@ -697,7 +696,7 @@ const initializeDropoffMap = async () => {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
     }).addTo(dropoffMap)
-    dropoffMarker = L.marker([lat, lng], { draggable: false }).addTo(dropoffMap)
+    dropoffMarker = L.marker([lat, lng], { draggable: false, icon: leafletIcon }).addTo(dropoffMap)
 }
 
 watch(selectedDropOff, async (bank) => {
