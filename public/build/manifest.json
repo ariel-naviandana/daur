@@ -108,17 +108,17 @@
     "src": "public/images/withdraw-icon.svg"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DzZsPP_D.css",
+    "file": "../dist/css/app-DRqLYX3i.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.ts": {
-    "file": "assets/app-D6PqTupB.js",
+    "file": "../dist/js/app2.js",
     "name": "app",
     "src": "resources/js/app.ts",
     "isEntry": true,
     "css": [
-      "assets/app-CkmbIQeV.css"
+      "../dist/css/app-DRqLYX3i.css"
     ],
     "assets": [
       "assets/hero-image-BcjAzatS.png",
