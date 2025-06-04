@@ -164,8 +164,6 @@ import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 
 const isHoverReject = ref(false)
 const isHoverAccept = ref(false)
@@ -590,7 +588,6 @@ const buttonHoverStyleAccept = {
 </script>
 
 <style scoped>
-@import "leaflet/dist/leaflet.css";
 ::-webkit-scrollbar {
     display: none
 }

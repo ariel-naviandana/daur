@@ -229,8 +229,6 @@ import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
 import { WasteType } from '@/interfaces/WasteType'
 import { User } from "@/interfaces/User"
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 import {useAuthStore} from "@/stores/auth"
 
 const authStore = useAuthStore()
@@ -1017,7 +1015,6 @@ const buttonHoverStyle = {
 </script>
 
 <style scoped>
-@import "leaflet/dist/leaflet.css";
 ::-webkit-scrollbar {
     display: none;
 }
