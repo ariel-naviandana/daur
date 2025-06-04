@@ -27,6 +27,7 @@
         { "src": "/assets/(.*)", "dest": "/public/dist/assets/$1" },
         { "src": "/images/(.*)", "dest": "/public/images/$1" },
         { "src": "/build/assets/(.*)", "dest": "/public/dist/$1" },
+        { "src": "/favicon.ico", "dest": "/public/favicon.ico" },
         { "src": "/(.*)", "dest": "/public/index.php" }
     ],
     "env": {
@@ -34,7 +35,7 @@
         "APP_ENV": "production",
         "APP_KEY": "base64:hKzV7EcXOGwErHetAUsTdDoVFBO5OuYe2sEHR+22erU=",
         "APP_DEBUG": "true",
-        "APP_URL": "https://daur-sigma.vercel.app",
+        "APP_URL": "https://daur-xvpm.vercel.app",
         "OPENCAGE_API_KEY": "e5f8659f848545f486b84de646bd104d",
         "DB_CONNECTION": "mysql",
         "DB_HOST": "n5mjf.h.filess.io",

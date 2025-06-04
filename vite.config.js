@@ -20,7 +20,7 @@ export default defineConfig({
             },
         }),
     ],
-    base: '/', // Ensure assets are referenced relative to the root
+    base: '/',
     build: {
         outDir: 'public/dist',
         emptyOutDir: true,
@@ -39,7 +39,7 @@ export default defineConfig({
         },
     },
     server: {
-        https: false, // Local dev uses HTTP; Vercel handles HTTPS
+        https: false,
         host: '0.0.0.0',
     },
 });
