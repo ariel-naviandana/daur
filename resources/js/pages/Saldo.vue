@@ -16,7 +16,6 @@
             </button>
             </a>
 
-            <!-- TODO : Buat lebih dinamis -->
             <h1 :style="userNameStyle">{{ user?.name }}</h1>
         </div>
 
@@ -29,7 +28,6 @@
             @submit="handleWithdraw"
         />
 
-        <!-- Section Mutasi Saldo -->
         <div :style="mutasiWrapperStyle">
             <div :style="mutasiHeaderStyle">
                 <h2 :style="mutasiTitleStyle">Mutasi saldo</h2>
@@ -89,8 +87,9 @@ import { theme } from '@/helpers/theme'
 import { WalletTransaction } from "@/interfaces/WalletTransaction"
 import { useWalletTransactionApi } from "@/composables/useWalletTransactionApi"
 import { useWalletApi } from "@/composables/useWalletApi"
+import { useAuthApi} from "@/composables/useAuthApi";
 import SaldoCard from "@/components/SaldoCard.vue"
-import WithdrawalCard from "@/components/WithdrawalCard.vue"
+import WithdrawalCard from "@/components/PopupWithdrawal.vue"
 import {Wallet} from "@/interfaces/Wallet"
 import {useAuthStore} from "@/stores/auth"
 import {User} from "@/interfaces/User"
@@ -102,15 +101,14 @@ const wallet = ref<Wallet | null>(null)
 const transactions = ref([])
 const isHover = ref(false)
 
-const handleWithdraw = (data: { destination: string; amount: string }) => {
-    console.log('Penarikan ke:', data.destination)
-    console.log('Jumlah:', data.amount)
-    showModal.value = false
-}
+// const handleWithdraw = (data: { destination: string; amount: string }) => {
+//     console.log('Penarikan ke:', data.destination)
+//     console.log('Jumlah:', data.amount)
+//     showModal.value = false
+// }
 
 const isHoverDownload = ref(false)
 const isHoverFilter = ref(false)
-const isHover = ref(false)
 const filterMonth = ref('this')
 
 const { getCurrentUser } = useAuthApi()
@@ -292,11 +290,6 @@ const mutasiTitleTextStyle = {
 const mutasiDateStyle = {
     fontSize: '0.85rem',
     color: '#888',
-}
-
-const mutasiAmountPlusStyle = {
-    color: theme.colors.primary,
-    fontWeight: theme.fonts.weight.bold,
 }
 
 const mutasiAmountMinusStyle = {
