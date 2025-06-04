@@ -231,10 +231,6 @@ const radioBox = {
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
-const buttonHoverStyle = {
-    transform: 'scale(1.05)',
-}
-
 const nominalInputStyle = {
     width: '100%',
     height: '60px',
@@ -256,8 +252,8 @@ const actionButtonsWrapper = {
 }
 
 const cancelBtn = {
-    backgroundColor: '#EB5757',
-    color: '#fff',
+    backgroundColor: theme.colors.red,
+    color: theme.colors.whiteElement,
     border: 'none',
     padding: '12px 24px',
     borderRadius: '999px',
