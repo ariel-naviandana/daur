@@ -17,18 +17,17 @@
             "config": {
                 "installCommand": "npm install",
                 "buildCommand": "npm run build",
-                "outputDirectory": "public"
+                "outputDirectory": "dist"
             }
         }
     ],
     "routes": [
-        { "src": "/js/(.*)", "dest": "/public/js/$1" },
-        { "src": "/css/(.*)", "dest": "/public/css/$1" },
-        { "src": "/dist/(.*)", "dest": "/public/dist/$1" },
-        { "src": "/assets/(.*)", "dest": "/public/dist/assets/$1" },
-        { "src": "/images/(.*)", "dest": "/public/images/$1" },
-        { "src": "/build/assets/(.*)", "dest": "/public/dist/$1" },
-        { "src": "/favicon.ico", "dest": "/public/favicon.ico" },
+        { "src": "/js/(.*)", "dest": "/dist/js/$1" },
+        { "src": "/css/(.*)", "dest": "/dist/css/$1" },
+        { "src": "/dist/(.*)", "dest": "/dist/$1" },
+        { "src": "/assets/(.*)", "dest": "/dist/assets/$1" },
+        { "src": "/images/(.*)", "dest": "/dist/images/$1" },
+        { "src": "/favicon.ico", "dest": "/dist/favicon.ico" },
         { "src": "/(.*)", "dest": "/public/index.php" }
     ],
     "env": {
