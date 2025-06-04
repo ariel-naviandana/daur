@@ -6,16 +6,13 @@
                     <img src="/public/images/ic-transaction.svg" style="width: 36px; height: 36px;" />
                 </div>
                 <div>
-                    <p :style="transactionNameInfo">{{ transaction.wallet?.user?.name ?? '-' }}</p>
+                    <p :style="transactionNameInfo">{{ props.transaction.wallet?.user?.name?? '-' }}</p>
                     <p :style="transactionDate">{{ formatDate(props.transaction.created_at) }}</p>
                 </div>
             </div>
 
             <div :style="tujuanTransfer">
-                <p style="color: #aaa; fontSize: 0.85rem;">
-                    {{ transaction.method ? (transaction.method.toUpperCase() + ' — ') : '' }}
-                    {{ transaction.account_info ?? '-' }}
-                </p>
+                <p style="color: #aaa; fontSize: 0.85rem;"></p>
             </div>
 
             <div :style="amountWrapper">
@@ -23,17 +20,17 @@
             </div>
 
             <div :style="statusWrapper">
-                <span :style="[statusBadgeStyle, statusBackgroundStyle]">{{ statusText(props.transaction.status) }}</span>
+                <span :style="statusBadgeStyle">{{ statusText(props.transaction.status) }}</span>
             </div>
         </div>
     </li>
 </template>
 
-<script lang="ts" setup>
-import {computed, ref} from "vue";
-import { theme } from '@/helpers/theme'
-import {WalletTransaction} from "@/interfaces/WalletTransaction";
 
+<script lang="ts" setup>
+import {ref} from "vue";
+import { theme } from '@/helpers/theme'
+import { WalletTransaction } from "@/interfaces/WalletTransaction"
 const props = defineProps<{ transaction: WalletTransaction }>()
 function formatDate(dateStr?: string) {
     if (!dateStr) return '-'
@@ -41,11 +38,9 @@ function formatDate(dateStr?: string) {
     return d.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) +
         ', ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
 }
-
 function formatRupiah(amount: number) {
     return amount.toLocaleString('id-ID')
 }
-
 function statusText(status: string) {
     if (status === 'approved') return 'Approved'
     if (status === 'rejected') return 'Rejected'
@@ -146,24 +141,5 @@ const statusBadgeStyle = {
     height: '24px',
     textAlign: 'center',
     lineHeight: '16px',
-}
-
-const statusBackgroundStyle = computed(() => {
-    const status = props.transaction.status.toLowerCase()
-    if (status === 'approved') return { backgroundColor: theme.colors.primary }
-    if (status === 'waiting') return { backgroundColor: theme.colors.yellow }
-    if (status === 'rejected') return { backgroundColor: theme.colors.red }
-    return { backgroundColor: theme.colors.grey }
-})
-
-const methodStyle = {
-    fontWeight: theme.fonts.weight.bold,
-    color: theme.colors.darkGrey,
-    marginRight: '4px',
-}
-
-const accountInfoStyle = {
-    fontWeight: 'normal', // atau theme.fonts.weight.regular kalau ada
-    color: theme.colors.grey,
 }
 </script>
