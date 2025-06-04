@@ -111,7 +111,7 @@
                         <div v-if="dropdownOpenId === user.id" :style="dropdownOpen">
                             <ul class="text-sm text-gray-700">
                                 <li><button @click="handleAction('lihat', user)" :style="btn_dropdown" class="button_hover_grey">Lihat Detail</button></li>
-                                <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="button_hover_grey">Update Role</button></li>
+                                <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="button_hover_grey">Edit Role</button></li>
                                 <li><button @click="handleAction('block', user)" :style="btn_dropdown" class="button_hover_red">Blokir User</button></li>
                             </ul>
                         </div>
@@ -174,6 +174,16 @@
                 </div>
             </div>
         </div>
+
+         <!-- Popup Edit Role -->
+        <PopupEditRole
+            :isOpen="!!editRoleUser"
+            :userId="editRoleUser?.id"
+            :userName="editRoleUser?.name"
+            :userRole="editRoleUser?.role"
+            @close="closeEditRolePopup"
+            @saved="handleRoleSaved"
+        />
     </div>
 </template>
 
@@ -183,6 +193,7 @@ import { theme } from '@/helpers/theme'
 import Navbar from "@/components/Navbar.vue"
 import { onMounted, onUnmounted } from 'vue'
 import { useUserApi } from '@/composables/useUserApi'
+import PopupEditRole from "@/components/PopupEditRole.vue"
 
 const dropdownRefs = {}
 const { getUsers } = useUserApi()
@@ -248,11 +259,23 @@ const toggleDropdown = (userId) => {
     dropdownOpenId.value = dropdownOpenId.value === userId ? null : userId
 }
 
+// State untuk PopupEditRole
+const editRoleUser = ref(null)
+
+const openEditRolePopup = (user) => {
+    editRoleUser.value = user
+}
+
+const closeEditRolePopup = () => {
+    editRoleUser.value = false
+}
+
 const handleAction = (action, user) => {
     if (action === 'lihat') {
         openUserPopup(user)
     } else if (action === 'edit') {
-        alert(`Edit user: ${user.name}`)
+        editRoleUser.value = user
+        openEditRolePopup(user)
     } else if (action === 'block') {
         const confirmed = confirm(`Blokir user ${user.name}?`)
         if (confirmed) {
@@ -260,6 +283,15 @@ const handleAction = (action, user) => {
         }
     }
     dropdownOpenId.value = null
+}
+
+const handleRoleSaved = (updatedUser) => {
+  // update data user di users.value jika perlu
+  const index = users.value.findIndex(u => u.id === updatedUser.id)
+  if (index !== -1) {
+    users.value[index].role = updatedUser.role
+  }
+  closeEditRolePopup()
 }
 
 const btn_menu = {
