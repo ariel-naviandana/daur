@@ -8,7 +8,7 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
-            buildDirectory: 'dist',
+            buildDirectory: 'public/build',
         }),
         tailwindcss(),
         vue({
@@ -22,7 +22,7 @@ export default defineConfig({
     ],
     base: '/',
     build: {
-        outDir: 'public/dist',
+        outDir: 'public/build',
         emptyOutDir: true,
         manifest: true,
         rollupOptions: {
