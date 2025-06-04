@@ -71,6 +71,8 @@ import { ref, watch, onMounted, nextTick } from 'vue'
 import { theme } from '@/helpers/theme'
 import { useBankApi } from '@/composables/useBankApi'
 import { Bank } from '@/interfaces/Bank'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
 const OPENCAGE_API_KEY = 'e5f8659f848545f486b84de646bd104d'
 
@@ -388,6 +390,7 @@ const buttonHoverStyleSave = {
 </script>
 
 <style scoped>
+@import "leaflet/dist/leaflet.css";
 ::-webkit-scrollbar {
     display: none;
 }
