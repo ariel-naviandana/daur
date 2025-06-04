@@ -108,7 +108,7 @@
     "src": "public/images/withdraw-icon.svg"
   },
   "resources/css/app.css": {
-    "file": "../dist/css/app-DRqLYX3i.css",
+    "file": "assets/app-DzZsPP_D.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -118,7 +118,7 @@
     "src": "resources/js/app.ts",
     "isEntry": true,
     "css": [
-      "../dist/css/app-DRqLYX3i.css"
+      "assets/app-CkmbIQeV.css"
     ],
     "assets": [
       "assets/hero-image-BcjAzatS.png",
