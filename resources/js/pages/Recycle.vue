@@ -74,7 +74,7 @@
                             <path d="M16 2V6M8 2V6M3 10H21" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </span>
-                    Booking
+                    Booking Recycle
                 </h2>
 
                 <div :style="pickupTypeStyle">
