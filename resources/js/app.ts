@@ -17,9 +17,20 @@ import ManajemenSaldo from './pages/ManajemenSaldo.vue'
 import ManajemenArtikel from './pages/ManajemenArtikel.vue'
 import ManajemenSampah from './pages/ManajemenSampah.vue'
 import ManajemenBank from './pages/ManajemenBank.vue'
-import 'leaflet/dist/leaflet.css'
 import { initializeCsrf } from './helpers/axios'
 import { useAuthStore } from './stores/auth'
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: '/dist/assets/marker-icon-hN30_KVU.png',
+    iconUrl: '/dist/assets/marker-icon-hN30_KVU.png',
+    shadowUrl: null,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
 
 const el = document.getElementById('app')
 

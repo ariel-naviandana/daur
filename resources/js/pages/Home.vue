@@ -4,7 +4,7 @@
         <div :style="mainContentStyle" >
             <div class="home-page">
                 <section class="hero">
-                    <img src="/images/hero-image.png" alt="Hero Image" :style="heroImgStyle" />
+                    <img src="/public/images/hero-image.png" alt="Hero Image" :style="heroImgStyle" />
                 </section>
 
                 <section class="mission" :style="missionStyle">
