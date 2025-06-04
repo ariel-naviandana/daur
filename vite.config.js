@@ -8,7 +8,7 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
-            buildDirectory: 'dist', // Ensure assets are built to public/dist
+            buildDirectory: 'dist',
         }),
         tailwindcss(),
         vue({
@@ -20,22 +20,26 @@ export default defineConfig({
             },
         }),
     ],
+    base: '/', // Ensure assets are referenced relative to the root
     build: {
-        outDir: 'public/dist', // Output to public/dist for Vercel
-        emptyOutDir: true, // Clear the output directory before building
-        manifest: true, // Generate manifest.json for Laravel integration
+        outDir: 'public/dist',
+        emptyOutDir: true,
+        manifest: true,
         rollupOptions: {
             output: {
-                // Ensure consistent chunk names for Vercel
                 chunkFileNames: 'js/[name]-[hash].js',
                 entryFileNames: 'js/[name].js',
                 assetFileNames: ({ name }) => {
                     if (/\.css$/.test(name ?? '')) {
-                        return 'css/[name][extname]';
+                        return 'css/[name]-[hash][extname]';
                     }
-                    return 'assets/[name][extname]';
+                    return 'assets/[name]-[hash][extname]';
                 },
             },
         },
+    },
+    server: {
+        https: false, // Local dev uses HTTP; Vercel handles HTTPS
+        host: '0.0.0.0',
     },
 });
