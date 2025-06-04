@@ -6,6 +6,7 @@
             "use": "vercel-php@0.7.3",
             "config": {
                 "installCommand": "composer install --no-dev --optimize-autoloader",
+                "buildCommand": "php artisan cache:clear && php artisan config:clear && php artisan route:clear && php artisan view:clear",
                 "outputDirectory": "public",
                 "phpExtensions": ["mbstring", "pdo_mysql", "json", "openssl", "bcmath", "xml"]
             }
