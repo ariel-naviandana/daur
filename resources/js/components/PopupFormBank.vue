@@ -74,6 +74,7 @@ import { Bank } from '@/interfaces/Bank'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+delete (L.Icon.Default.prototype as any)._getIconUrl
 const leafletIcon = L.icon({
     iconUrl: '/images/marker-icon.png',
     iconRetinaUrl: '/images/marker-icon-2x.png',
