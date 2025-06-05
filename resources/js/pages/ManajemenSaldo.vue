@@ -194,7 +194,8 @@ const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
     minHeight: '100vh',
     fontFamily: theme.fonts.family,
-    overflowX : 'hidden'
+    overflowX : 'hidden',
+    overflow: 'hidden',
 }
 
 const titleStyle = {
@@ -229,8 +230,6 @@ const headingContainerStyle = {
     gap: '12px',
     marginBottom: '20px',
 }
-
-
 
 const tabWrapperStyle = {
     display: 'flex',

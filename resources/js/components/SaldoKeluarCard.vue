@@ -81,8 +81,8 @@ const leftSection = {
 }
 
 const tujuanTransfer = {
-    fontSize: '0.85rem',
-    color: theme.colors.grey,
+    fontSize: theme.fonts.size.small,
+    color: theme.colors.darkGrey,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -108,7 +108,7 @@ const transactionNameInfo = {
 }
 
 const transactionDate = {
-    fontSize: theme.fonts.size.base,
+    fontSize: theme.fonts.size.small,
     fontWeight: theme.fonts.weight.medium,
     color: theme.colors.grey,
     margin: 0,
@@ -128,7 +128,7 @@ const mutasiAmountPlusStyle = {
     color: theme.colors.primary,
     fontWeight: theme.fonts.weight.bold,
     whiteSpace: 'nowrap',
-    marginRight: '24px', // Tambahkan ini
+    marginRight: '24px',
 }
 
 const statusBadgeStyle = {
@@ -163,7 +163,7 @@ const methodStyle = {
 }
 
 const accountInfoStyle = {
-    fontWeight: 'normal', // atau theme.fonts.weight.regular kalau ada
+    fontWeight: theme.fonts.weight.regular,
     color: theme.colors.grey,
 }
 </script>

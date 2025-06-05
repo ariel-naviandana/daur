@@ -117,14 +117,14 @@ const transactionNameInfo = {
 }
 
 const transactionDate = {
-    fontSize: theme.fonts.size.base,
+    fontSize: theme.fonts.size.small,
     fontWeight: theme.fonts.weight.medium,
     color: theme.colors.grey,
     margin: 0,
 }
 
 const tujuanTransfer = {
-    fontSize: '0.85rem',
+    fontSize: theme.fonts.size.small,
     color: theme.colors.grey,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
