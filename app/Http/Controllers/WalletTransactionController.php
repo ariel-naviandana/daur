@@ -30,7 +30,18 @@ class WalletTransactionController extends Controller
 
     public function update(Request $request, $id) {
         $wd = WalletTransaction::findOrFail($id);
+        $originalStatus = $wd->status;
         $wd->update($request->all());
+
+        if ($wd->status === 'approved' && $originalStatus !== 'approved') {
+            $wallet = $wd->wallet;
+            if ($wd->type === 'withdrawal') {
+                $wallet->balance -= $wd->amount;
+            } elseif ($wd->type === 'deposit') {
+                $wallet->balance += $wd->amount;
+            }
+            $wallet->save();
+        }
         return $wd->load('wallet');
     }
 
