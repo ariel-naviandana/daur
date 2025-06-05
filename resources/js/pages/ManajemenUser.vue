@@ -112,7 +112,7 @@
                             <ul class="text-sm text-gray-700">
                                 <li><button @click="handleAction('lihat', user)" :style="btn_dropdown" class="button_hover_grey">Lihat Detail</button></li>
                                 <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="button_hover_grey">Edit Role</button></li>
-                                <li><button @click="handleAction('block', user)" :style="btn_dropdown" class="button_hover_red">Blokir User</button></li>
+                                <li><button @click="handleAction('delete', user)" :style="btn_dropdown" class="button_hover_red">Hapus User</button></li>
                             </ul>
                         </div>
                     </div>
@@ -184,6 +184,15 @@
             @close="closeEditRolePopup"
             @saved="handleRoleSaved"
         />
+
+        <!-- Popup Delete -->
+        <PopupDelete
+            :isOpen="isDeletePopupOpen"
+            :itemName="userToDelete?.name || ''"
+            actionLabel="Blokir User"
+            @close="isDeletePopupOpen = false"
+            @confirm="handleDeleteConfirmed"
+        />
     </div>
 </template>
 
@@ -194,9 +203,10 @@ import Navbar from "@/components/Navbar.vue"
 import { onMounted, onUnmounted } from 'vue'
 import { useUserApi } from '@/composables/useUserApi'
 import PopupEditRole from "@/components/PopupEditRole.vue"
+import PopupDelete from "@/components/PopupDelete.vue"
 
 const dropdownRefs = {}
-const { getUsers } = useUserApi()
+const { getUsers, deleteUser } = useUserApi()
 
 const handleClickOutside = (event) => {
     const openDropdown = dropdownOpenId.value
@@ -245,6 +255,14 @@ const filteredUsers = computed(() => {
 
 const selectedUser = ref(null)
 
+// State untuk PopupEditRole
+const editRoleUser = ref(null)
+
+// state untuk PopupDelete
+const userToDelete = ref(null)
+const isDeletePopupOpen = ref(false)
+
+
 const openUserPopup = (user) => {
     selectedUser.value = user
 }
@@ -258,9 +276,6 @@ const dropdownOpenId = ref(null)
 const toggleDropdown = (userId) => {
     dropdownOpenId.value = dropdownOpenId.value === userId ? null : userId
 }
-
-// State untuk PopupEditRole
-const editRoleUser = ref(null)
 
 const openEditRolePopup = (user) => {
     editRoleUser.value = user
@@ -276,11 +291,9 @@ const handleAction = (action, user) => {
     } else if (action === 'edit') {
         editRoleUser.value = user
         openEditRolePopup(user)
-    } else if (action === 'block') {
-        const confirmed = confirm(`Blokir user ${user.name}?`)
-        if (confirmed) {
-            users.value = users.value.filter(u => u.id !== user.id)
-        }
+    } else if (action === 'delete') {
+        userToDelete.value = user
+        isDeletePopupOpen.value = true
     }
     dropdownOpenId.value = null
 }
@@ -292,6 +305,20 @@ const handleRoleSaved = (updatedUser) => {
     users.value[index].role = updatedUser.role
   }
   closeEditRolePopup()
+}
+
+const handleDeleteConfirmed = async () => {
+    if (userToDelete.value) {
+        try {
+            await deleteUser(userToDelete.value.id)
+            users.value = users.value.filter(u => u.id !== userToDelete.value.id)
+        } catch (error) {
+            console.error('Gagal menghapus user:', error)
+        } finally {
+            isDeletePopupOpen.value = false
+            userToDelete.value = null
+        }
+    }
 }
 
 const btn_menu = {
