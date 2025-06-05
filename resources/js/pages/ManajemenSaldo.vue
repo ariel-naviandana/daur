@@ -58,6 +58,7 @@
                         v-for="trx in saldoMasuk"
                         :key="trx.id"
                         :transaction="trx"
+                        :userName="userMap[trx.wallet?.user_id ?? 0] ?? '-'"
                     />
                 </ul>
             </div>
@@ -67,6 +68,7 @@
                         v-for="trx in saldoKeluar"
                         :key="trx.id"
                         :transaction="trx"
+                        :userName="userMap[trx.wallet?.user_id ?? 0] ?? '-'"
                     />
                 </ul>
             </div>
@@ -76,6 +78,7 @@
                         v-for="trx in permintaanPenarikan"
                         :key="trx.id"
                         :transaction="trx"
+                        :userName="userMap[trx.wallet?.user_id ?? 0] ?? '-'"
                         @approve="handleApprove"
                         @reject="handleReject"
                     />
@@ -152,12 +155,18 @@ const permintaanPenarikan = computed(() =>
 )
 
 async function handleApprove(trx: WalletTransaction) {
-    await saveWalletTransaction({ ...trx, status: 'approved' })
+    const payload = { ...trx, status: 'approved' }
+    console.log('Payload approve:', payload)
+    await saveWalletTransaction(payload)
     await fetchTransactions()
+    await fetchUsername()
 }
 async function handleReject(trx: WalletTransaction) {
-    await saveWalletTransaction({ ...trx, status: 'rejected' })
+    const payload = { ...trx, status: 'rejected' }
+    console.log('Payload approve:', payload)
+    await saveWalletTransaction(payload)
     await fetchTransactions()
+    await fetchUsername()
 }
 
 const getTabButtonStyle = (tab: string) => {

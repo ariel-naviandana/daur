@@ -6,7 +6,7 @@
                     <img src="/public/images/ic-transaction.svg" style="width: 36px; height: 36px;" />
                 </div>
                 <div>
-                    <p :style="transactionNameInfo">{{ transaction.wallet?.user?.name ?? '-' }}</p>
+                    <p :style="transactionNameInfo">{{ userName }}</p>
                     <p :style="transactionDate">{{ formatDate(props.transaction.created_at) }}</p>
                 </div>
             </div>
@@ -32,9 +32,9 @@
 <script lang="ts" setup>
 import {computed, ref} from "vue";
 import { theme } from '@/helpers/theme'
-import {WalletTransaction} from "@/interfaces/WalletTransaction";
+import { WalletTransaction } from "@/interfaces/WalletTransaction"
 
-const props = defineProps<{ transaction: WalletTransaction }>()
+const props = defineProps<{ transaction: WalletTransaction, userName: string }>()
 function formatDate(dateStr?: string) {
     if (!dateStr) return '-'
     const d = new Date(dateStr)
