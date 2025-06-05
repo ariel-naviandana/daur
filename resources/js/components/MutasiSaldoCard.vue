@@ -45,8 +45,8 @@ const props = defineProps({
 
 const iconSrc = computed(() =>
     props.item.type === 'withdrawal'
-        ? '/public/images/money-out.svg'
-        : '/public/images/money-in.svg'
+        ? '/images/money-out.svg'
+        : '/images/money-in.svg'
 )
 
 const formattedDate = computed(() =>
