@@ -163,7 +163,7 @@
         </div>
     </div>
 
-    <PopupEditStatusRecycle
+    <PopupConfirm
         v-if="confirmation"
         :message="`Apakah Anda yakin ingin ${confirmation.label.toLowerCase()} transaksi ini?`"
         @confirm="handleConfirm"
@@ -180,7 +180,7 @@ import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-import PopupEditStatusRecycle from './PopupEditStatusRecycle.vue'
+import PopupConfirm from './PopupConfirm.vue'
 const isHoverReject = ref(false)
 const isHoverAccept = ref(false)
 const isHoverClose = ref(false)

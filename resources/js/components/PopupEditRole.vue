@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <PopupEditStatusRecycle
+    <PopupConfirm
         v-if="confirmation"
         message="Apakah Anda yakin ingin mengubah role pengguna ini?"
         @confirm="handleConfirm"
@@ -49,7 +49,7 @@ import { useUserApi } from '@/composables/useUserApi'
 import { useBankApi } from '@/composables/useBankApi'
 import { theme } from '@/helpers/theme'
 import { Bank } from '@/interfaces/Bank'
-import PopupEditStatusRecycle from './PopupEditStatusRecycle.vue'
+import PopupConfirm from './PopupConfirm.vue'
 
 const props = defineProps<{
     isOpen: boolean

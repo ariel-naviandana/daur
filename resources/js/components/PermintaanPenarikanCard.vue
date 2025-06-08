@@ -1,7 +1,6 @@
 <template>
     <li :style="cardStyle">
         <div :style="gridContainer">
-            <!-- Kiri: Icon + Nama + Tanggal -->
             <div :style="leftSection">
                 <div :style="transactionIcon">
                     <img src="/public/images/ic-transaction.svg" style="width: 36px; height: 36px;" />
@@ -12,7 +11,6 @@
                 </div>
             </div>
 
-            <!-- Tengah: Tujuan Transfer -->
             <div :style="tujuanTransfer">
                 <p style="color: #aaa; fontSize: 0.85rem;">
                     {{ transaction.method ? (transaction.method.toUpperCase() + ' — ') : '' }}
@@ -20,18 +18,16 @@
                 </p>
             </div>
 
-            <!-- Nominal -->
             <div :style="amountWrapper">
                 <p :style="mutasiAmountPlusStyle">Rp. {{ formatRupiah(props.transaction.amount) }}</p>
             </div>
 
-            <!-- Tombol Aksi -->
             <div :style="actionWrapper">
                 <button
                     :style="[acceptButton, isHoverAccept ? buttonHoverStyleAccept : {}]"
                     @mouseover="isHoverAccept = true"
                     @mouseleave="isHoverAccept = false"
-                    @click="$emit('approve', transaction)"
+                    @click="confirmAction('approve')"
                 >
                     Setujui
                 </button>
@@ -39,22 +35,39 @@
                     :style="[rejectButton, isHoverReject ? buttonHoverStyleReject : {}]"
                     @mouseover="isHoverReject = true"
                     @mouseleave="isHoverReject = false"
-                    @click="$emit('reject', transaction)"
+                    @click="confirmAction('reject')"
                 >
                     Tolak
                 </button>
             </div>
         </div>
+
+        <PopupConfirm
+            v-if="confirmation"
+            :message="`Apakah Anda yakin ingin ${confirmation === 'approve' ? 'menyetujui' : 'menolak'} transaksi ini?`"
+            @confirm="handleConfirm"
+            @cancel="cancelConfirm"
+        />
     </li>
 </template>
 
 <script setup lang="ts">
-import { theme } from '@/helpers/theme'
 import { ref } from 'vue'
-import {WalletTransaction} from "@/interfaces/WalletTransaction"
+import { theme } from '@/helpers/theme'
+import { WalletTransaction } from '@/interfaces/WalletTransaction'
+import PopupConfirm from './PopupConfirm.vue'
 
-const props = defineProps<{ transaction: WalletTransaction, userName: string }>()
-defineEmits(['approve', 'reject'])
+const props = defineProps<{
+    transaction: WalletTransaction
+    userName: string
+}>()
+
+const emit = defineEmits(['approve', 'reject'])
+
+const confirmation = ref<null | 'approve' | 'reject'>(null)
+const isHoverAccept = ref(false)
+const isHoverReject = ref(false)
+
 function formatDate(dateStr?: string) {
     if (!dateStr) return '-'
     const d = new Date(dateStr)
@@ -66,8 +79,22 @@ function formatRupiah(amount: number) {
     return amount.toLocaleString('id-ID')
 }
 
-const isHoverAccept = ref(false)
-const isHoverReject = ref(false)
+const confirmAction = (action: 'approve' | 'reject') => {
+    confirmation.value = action
+}
+
+const handleConfirm = () => {
+    if (confirmation.value === 'approve') {
+        emit('approve', props.transaction)
+    } else if (confirmation.value === 'reject') {
+        emit('reject', props.transaction)
+    }
+    confirmation.value = null
+}
+
+const cancelConfirm = () => {
+    confirmation.value = null
+}
 
 const cardStyle = {
     backgroundColor: theme.colors.whiteElement,
@@ -78,7 +105,7 @@ const cardStyle = {
     fontFamily: theme.fonts.family,
     boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
     listStyle: 'none',
-    width: '100%',
+    width: '100%'
 }
 
 const gridContainer = {
@@ -86,7 +113,7 @@ const gridContainer = {
     gridTemplateColumns: '3fr 3fr 2fr 2fr',
     alignItems: 'center',
     gap: '16px',
-    width: '100%',
+    width: '100%'
 }
 
 const leftSection = {
@@ -94,7 +121,7 @@ const leftSection = {
     alignItems: 'center',
     gap: '16px',
     overflow: 'hidden',
-    minWidth: 0,
+    minWidth: 0
 }
 
 const transactionIcon = {
@@ -103,7 +130,7 @@ const transactionIcon = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '50%',
+    borderRadius: '50%'
 }
 
 const transactionNameInfo = {
@@ -113,14 +140,14 @@ const transactionNameInfo = {
     margin: 0,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    textOverflow: 'ellipsis'
 }
 
 const transactionDate = {
     fontSize: theme.fonts.size.small,
     fontWeight: theme.fonts.weight.medium,
     color: theme.colors.grey,
-    margin: 0,
+    margin: 0
 }
 
 const tujuanTransfer = {
@@ -128,25 +155,25 @@ const tujuanTransfer = {
     color: theme.colors.grey,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    textOverflow: 'ellipsis'
 }
 
 const amountWrapper = {
     textAlign: 'right',
-    whiteSpace: 'nowrap',
+    whiteSpace: 'nowrap'
 }
 
 const mutasiAmountPlusStyle = {
     color: theme.colors.primary,
     fontWeight: theme.fonts.weight.bold,
     whiteSpace: 'nowrap',
-    marginRight: '24px',
+    marginRight: '24px'
 }
 
 const actionWrapper = {
     display: 'flex',
     justifyContent: 'flex-end',
-    gap: '10px',
+    gap: '10px'
 }
 
 const acceptButton = {
@@ -159,7 +186,7 @@ const acceptButton = {
     cursor: 'pointer',
     fontSize: theme.fonts.size.small,
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
+    transition: '0.2s ease-in-out'
 }
 
 const rejectButton = {
@@ -172,16 +199,16 @@ const rejectButton = {
     cursor: 'pointer',
     fontSize: theme.fonts.size.small,
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
+    transition: '0.2s ease-in-out'
 }
 
 const buttonHoverStyleAccept = {
     backgroundColor: '#2d862d',
-    transform: 'scale(1.05)',
+    transform: 'scale(1.05)'
 }
 
 const buttonHoverStyleReject = {
     backgroundColor: '#B5271D',
-    transform: 'scale(1.05)',
+    transform: 'scale(1.05)'
 }
 </script>
