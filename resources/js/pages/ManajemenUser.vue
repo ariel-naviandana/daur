@@ -189,6 +189,7 @@
             :userId="editRoleUser?.id"
             :userName="editRoleUser?.name"
             :userRole="editRoleUser?.role"
+            :userBankId="editRoleUser?.bank_id ?? ''"
             @close="closeEditRolePopup"
             @saved="handleRoleSaved"
         />
