@@ -8,7 +8,7 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
-            buildDirectory: 'public/build',
+            buildDirectory: 'build',
         }),
         tailwindcss(),
         vue({
@@ -20,15 +20,15 @@ export default defineConfig({
             },
         }),
     ],
-    base: '/build/',
+    base: process.env.NODE_ENV === 'production' ? '/build/' : '/',
     build: {
         outDir: 'public/build',
         emptyOutDir: true,
-        manifest: 'manifest.json',
+        manifest: true,
         rollupOptions: {
             output: {
                 chunkFileNames: 'assets/[name]-[hash].js',
-                entryFileNames: 'assets/[name].js',
+                entryFileNames: 'assets/[name]-[hash].js',
                 assetFileNames: 'assets/[name]-[hash][extname]',
             },
         },
