@@ -24,7 +24,7 @@
     ],
     "routes": [
         { "src": "/build/(.*)", "dest": "/public/build/$1" },
-        { "src": "/(.*)\\.\\(js|css\\)", "dest": "/public/build/assets/$1.$2" },
+        { "src": "/assets/(.*)\\.(js|css)", "dest": "/public/build/assets/$1.$2" },
         { "src": "/images/(.*)", "dest": "/public/images/$1" },
         { "src": "/favicon.ico", "dest": "/public/build/favicon.ico" },
         { "src": "/(.*)", "dest": "/public/index.php" }
@@ -57,6 +57,6 @@
         "VIEW_COMPILED_PATH": "/tmp/framework/views",
         "MAIL_MAILER": "log",
         "VITE_APP_NAME": "${APP_NAME}",
-        "BUILD_CACHE_BUSTER": "20250608_2"
+        "BUILD_CACHE_BUSTER": "20250608_3"
     }
 }
