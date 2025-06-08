@@ -21,6 +21,13 @@
     ],
     "routes": [
         {
+            "src": "/images/(.*)",
+            "dest": "/public/images/$1",
+            "headers": {
+                "Cache-Control": "public, max-age=86400"
+            }
+        },
+        {
             "src": "/build/(.*)",
             "dest": "/public/build/$1",
             "headers": {
@@ -43,15 +50,15 @@
             "dest": "/public/robots.txt"
         },
         {
-            "src": "/(.*)",
-            "dest": "/public/index.php"
-        },
-        {
-            "src": "/images/(.*)",
-            "dest": "/public/images/$1",
+            "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$)",
+            "dest": "/public/$1",
             "headers": {
                 "Cache-Control": "public, max-age=86400"
             }
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/public/index.php"
         }
     ],
     "env": {

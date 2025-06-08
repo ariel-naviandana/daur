@@ -4,12 +4,12 @@
         <div :style="mainContentStyle" >
             <div class="home-page">
                 <section class="hero">
-                    <img src="/public/images/hero-image.png" alt="Hero Image" :style="heroImgStyle" />
+                    <img src="/images/hero-image.png" alt="Hero Image" :style="heroImgStyle" />
                 </section>
 
                 <section class="mission" :style="missionStyle">
                     <div class="mission-img">
-                        <img src="/public/images/recycle-image.png" alt="Recycle" :style="missionImgStyle" />
+                        <img src="/images/recycle-image.png" alt="Recycle" :style="missionImgStyle" />
                     </div>
                     <div class="mission-text" :style="missionTextStyle">
                         <h2 :style="missionHeadingStyle">Meningkatkan Kesadaran, Mewujudkan Perubahan</h2>
