@@ -20,11 +20,18 @@ export default defineConfig({
             },
         }),
     ],
-    base: '/',
+    base: '/build/',
     build: {
         outDir: 'public/build',
         emptyOutDir: true,
         manifest: 'manifest.json',
+        rollupOptions: {
+            output: {
+                chunkFileNames: 'assets/[name]-[hash].js',
+                entryFileNames: 'assets/[name].js',
+                assetFileNames: 'assets/[name]-[hash][extname]',
+            },
+        },
     },
     server: {
         https: false,
