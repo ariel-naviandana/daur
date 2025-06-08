@@ -32,13 +32,13 @@ const props = defineProps({
 
 const isHover = ref(false)
 
-const { getWallet } = useWalletApi()
+const { getWallet, getWalletByUser } = useWalletApi()
 
 const wallet = ref<Wallet | null>(null)
 
 const fetchWallet = async () => {
     if(props.userId) {
-        wallet.value = await getWallet(props.userId)
+        wallet.value = await getWalletByUser(props.userId)
     }
 }
 

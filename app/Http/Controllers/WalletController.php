@@ -24,6 +24,10 @@ class WalletController extends Controller
         return Wallet::with('user', 'transactions')->findOrFail($id);
     }
 
+    public function showUserWallet($id) {
+        return Wallet::with('user', 'transactions')->where('user_id', $id)->get()->first();
+    }
+
     public function update(Request $request, $id) {
         $wallet = Wallet::findOrFail($id);
         $wallet->update($request->all());

@@ -69,6 +69,7 @@ Route::middleware(['auth:sanctum', NoCacheMiddleware::class, 'web'])->group(func
     Route::get('/wallets', [WalletController::class, 'index']);
     Route::post('/wallets', [WalletController::class, 'store']);
     Route::get('/wallets/{id}', [WalletController::class, 'show']);
+    Route::get('/wallets-user/{id}', [WalletController::class, 'showUserWallet']);
     Route::put('/wallets/{id}', [WalletController::class, 'update']);
     Route::delete('/wallets/{id}', [WalletController::class, 'destroy']);
 
