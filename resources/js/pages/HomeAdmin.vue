@@ -67,6 +67,12 @@
         @done="updateStatus('success')"
         :is-admin="true"
     />
+    <PopupNotifikasi
+        :isOpen="showNotification"
+        :title="notificationTitle"
+        :message="notificationMessage"
+        @close="showNotification = false"
+    />
     </div>
   </template>
 
@@ -85,6 +91,7 @@
   import {WalletTransaction} from "@/interfaces/WalletTransaction"
   import { User } from '@/interfaces/User'
   import {Wallet} from "@/interfaces/Wallet"
+  import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
 
   const users = ref<User[]>([])
   const walletTransactions = ref<WalletTransaction[]>([])
@@ -100,6 +107,16 @@
   const selectedItem = ref<RecycleTransaction | null>(null)
   const history = ref<RecycleTransaction[]>([])
   const { getRecycleTransactions, saveRecycleTransaction } = useRecycleTransactionApi()
+
+  const showNotification = ref(false)
+  const notificationTitle = ref('')
+  const notificationMessage = ref('')
+
+  const showAlert = (title: string, message: string) => {
+      notificationTitle.value = title
+      notificationMessage.value = message
+      showNotification.value = true
+  }
 
   const fetchUsers = async () => {
       try {
@@ -185,7 +202,7 @@
                       }
                       await saveWallet(wallet)
                   } else {
-                      alert('Gagal memperbarui saldo dompet')
+                      showAlert('Gagal', 'Gagal memperbarui saldo dompet')
                   }
               }
 
@@ -195,14 +212,14 @@
                   )
                   closePopup()
               } else {
-                  alert('Gagal memperbarui status transaksi')
+                  showAlert('Gagal', 'Gagal memperbarui status transaksi')
               }
 
               await fetchHistory()
               await fetchWalletTransactions()
           } catch (error) {
               console.error('Error updating transaction status:', error)
-              alert('Terjadi kesalahan saat memperbarui status')
+              showAlert('Kesalahan', 'Terjadi kesalahan saat memperbarui status')
           }
       }
   }

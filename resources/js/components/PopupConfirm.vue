@@ -1,53 +1,43 @@
 <template>
-    <div v-if="isOpen" :style="overlayStyle">
-        <div :style="modalStyle">
-            <h3 :style="titleStyle">{{ title }}</h3>
+    <div :style="overlayStyle">
+        <div :style="popupStyle">
+            <h3 :style="titleStyle">Konfirmasi</h3>
             <p :style="messageStyle">{{ message }}</p>
-            <div :style="buttonContainerStyle">
+            <div :style="buttonGroupStyle">
                 <button
-                    @click="onCancel"
+                    type="button"
                     :style="[cancelButtonStyle, isHoverCancel ? buttonHoverStyleCancel : {}]"
                     @mouseover="isHoverCancel = true"
                     @mouseleave="isHoverCancel = false"
+                    @click="$emit('cancel')"
                 >
-                    {{ cancelText }}
+                    Batal
                 </button>
                 <button
-                    @click="onConfirm"
+                    type="button"
                     :style="[confirmButtonStyle, isHoverConfirm ? buttonHoverStyleConfirm : {}]"
                     @mouseover="isHoverConfirm = true"
                     @mouseleave="isHoverConfirm = false"
+                    @click="$emit('confirm')"
                 >
-                    {{ confirmText }}
+                    Ya
                 </button>
             </div>
         </div>
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
+import { ref } from 'vue'
 import { theme } from '@/helpers/theme'
-import {ref} from "vue"
+
+const props = defineProps({
+    message: { type: String, required: true }
+})
+const emit = defineEmits(['confirm', 'cancel'])
+
 const isHoverCancel = ref(false)
 const isHoverConfirm = ref(false)
-
-const props = defineProps<{
-    isOpen: boolean
-    title: string
-    message: string
-    confirmText?: string
-    cancelText?: string
-}>()
-
-const emit = defineEmits(['close', 'confirm'])
-
-const onConfirm = () => {
-    emit('confirm')
-}
-
-const onCancel = () => {
-    emit('close')
-}
 
 const overlayStyle = {
     position: 'fixed',
@@ -59,67 +49,65 @@ const overlayStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1000
+    zIndex: 1500,
 }
 
-const modalStyle = {
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '10px',
-    width: '300px',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
-    textAlign: 'center'
+const popupStyle = {
+    backgroundColor: theme.colors.whiteElement,
+    borderRadius: '16px',
+    padding: '24px',
+    width: '320px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    textAlign: 'center',
 }
 
 const titleStyle = {
-    fontSize: '18px',
-    fontWeight: 'bold',
-    marginBottom: '10px',
-    color: theme.colors.darkGrey
+    marginBottom: '16px',
+    fontSize: theme.fonts.size.medium,
+    fontWeight: theme.fonts.weight.bold,
+    color: theme.colors.darkGrey,
 }
 
 const messageStyle = {
-    fontSize: '14px',
-    color: theme.colors.darkGrey,
-    marginBottom: '20px'
-}
-
-const buttonContainerStyle = {
-    display: 'flex',
-    justifyContent: 'space-evenly',
-    marginTop: '20px'
-}
-
-const confirmButtonStyle = {
-    backgroundColor: theme.colors.primary,
-    color: "white",
-    border: "none",
-    padding: "6px",
-    width: '80px',
+    marginBottom: '24px',
     fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.medium,
-    borderRadius: "24px",
-    cursor: "pointer",
+    color: theme.colors.darkGrey,
+}
+
+const buttonGroupStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '16px',
+}
+
+const cancelButtonStyle = {
+    padding: "6px",
+    width: '110px',
+    borderRadius: '24px',
+    backgroundColor: theme.colors.lightGrey,
+    color: theme.colors.darkGrey,
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: theme.fonts.size.base,
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     transition: '0.2s ease-in-out',
 }
 
-const cancelButtonStyle = {
-    backgroundColor: theme.colors.lightGrey,
-    color: "black",
-    border: "none",
+const confirmButtonStyle = {
     padding: "6px",
-    width: '80px',
+    width: '110px',
+    borderRadius: '24px',
+    backgroundColor: theme.colors.primary,
+    color: theme.colors.whiteElement,
+    border: 'none',
+    cursor: 'pointer',
     fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.medium,
-    borderRadius: "24px",
-    cursor: "pointer",
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     transition: '0.2s ease-in-out',
 }
 
 const buttonHoverStyleCancel = {
-    backgroundColor: '#9F9F9F',
+    backgroundColor: theme.colors.grey,
     transform: 'scale(1.05)',
 }
 
@@ -128,3 +116,9 @@ const buttonHoverStyleConfirm = {
     transform: 'scale(1.05)',
 }
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+    display: none;
+}
+</style>

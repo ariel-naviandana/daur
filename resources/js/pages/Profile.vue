@@ -35,8 +35,8 @@
         </div>
 
         <div :style="columnStyle">
-          <h2 :style="headingStyle">Total Sampah</h2>
-          <div :style="textStatStyle">{{ totalSampah }} Kg</div>
+          <h2 :style="headingStyle">Total Recycle</h2>
+          <div :style="textStatStyle">{{ totalSampah }}</div>
         </div>
 
         <div :style="columnStyle" @mouseover="hoverRiwayat = true" @mouseleave="hoverRiwayat = false">
@@ -101,6 +101,22 @@
         </button>
       </div>
     </form>
+
+
+      <PopupSimpanProfile
+          :isOpen="showConfirmPopup"
+          itemName="profil"
+          title="Konfirmasi Perubahan"
+          @close="showConfirmPopup = false"
+          @confirm="() => { showConfirmPopup = false; simpanData() }"
+      />
+
+      <PopupNotifikasi
+          :isOpen="showNotifPopup"
+          :title="notifTitle"
+          :message="notifMessage"
+          @close="showNotifPopup = false"
+      />
   </div>
 </template>
 
@@ -111,6 +127,13 @@ import { theme } from '@/helpers/theme'
 import { useAuthApi } from '@/composables/useAuthApi'
 import { useImageApi } from '@/composables/useImageApi'
 import {useAuthStore} from "@/stores/auth"
+import PopupSimpanProfile from '@/components/PopupSimpanProfile.vue'
+import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
+import {useWalletApi} from "@/composables/useWalletApi"
+import {useRecycleTransactionApi} from "@/composables/useRecycleTransactionApi"
+
+const { getRecycleTransactionsByUser } = useRecycleTransactionApi()
+const { getWallet } = useWalletApi()
 
 const saldoDaur = ref<number>(0)
 const totalSampah = ref<number>(0)
@@ -132,6 +155,10 @@ const userId = ref<number | null>(null)
 const hoverSaldo = ref(false)
 const hoverRiwayat = ref(false)
 const isHover = ref(false)
+const showConfirmPopup = ref(false)
+const showNotifPopup = ref(false)
+const notifTitle = ref('')
+const notifMessage = ref('')
 
 const triggerFileInput = () => {
   fileInputRef.value?.click()
@@ -145,8 +172,10 @@ onMounted(async () => {
     phone.value = user.phone || ''
     userProfileImage.value = user.profile_picture || null
     userId.value = user.id
-    saldoDaur.value = user.wallet?.balance ?? 0
-    totalSampah.value = user.recycleTransactions?.reduce((sum, tx) => sum + (tx.total_quantity ?? 0), 0) ?? 0
+    const recycleTransactions = await getRecycleTransactionsByUser(user.id)
+    totalSampah.value = recycleTransactions.length
+    const wallet = await getWallet(user.id)
+    saldoDaur.value = wallet?.balance || 0
   }
 })
 
@@ -158,34 +187,44 @@ const handleImageChange = (event: Event) => {
   }
 }
 
-const simpanProfil = async () => {
-  let imageUrl = userProfileImage.value
+const simpanProfil = () => {
+    showConfirmPopup.value = true
+}
 
-  if (selectedImage.value) {
-    const uploadedUrl = await uploadToCloudinary(selectedImage.value)
-    if (!uploadedUrl) {
-      alert('Gagal upload gambar!')
-      return
+const simpanData = async () => {
+    let imageUrl = userProfileImage.value
+
+    if (selectedImage.value) {
+        const uploadedUrl = await uploadToCloudinary(selectedImage.value)
+        if (!uploadedUrl) {
+            showNotif('Upload Gagal', 'Gagal upload gambar!')
+            return
+        }
+        imageUrl = uploadedUrl
     }
-    imageUrl = uploadedUrl
-  }
 
-  const updatedUser = await updateProfile({
-    id: userId.value,
-    name: nama.value,
-    address: alamat.value,
-    phone: phone.value,
-    profile_picture: imageUrl,
-  })
+    const updatedUser = await updateProfile({
+        id: userId.value,
+        name: nama.value,
+        address: alamat.value,
+        phone: phone.value,
+        profile_picture: imageUrl
+    })
 
-  if (updatedUser) {
-    userProfileImage.value = updatedUser.image || imageUrl
-    previewImage.value = null
-    selectedImage.value = null
-    alert('Profil berhasil diperbarui!')
-  } else {
-    alert('Gagal menyimpan profil.')
-  }
+    if (updatedUser) {
+        userProfileImage.value = updatedUser.image || imageUrl
+        previewImage.value = null
+        selectedImage.value = null
+        showNotif('Berhasil!', 'Profil berhasil diperbarui!')
+    } else {
+        showNotif('Gagal!', 'Gagal menyimpan profil.')
+    }
+}
+
+const showNotif = (title: string, message: string) => {
+    notifTitle.value = title
+    notifMessage.value = message
+    showNotifPopup.value = true
 }
 
 const hoverCardStyle = {

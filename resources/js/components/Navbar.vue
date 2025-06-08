@@ -44,7 +44,7 @@
 
             <div class="hidden md:block relative">
                 <template v-if="!user">
-                    <a href="/login" style="color: white; font-weight: bold; background-color: #4CAF50; padding: 6px 28px; border-radius: 24px">Login</a>
+                    <a href="/login" style="color: white; font-weight: bold; background-color: #4CAF50; padding: 6px 28px; border-radius: 24px" class="login-button">Login</a>
                 </template>
                 <template v-else>
                     <div class="flex items-center gap-4">
@@ -255,5 +255,20 @@ const profileLinkStyle = {
 a:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.login-button {
+    color: white;
+    font-weight: bold;
+    background-color: #4CAF50;
+    padding: 6px 28px;
+    border-radius: 24px;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: #388E3C; /* warna hijau lebih gelap */
+    transform: scale(1.1);     /* membesarkan tombol */
 }
 </style>

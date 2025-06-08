@@ -3,20 +3,19 @@
         <div :style="upperSection">
             <!-- Tombol Kembali -->
             <a href="/profile">
-                <button
-                    :style="[backButtonStyle, isHover ? buttonHoverStyle : {}]"
-                    @mouseover="isHover = true"
-                    @mouseleave="isHover = false"
-                    @click=""
-                >
-                    <img src="/images/back-btn.svg" alt="">
-                    <div style="display: flex; justify-content: center; align-items: center;">
-                        <span>Kembali ke profile</span>
-                    </div>
-                </button>
+            <button
+                :style="[backButtonStyle, isHover ? buttonHoverStyle : {}]"
+                @mouseover="isHover = true"
+                @mouseleave="isHover = false"
+                @click=""
+            >
+                <img src="/images/back-btn.svg" alt="">
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <span>Kembali ke profile</span>
+                </div>
+            </button>
             </a>
 
-            <!-- TODO : Buat lebih dinamis -->
             <h1 :style="userNameStyle">{{ user?.name }}</h1>
         </div>
 
@@ -29,7 +28,6 @@
             @submit="handleWithdraw"
         />
 
-        <!-- Section Mutasi Saldo -->
         <div :style="mutasiWrapperStyle">
             <div :style="mutasiHeaderStyle">
                 <h2 :style="mutasiTitleStyle">Mutasi saldo</h2>
@@ -45,37 +43,22 @@
                         v-model="filterMonth"
                         :style="filterDownloadButtonStyle"
                     >
-                        <option value="this">Paling baru</option>
-                        <option value="last">Bulan Lalu</option>
+                        <option value="this">Bulan ini</option>
                         <option value="prev2">2 Bulan Lalu</option>
+                        <option value="prev3">3 Bulan Lalu</option>
                     </select>
                 </div>
             </div>
-            <p :style="mutasiTitleTextStyle">Tanggal </p>
-
-            <div
-                v-for="item in transactionById"
-                :key="item.id"
-                :style="mutasiCardStyle"
-            >
-                <div :style="mutasiIconWrapperStyle">
-                    <img :src="item.type === 'withdrawal' ? '/images/money-out.svg' : '/images/money-in.svg'" />
+            <div v-if="Object.keys(filteredGroupedTransactions).length">
+                <div v-for="(items, group) in filteredGroupedTransactions" :key="group" style="margin-bottom:2rem;">
+                    <h3 :style="mutasiTitleTextStyle">{{ group }}</h3>
+                    <MutasiSaldoCard v-for="item in items" :key="item.id" :item="item" />
                 </div>
-                <div :style="mutasiInfoStyle">
-                    <p :style="mutasiTitleTextStyle">
-                        {{ item.type === 'deposit' ? 'Saldo masuk' : 'Penarikan' }}
-                    </p>
-                    <p :style="mutasiDateStyle">
-                        {{ new Date(item.created_at).toLocaleString('id-ID', {
-                        day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                    }) }}
-                    </p>
-                </div>
-                <p :style="[item.type === 'deposit' ? mutasiAmountPlusStyle : mutasiAmountMinusStyle]">
-                    {{ item.type === 'deposit' ? '+' : '-' }}Rp. {{ Number(item.amount).toLocaleString('id-ID') }}
-                </p>
             </div>
-            <div v-if="transactionById.length === 0" style="text-align:center;color:#888;padding:2rem;">
+            <div v-else style="text-align:center;color:#888;padding:2rem;">
+                Belum ada mutasi saldo.
+            </div>
+            <div v-else style="text-align:center;color:#888;padding:2rem;">
                 Belum ada mutasi saldo.
             </div>
         </div>
@@ -89,21 +72,24 @@ import { theme } from '@/helpers/theme'
 import { WalletTransaction } from "@/interfaces/WalletTransaction"
 import { useWalletTransactionApi } from "@/composables/useWalletTransactionApi"
 import { useWalletApi } from "@/composables/useWalletApi"
+import { useAuthApi} from "@/composables/useAuthApi"
 import SaldoCard from "@/components/SaldoCard.vue"
-import WithdrawalCard from "@/components/WithdrawalCard.vue"
+import WithdrawalCard from "@/components/PopupWithdrawal.vue"
+import MutasiSaldoCard from "@/components/MutasiSaldoCard.vue"
 import {Wallet} from "@/interfaces/Wallet"
 import {useAuthStore} from "@/stores/auth"
 import {User} from "@/interfaces/User"
 
 const showModal = ref(false)
 const userId = ref<number | null>(null)
-const user = ref<User>(null)
+const user = ref<any>(null)
 const wallet = ref<Wallet | null>(null)
-const transactions = ref<WalletTransaction[]>([])
+const transactions = ref([])
+const isHover = ref(false)
+
 
 const isHoverDownload = ref(false)
 const isHoverFilter = ref(false)
-const isHover = ref(false)
 const filterMonth = ref('this')
 
 const authStore = useAuthStore()
@@ -112,15 +98,67 @@ const { saveWalletTransaction } = useWalletTransactionApi()
 const { getWalletTransactions } = useWalletTransactionApi()
 
 onMounted(async () => {
-    userId.value = user.id
-    wallet.value = await getWallet(user.id)
-})
-
-onMounted(async () => {
     user.value = await authStore.user
     userId.value = user.value.id
     wallet.value = await getWallet(userId.value)
     await fetchWalletTransaction()
+})
+
+const sortedTransactions = computed(() =>
+    [...transactionById.value].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+)
+
+function formatMonthYear(dateStr: string) {
+    const date = new Date(dateStr)
+    // Format: Juni 2025
+    return date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
+}
+const groupedTransactions = computed(() => {
+    const groups: Record<string, any[]> = {}
+    for (const item of sortedTransactions.value) {
+        const groupKey = formatMonthYear(item.created_at)
+        if (!groups[groupKey]) groups[groupKey] = []
+        groups[groupKey].push(item)
+    }
+    return groups
+})
+
+// --- FILTER BY BULAN ---
+function getFilterMonthDateRange(filter: string) {
+    const now = new Date()
+    let from = new Date(now.getFullYear(), now.getMonth(), 1)
+    let to = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
+    if (filter === 'prev2') {
+        // 2 bulan lalu
+        from = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+        to = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999)
+    } else if (filter === 'prev3') {
+        // 3 bulan lalu
+        from = new Date(now.getFullYear(), now.getMonth() - 2, 1)
+        to = new Date(now.getFullYear(), now.getMonth() - 1, 0, 23, 59, 59, 999)
+    }
+    return { from, to }
+}
+
+const filteredGroupedTransactions = computed(() => {
+    // Tanpa filter: semua bulan (jika mau)
+    if (!filterMonth.value) return groupedTransactions.value
+
+    // Filter sesuai bulan
+    const { from, to } = getFilterMonthDateRange(filterMonth.value)
+    const filtered: Record<string, any[]> = {}
+    for (const [group, items] of Object.entries(groupedTransactions.value)) {
+        // Ambil salah satu tanggal dari item untuk cek bulan
+        // Atau filter per item, lebih presisi
+        const filteredItems = items.filter(item => {
+            const date = new Date(item.created_at)
+            return date >= from && date <= to
+        })
+        if (filteredItems.length) {
+            filtered[group] = filteredItems
+        }
+    }
+    return filtered
 })
 
 const fetchWalletTransaction = async () => {
@@ -133,7 +171,6 @@ const transactionById = computed(() => {
 })
 
 const handleWithdraw = async (payload: WalletTransaction) => {
-    // Pastikan wallet sudah ready
     if (!wallet.value?.id) {
         alert("Wallet tidak ditemukan")
         return
@@ -197,7 +234,7 @@ const userNameStyle = {
     fontSize: theme.fonts.size.heading,
     fontWeight: theme.fonts.weight.bold,
     color: theme.colors.darkGrey,
-    marginBottom: '1.5rem',
+    marginBottom: '14px',
 }
 
 const upperSection = {
@@ -278,17 +315,13 @@ const mutasiTitleTextStyle = {
     fontWeight: theme.fonts.weight.bold,
     fontSize: theme.fonts.size.base,
     color: theme.colors.darkGrey,
-    marginBottom: '4px',
+    margin: '24px 0 8px 0',
+    letterSpacing: '0.5px'
 }
 
 const mutasiDateStyle = {
     fontSize: '0.85rem',
     color: '#888',
-}
-
-const mutasiAmountPlusStyle = {
-    color: theme.colors.primary,
-    fontWeight: theme.fonts.weight.bold,
 }
 
 const mutasiAmountMinusStyle = {

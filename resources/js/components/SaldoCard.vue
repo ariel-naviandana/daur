@@ -4,7 +4,7 @@
             <p :style="saldoLabelStyle">Saldo DAUR</p>
             <p :style="saldoAmountStyle">Rp. {{ wallet?.balance ?? 0 }}</p>
         </div>
-        <button :style="[penarikanButtonStyle, isHover ? penarikanHoverStyle : {}]"
+            <button :style="[penarikanButtonStyle, isHover ? penarikanHoverStyle : {}]"
                 @mouseover="isHover = true"
                 @mouseleave="isHover = false"
                 @click="tarikSaldo">
@@ -30,7 +30,7 @@ const props = defineProps({
     },
 })
 
-const isHover = ref(true)
+const isHover = ref(false)
 
 const { getWallet } = useWalletApi()
 

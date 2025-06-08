@@ -1,6 +1,6 @@
 <template>
     <div :style="categoryListContainerStyle">
-        <button :style="navigationButtonStyle" @click="scrollCategoryList('left')">
+        <button class="navigation-button" @click="scrollCategoryList('left')">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -8,6 +8,7 @@
 
         <div class="category-list" :style="categoryListStyle">
             <button
+                class="category-card"
                 v-for="category in categories"
                 :key="category.id"
                 :style="categoryItemStyle"
@@ -17,7 +18,7 @@
             </button>
         </div>
 
-        <button :style="navigationButtonStyle" @click="scrollCategoryList('right')">
+        <button class="navigation-button" @click="scrollCategoryList('right')">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -132,5 +133,35 @@ const navigationButtonStyle = {
 <style scoped>
 ::-webkit-scrollbar {
     display: none
+}
+
+.category-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+}
+
+.navigation-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background-color: white;
+    color: #333; /* atau pakai: theme.colors.darkGrey jika inline style dihilangkan */
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navigation-button:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>

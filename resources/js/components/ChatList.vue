@@ -13,6 +13,7 @@
                 v-for="contact in filteredContacts"
                 :key="contact.id"
                 @click="selectContact(contact)"
+                class="bank-item"
                 :style="[bankItemStyle, selectedContact?.id === contact.id ? activeBankStyle : {}]"
             >
                 <img v-if="contact.profile_picture" :src="contact.profile_picture" alt="avatar" :style="avatarStyle" />
@@ -108,3 +109,15 @@ const avatarStyle = {
     marginRight: '1rem',
 }
 </script>
+
+<style scoped>
+.bank-item {
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 8px;
+}
+
+.bank-item:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+</style>

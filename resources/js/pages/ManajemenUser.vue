@@ -82,10 +82,10 @@
                     :key="user.id"
                     :style="cardList"
                 >
-                    <!-- Avatar -->
+                    <!-- Foto Profil/Avatar -->
                     <div :style="avatar">
-                        <!-- Cek apakah ada profileImage, jika ada tampilkan gambar profil -->
-                        <img v-if="user.profileImage" :src="user.profileImage" alt="Profile" :style="userImage"/>
+                        <!-- Cek apakah ada profileImage, jika ada gambar profil akan ditampilkan -->
+                        <img v-if="user.profile_picture" :src="user.profile_picture  || '/images/profile-pict-holder.svg'" alt="Profile" :style="userImage"/>
                         <!-- Jika tidak ada, tampilkan avatar default -->
                         <svg v-else xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" :style="iconStyle">
                             <circle cx="12" cy="12" r="10"></circle>
@@ -111,8 +111,8 @@
                         <div v-if="dropdownOpenId === user.id" :style="dropdownOpen">
                             <ul class="text-sm text-gray-700">
                                 <li><button @click="handleAction('lihat', user)" :style="btn_dropdown" class="button_hover_grey">Lihat Detail</button></li>
-                                <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="button_hover_grey">Update Role</button></li>
-                                <li><button @click="handleAction('block', user)" :style="btn_dropdown" class="button_hover_red">Blokir User</button></li>
+                                <li><button @click="handleAction('edit', user)" :style="btn_dropdown" class="button_hover_grey">Edit Role</button></li>
+                                <li><button @click="handleAction('delete', user)" :style="btn_dropdown" class="button_hover_red">Hapus User</button></li>
                             </ul>
                         </div>
                     </div>
@@ -124,7 +124,12 @@
         <div v-if="selectedUser" :style="popupDetail">
             <div :style="popupOverlay" @click="closePopup"></div>
             <div :style="popupContainer">
-                <button @click="closePopup" :style="btnClosePopup">
+                <button
+                    @click="closePopup"
+                    @mouseover="isHoverClose = true"
+                    @mouseleave="isHoverClose = false"
+                    :style="[btnClosePopup, isHoverClose ? hoverCloseStyle : {}]"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
                          stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -134,9 +139,12 @@
 
                 <div :style="popupHeader">
                     <div>
+                        <!-- Foto Profil/Avatar -->
                         <div :style="profileImageWrapper">
-                            <img v-if="selectedUser.profileImage" :src="selectedUser.profileImage" alt="Profile" :style="profileImage" />
-                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" :style="iconStyle">
+                            <!-- Cek apakah ada profileImage, jika ada tampilkan gambar profil -->
+                            <img v-if="selectedUser.profile_picture" :src="selectedUser.profile_picture || '/images/profile-pict-holder.svg'" alt="Profile" :style="profileImage"/>
+                            <!-- Jika tidak ada, tampilkan avatar default -->
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" :style="iconStyle">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <circle cx="12" cy="10" r="3"></circle>
                                 <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
@@ -154,11 +162,11 @@
                 <div :style="containerAktivitas">
                     <div>
                         <p :style="labelAktivitas">Saldo DAUR</p>
-                        <p :style="valueAktivitas">Rp. {{ selectedUser.saldo ? selectedUser.saldo.toLocaleString('id-ID') : '0' }}</p>
+                        <p :style="valueAktivitas">Rp. {{ selectedUser.wallet?.balance ? selectedUser.wallet.balance.toLocaleString('id-ID') : '0' }}</p>
                     </div>
                     <div>
-                        <p :style="labelAktivitas">Total Sampah</p>
-                        <p :style="valueAktivitas">{{ selectedUser.totalSampah ?? 0 }} Kg</p>
+                        <p :style="labelAktivitas">Total Recycle</p>
+                        <p :style="valueAktivitas">{{ totalRecycle ?? 0 }}</p>
                     </div>
                     <div>
                         <p :style="labelAktivitas">Recycle</p>
@@ -174,16 +182,90 @@
                 </div>
             </div>
         </div>
+
+         <!-- Popup Edit Role -->
+        <PopupEditRole
+            :isOpen="!!editRoleUser"
+            :userId="editRoleUser?.id"
+            :userName="editRoleUser?.name"
+            :userRole="editRoleUser?.role"
+            :userBankId="editRoleUser?.bank_id ?? ''"
+            @close="closeEditRolePopup"
+            @saved="handleRoleSaved"
+        />
+
+        <!-- Popup Delete -->
+        <PopupDelete
+            :isOpen="isDeletePopupOpen"
+            :itemName="userToDelete?.name || ''"
+            actionLabel="Blokir User"
+            @close="isDeletePopupOpen = false"
+            @confirm="handleDeleteConfirmed"
+            />
+        <PopupNotifikasi
+            :title="popup.title"
+            :message="popup.message"
+            :isOpen="popup.isOpen"
+            @close="tutupPopup"
+        />
     </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { theme } from '@/helpers/theme'
 import Navbar from "@/components/Navbar.vue"
 import { onMounted, onUnmounted } from 'vue'
+import { useUserApi } from "@/composables/useUserApi"
+import PopupEditRole from "@/components/PopupEditRole.vue"
+import PopupDelete from "@/components/PopupDelete.vue"
+import PopupNotifikasi from "@/components/PopupNotifikasi.vue"
+import {useRecycleTransactionApi} from "@/composables/useRecycleTransactionApi.js"
+
+const { getRecycleTransactionsByUser } = useRecycleTransactionApi()
 
 const dropdownRefs = {}
+const { getUsers, deleteUser } = useUserApi()
+
+// State untuk filter & pencarian
+const search = ref('')
+const sort = ref('name_asc')
+const users = ref([])
+
+const selectedUser = ref(null)
+
+// State untuk PopupEditRole
+const editRoleUser = ref(null)
+
+// state untuk PopupDelete
+const userToDelete = ref(null)
+const isDeletePopupOpen = ref(false)
+
+const dropdownOpenId = ref(null)
+
+const isHoverClose = ref(false)
+
+const popup = ref({
+    isOpen: false,
+    title: '',
+    message: '',
+})
+
+const tampilkanPopup = (title, message) => {
+    popup.value = {
+        isOpen: true,
+        title,
+        message
+    }
+}
+
+const tutupPopup = () => {
+    popup.value.isOpen = false
+}
+
+const eksekusiAksi = () => {
+    popup.value.isOpen = false
+}
 
 const handleClickOutside = (event) => {
     const openDropdown = dropdownOpenId.value
@@ -202,39 +284,13 @@ onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside)
 })
 
-// State untuk filter & pencarian
-const search = ref('')
-const sort = ref('name_asc')
-
-// Data dummy user
-const users = ref([
-    {
-        id: 1,
-        name: 'Rudy Tabootie',
-        email: 'rudytabootie@gmail.com',
-        address: 'Jl. Mawar No. 10, Malang',
-        saldo: 25000,
-        totalSampah: 15,
-    },
-    {
-        id: 2,
-        name: 'Anna Zakaria',
-        email: 'anna.zakaria@example.com',
-        address: 'Jl. Soekarno-Hatta No. 21, Malang',
-    },
-    {
-        id: 3,
-        name: 'Budi Santoso',
-        email: 'budi.santoso@example.com',
-        address: 'Jl. Veteran No. 3, Malang',
-    },
-    {
-        id: 4,
-        name: 'Citra Lestari',
-        email: 'citra.lestari@example.com',
-        address: 'Jl. Gajayana No. 12, Malang',
-    },
-])
+onMounted(async () => {
+    try {
+        users.value = await getUsers()
+    } catch (error) {
+        console.error('Gagal mengambil data users:', error)
+    }
+})
 
 // Filter dan sortir
 const filteredUsers = computed(() => {
@@ -251,9 +307,11 @@ const filteredUsers = computed(() => {
     return result
 })
 
-const selectedUser = ref(null)
+const totalRecycle = ref(0)
 
-const openUserPopup = (user) => {
+const openUserPopup = async (user) => {
+    const recycles = await getRecycleTransactionsByUser(user.id)
+    totalRecycle.value = recycles.length
     selectedUser.value = user
 }
 
@@ -261,24 +319,58 @@ const closePopup = () => {
     selectedUser.value = null
 }
 
-const dropdownOpenId = ref(null)
-
 const toggleDropdown = (userId) => {
     dropdownOpenId.value = dropdownOpenId.value === userId ? null : userId
 }
 
+// Fungsi untuk membuka popup edit role
+const openEditRolePopup = (user) => {
+    editRoleUser.value = user
+}
+
+// Fungsi untuk menutup popup edit role
+const closeEditRolePopup = () => {
+    editRoleUser.value = false
+}
+
+// Fungsi untuk menangani aksi dari dropdown menu
 const handleAction = (action, user) => {
     if (action === 'lihat') {
         openUserPopup(user)
     } else if (action === 'edit') {
-        alert(`Edit user: ${user.name}`)
+        editRoleUser.value = user
+        openEditRolePopup(user)
+    } else if (action === 'delete') {
+        userToDelete.value = user
+        isDeletePopupOpen.value = true
     } else if (action === 'block') {
-        const confirmed = confirm(`Blokir user ${user.name}?`)
-        if (confirmed) {
-            users.value = users.value.filter(u => u.id !== user.id)
-        }
+        tampilkanPopup('Blokir User', `Fitur blokir user belum tersedia.`)
     }
     dropdownOpenId.value = null
+}
+
+const handleRoleSaved = (updatedUser) => {
+  // update data user di users.value jika perlu
+  const index = users.value.findIndex(u => u.id === updatedUser.id)
+  if (index !== -1) {
+    users.value[index].role = updatedUser.role
+  }
+  closeEditRolePopup()
+}
+
+// Fungsi untuk mengonfirmasi penghapusan user
+const handleDeleteConfirmed = async () => {
+    if (userToDelete.value) {
+        try {
+            await deleteUser(userToDelete.value.id)
+            users.value = users.value.filter(u => u.id !== userToDelete.value.id)
+        } catch (error) {
+            console.error('Gagal menghapus user:', error)
+        } finally {
+            isDeletePopupOpen.value = false
+            userToDelete.value = null
+        }
+    }
 }
 
 const btn_menu = {
@@ -503,7 +595,7 @@ const btnClosePopup = {
     position: 'absolute',
     top: '22px',
     right: '22px',
-    color: '#000',
+    color: theme.colors.darkGrey,
     background: 'none',
     border: 'none',
     cursor: 'pointer',
@@ -569,6 +661,11 @@ const iconAktivitas = {
     color: theme.colors.primary,
     display: 'flex',
     justifyContent: 'center',
+}
+
+const hoverCloseStyle = {
+    color: theme.colors.black,
+    transform: 'scale(1.05)',
 }
 </script>
 

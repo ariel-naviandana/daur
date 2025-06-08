@@ -82,6 +82,15 @@
                 </div>
             </form>
         </div>
+
+        <!-- Popup konfirmasi edit -->
+        <PopupEdit
+            v-if="showConfirmSavePopup"
+            :is-open="showConfirmSavePopup"
+            :item-name="form.name"
+            @close="cancelConfirm"
+            @confirm="confirmSave"
+        />
     </div>
 </template>
 
@@ -93,6 +102,7 @@ import { Bank } from '@/interfaces/Bank'
 import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import PopupEdit from './PopupEdit.vue'
 
 const leafletIcon = L.icon({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -121,6 +131,9 @@ const form = ref<Bank>({
     latitude: defaultLat.value,
     longitude: defaultLng.value
 })
+
+const showConfirmSavePopup = ref(false)
+
 const { saveBank } = useBankApi()
 
 const map = ref(null)
@@ -275,13 +288,31 @@ onMounted(async () => {
     }
 })
 
-const save = async () => {
-    form.value.address = addressInput.value
-    await saveBank(form.value)
-    emit('saved')
-    emit('close')
+const save = () => {
+    if (form.value.id !== 0) {
+        showConfirmSavePopup.value = true
+    } else {
+        confirmSave()
+    }
 }
 
+const confirmSave = async () => {
+    showConfirmSavePopup.value = false
+    try {
+        form.value.address = addressInput.value
+        await saveBank(form.value)
+        emit('saved')
+        emit('close')
+    } catch (error) {
+        console.error('Error saving bank:', error)
+    }
+}
+
+const cancelConfirm = () => {
+    showConfirmSavePopup.value = false
+}
+
+// Styles
 const overlayStyle = {
     position: 'fixed',
     top: 0,
@@ -366,7 +397,8 @@ const buttonGroupStyle = {
 }
 
 const cancelButtonStyle = {
-    padding: '8px 16px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '8px',
     backgroundColor: theme.colors.lightGrey,
     color: theme.colors.darkGrey,
@@ -378,7 +410,8 @@ const cancelButtonStyle = {
 }
 
 const saveButtonStyle = {
-    padding: '8px 16px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '8px',
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,

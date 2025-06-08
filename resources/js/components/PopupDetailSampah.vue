@@ -6,7 +6,13 @@
                     <img :src="selectedCategory?.image" :alt="selectedCategory?.name || 'Icon Sampah'" :style="iconStyle" />
                     <h2 :style="headingStyle">{{ selectedCategory?.name || 'Detail Sampah' }}</h2>
                 </div>
-                <button @click="closeModal" :style="closeButtonStyle">
+                <button
+                    @click="closeModal"
+                    :style="[closeButtonStyle, isHoverClose ? closeButtonHoverStyle : {}]"
+                    @mouseover="isHoverClose = true"
+                    @mouseleave="isHoverClose = false"
+                    aria-label="Close modal"
+                >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -71,6 +77,7 @@ import { useWasteTypeApi } from '@/composables/useWasteTypeApi'
 import { WasteType } from '@/interfaces/WasteType'
 import { Category } from '@/interfaces/Category'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
+const isHoverClose = ref(false)
 
 const props = defineProps<{
     isOpen: boolean
@@ -200,7 +207,8 @@ const closeButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     padding: '4px',
-    color: theme.colors.darkGrey
+    color: theme.colors.darkGrey,
+    transition: 'color 0.2s ease, transform 0.2s ease',
 }
 
 const gridContainerStyle = {
@@ -321,6 +329,11 @@ const addButtonStyle = {
 const buttonHoverStyleAdd = {
     backgroundColor: '#2d862d',
     transform: 'scale(1.05)',
+}
+
+const closeButtonHoverStyle = {
+    color: theme.colors.black,   // Contoh: ganti warna saat hover
+    transform: 'scale(1.1)',
 }
 </script>
 

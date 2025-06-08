@@ -20,16 +20,28 @@
                     <button type="submit">Daftar</button>
                 </form>
 
-                <p :style="footerStyle">Sudah memiliki akun? <a href="/login" style="color: #4CAF50">Masuk</a></p>
+                <p :style="footerStyle">
+                    Sudah memiliki akun?
+                    <a href="/login" style="color: #4CAF50">Masuk</a>
+                </p>
             </div>
         </div>
+
+        <!-- PopupNotifikasi -->
+        <PopupNotifikasi
+            :isOpen="popup.isOpen"
+            :title="popup.title"
+            :message="popup.message"
+            @close="popup.isOpen = false"
+        />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useAuthApi } from '@/composables/useAuthApi'
 import { User } from '@/interfaces/User'
+import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
 
 const { register } = useAuthApi()
 
@@ -38,14 +50,26 @@ const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 
+const popup = reactive({
+    isOpen: false,
+    title: '',
+    message: ''
+})
+
+const showPopup = (title: string, message: string) => {
+    popup.title = title
+    popup.message = message
+    popup.isOpen = true
+}
+
 const handleRegister = async () => {
     if (!name.value || !email.value || !password.value || !confirmPassword.value) {
-        alert('Mohon lengkapi semua data.')
+        showPopup('Peringatan', 'Mohon lengkapi semua data.')
         return
     }
 
     if (password.value !== confirmPassword.value) {
-        alert('Kata sandi tidak cocok.')
+        showPopup('Peringatan', 'Kata sandi tidak cocok.')
         return
     }
 
@@ -58,10 +82,16 @@ const handleRegister = async () => {
 
     const user = await register(userData as User)
     if (user) {
-        alert('Pendaftaran berhasil!')
-        window.location.href = '/login'
+        showPopup('Sukses', 'Pendaftaran berhasil!')
+        // Redirect setelah popup ditutup
+        const closeWatcher = watch(() => popup.isOpen, (val) => {
+            if (!val) {
+                closeWatcher() // stop watch
+                window.location.href = '/login'
+            }
+        })
     } else {
-        alert('Pendaftaran gagal. Silakan coba lagi.')
+        showPopup('Gagal', 'Pendaftaran gagal. Silakan coba lagi.')
     }
 }
 

@@ -98,7 +98,13 @@
                     :key="article.id"
                     :article="article"
                     @edit="openEditForm"
-                    @delete="deleteArticle"
+                    @delete="() => requestDeleteArticle(article)"
+                />
+                <PopupDeleteArticle
+                    :isOpen="showDeletePopup"
+                    :itemName="articleToDelete?.title || ''"
+                    @close="cancelDelete"
+                    @confirm="confirmDeleteArticle"
                 />
             </div>
         </div>
@@ -112,10 +118,13 @@ import { theme } from '@/helpers/theme'
 import { ref, onMounted } from 'vue'
 import { useArticleApi } from '@/composables/useArticleApi'
 import ManajemenArtikelCard from '@/components/ManajemenArtikelCard.vue'
+import PopupDeleteArticle from "@/components/PopupDeleteArticle.vue"
 import type { Article } from '@/interfaces/Article'
 
 const { getArticles } = useArticleApi()
 const isHoverAdd = ref(false)
+const showDeletePopup = ref(false)
+const articleToDelete = ref<Article | null>(null)
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -262,7 +271,25 @@ const onArticleSaved = () => {
 
 const deleteArticle = async (id: number) => {
     await useArticleApi().deleteArticle(id)
-    await fetchArticles() // refresh daftar artikel
+    await fetchArticles()
+}
+
+const requestDeleteArticle = (article: Article) => {
+    articleToDelete.value = article
+    showDeletePopup.value = true
+}
+
+const confirmDeleteArticle = async () => {
+    if (articleToDelete.value) {
+        await deleteArticle(articleToDelete.value.id)
+    }
+    showDeletePopup.value = false
+    articleToDelete.value = null
+}
+
+const cancelDelete = () => {
+    showDeletePopup.value = false
+    articleToDelete.value = null
 }
 
 const sorting = {

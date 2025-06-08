@@ -1,8 +1,8 @@
 <template>
     <div v-if="visible" :style="overlayStyle">
-        <div :style="modalStyle">
+        <div class="scrollable-modal" :style="modalStyle">
             <p :style="labelStyle">Saldo DAUR</p>
-            <p :style="valueStyle">Rp. {{ wallet?.balance ?? 0 }}</p>
+            <p :style="valueStyle">Rp. {{ formatRupiah(wallet?.balance ?? 0) }}</p>
 
             <p :style="sectionTitleStyle">Pilih tujuan</p>
             <div :style="radioGroupWrapper">
@@ -20,10 +20,10 @@
             <div v-if="selectedOption" style="margin-top: 30px">
                 <p :style="sectionTitleStyle">Masukan nomor tujuan</p>
                 <input
-                type="text"
-                v-model="destinationNumber"
-                placeholder="Masukan nomor tujuan"
-                :style="nominalInputStyle">
+                    type="text"
+                    v-model="destinationNumber"
+                    placeholder="Masukan nomor tujuan"
+                    :style="nominalInputStyle">
             </div>
 
             <p :style="sectionTitleStyle">Masukkan nominal</p>
@@ -57,13 +57,21 @@
                 </button>
             </div>
         </div>
+
+        <PopupConfirm
+            v-if="confirmation"
+            :message="`Apakah Anda yakin ingin mengajukan penarikan Rp. ${formatRupiah(Number(amount))} ke ${selectedOption} (${destinationNumber})?`"
+            @confirm="handleConfirm"
+            @cancel="cancelConfirm"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref} from 'vue'
+import { ref } from 'vue'
 import { theme } from '@/helpers/theme'
-import { Wallet } from "@/interfaces/Wallet"
+import { Wallet } from '@/interfaces/Wallet'
+import PopupConfirm from "@/components/PopupConfirm.vue"
 
 const props = defineProps<{ visible: boolean, wallet: Wallet | null }>()
 const emit = defineEmits(['close', 'submit'])
@@ -74,6 +82,7 @@ const isHoverClose = ref(false)
 const isHoverConfirm = ref(false)
 const destinationNumber = ref('')
 const errorMessage = ref('')
+const confirmation = ref(false)
 
 const options = [
     { name: 'Gopay' },
@@ -84,6 +93,10 @@ const options = [
     { name: 'BNI' },
     { name: 'Mandiri' }
 ]
+
+const formatRupiah = (value: number) => {
+    return value.toLocaleString('id-ID')
+}
 
 const confirm = () => {
     errorMessage.value = ""
@@ -107,11 +120,20 @@ const confirm = () => {
         errorMessage.value = "Saldo tidak mencukupi"
         return
     }
+    confirmation.value = true
+}
+
+const handleConfirm = () => {
     emit('submit', {
         method: selectedOption.value.toLowerCase(),
         account_info: destinationNumber.value,
         amount: Number(amount.value)
     })
+    confirmation.value = false
+}
+
+const cancelConfirm = () => {
+    confirmation.value = false
 }
 
 const overlayStyle = {
@@ -131,7 +153,9 @@ const modalStyle = {
     backgroundColor: theme.colors.whiteElement,
     padding: '2rem',
     borderRadius: '24px',
-    width: '650px',
+    width: '900px',
+    maxHeight: '90vh',
+    overflowY: 'auto',
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
 }
 
@@ -182,7 +206,6 @@ const cancelBtnStyle = {
     fontWeight: theme.fonts.weight.semibold,
     padding: '10px',
     width: '160px',
-    // height: '50px',
     borderRadius: '999px',
     border: 'none',
     cursor: 'pointer',
@@ -195,7 +218,6 @@ const confirmBtnStyle = {
     color: theme.colors.whiteElement,
     padding: '10px',
     width: '160px',
-    // height: '50px',
     borderRadius: '999px',
     border: 'none',
     fontWeight: theme.fonts.weight.semibold,
@@ -226,6 +248,9 @@ const radioBox = {
     borderRadius: '24px',
     fontSize: '16px',
     fontWeight: theme.fonts.weight.medium,
+    cursor: 'pointer',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const nominalInputStyle = {
@@ -249,8 +274,8 @@ const actionButtonsWrapper = {
 }
 
 const cancelBtn = {
-    backgroundColor: '#EB5757',
-    color: '#fff',
+    backgroundColor: theme.colors.red,
+    color: theme.colors.whiteElement,
     border: 'none',
     padding: '12px 24px',
     borderRadius: '999px',
@@ -273,3 +298,16 @@ const confirmBtn = {
 }
 
 </script>
+
+<style scoped>
+.scrollable-modal::-webkit-scrollbar {
+    width: 8px;
+}
+.scrollable-modal::-webkit-scrollbar-thumb {
+    background: none;
+    border-radius: 5px;
+}
+.scrollable-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+</style>

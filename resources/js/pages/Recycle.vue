@@ -239,6 +239,12 @@
             @confirm="handleConfirmBooking"
             @close="closeConfirmBookingPopup"
         />
+        <PopupNotifikasi
+            :isOpen="isNotifOpen"
+            :title="titleNotif"
+            :message="notifMessage"
+            @close="closeNotif"
+        />
     </div>
 </template>
 
@@ -273,6 +279,8 @@ const leafletIcon = L.icon({
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
 })
+import {useAuthStore} from "@/stores/auth"
+import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
 
 const authStore = useAuthStore()
 const { getWasteTypes } = useWasteTypeApi()
@@ -297,6 +305,19 @@ const hoverPickup = ref(false)
 const hoverDropoff = ref(false)
 const pickupMap = ref(null)
 const dropoffMap = ref(null)
+const isNotifOpen = ref(false)
+const notifMessage = ref('')
+const titleNotif = ref('Transaksi Recycle')
+
+const openNotif = (message: string) => {
+    notifMessage.value = message
+    isNotifOpen.value = true
+}
+
+const closeNotif = () => {
+    isNotifOpen.value = false
+    notifMessage.value = ''
+}
 
 const getButtonStyle = (isPick: boolean) => {
     const active = isPick ? isPickup.value : !isPickup.value
@@ -390,7 +411,7 @@ const openConfirmBookingPopup = () => {
     if (validateForm()) {
         isConfirmBookingOpen.value = true
     } else {
-        alert('Harap isi semua input yang diperlukan sebelum melanjutkan.')
+        // openNotif('Harap isi semua input yang diperlukan sebelum melanjutkan.')
     }
 }
 
@@ -401,22 +422,22 @@ const closeConfirmBookingPopup = () => {
 const validateForm = (): boolean => {
     const allItemsHaveImages = cartItems.value.every(item => item.image)
     if (!allItemsHaveImages) {
-        alert('Harap unggah bukti foto untuk semua item di keranjang.')
+        openNotif('Harap unggah bukti foto untuk semua item di keranjang.')
         return false
     }
     if (isPickup.value) {
         if (addressInput.value.trim() === '') {
-            alert('Harap masukkan alamat penjemputan.')
+            openNotif('Harap masukkan alamat penjemputan.')
             return false
         }
     } else {
         if (!selectedDropOff.value?.id) {
-            alert('Harap pilih lokasi drop-off.')
+            openNotif('Harap pilih lokasi drop-off.')
             return false
         }
     }
     if (!pickupTime.value) {
-        alert('Harap pilih waktu penjemputan atau drop-off.')
+        openNotif('Harap pilih waktu penjemputan atau drop-off.')
         return false
     }
     const selectedDateTime = new Date(pickupTime.value)
@@ -427,11 +448,11 @@ const validateForm = (): boolean => {
     const hours = selectedDateTime.getHours()
     const minutes = selectedDateTime.getMinutes()
     if (hours < 9 || (hours >= 17) || (hours === 16 && minutes > 55)) {
-        alert('Waktu harus antara pukul 09:00 dan 17:00.')
+        openNotif('Waktu harus antara pukul 09:00 dan 17:00.')
         return false
     }
     if (isToday && selectedDateTime < minTimeToday) {
-        alert('Untuk hari ini, waktu harus setidaknya 2 jam dari sekarang.')
+        openNotif('Untuk hari ini, waktu harus setidaknya 2 jam dari sekarang.')
         return false
     }
     return true
@@ -471,14 +492,14 @@ const submitTransaction = async () => {
         }
         const success = await saveRecycleTransaction(payload)
         if (success) {
-            alert('Transaksi berhasil dibuat!')
+            openNotif('Transaksi berhasil dibuat!')
             redirectToRiwayat()
         } else {
-            alert('Gagal membuat transaksi. Silakan coba lagi.')
+            openNotif('Gagal membuat transaksi. Silakan coba lagi.')
         }
     } catch (error) {
         console.error('Error submitting transaction:', error)
-        alert('Terjadi kesalahan saat membuat transaksi. Silakan coba lagi.')
+        openNotif('Terjadi kesalahan saat membuat transaksi. Silakan coba lagi.')
     }
 }
 
@@ -508,11 +529,11 @@ const handleFileChange = async (event: Event, wasteTypeId: number) => {
     const validTypes = ['image/jpeg', 'image/png', 'image/gif']
     const maxSize = 5 * 1024 * 1024
     if (!validTypes.includes(file.type)) {
-        alert('Hanya file JPEG, PNG, atau GIF yang diperbolehkan.')
+        openNotif('Hanya file JPEG, PNG, atau GIF yang diperbolehkan.')
         return
     }
     if (file.size > maxSize) {
-        alert('Ukuran file maksimum adalah 5MB.')
+        openNotif('Ukuran file maksimum adalah 5MB.')
         return
     }
     try {
