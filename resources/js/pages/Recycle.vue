@@ -1,4 +1,3 @@
-```vue
 <template>
     <div :style="layoutStyle">
         <Navbar />
@@ -265,7 +264,6 @@ import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
 import { WasteType } from '@/interfaces/WasteType'
 import { User } from '@/interfaces/User'
-import { useAuthStore } from '@/stores/auth'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
@@ -1052,4 +1050,3 @@ const buttonHoverStyle = {
     display: none
 }
 </style>
-```
