@@ -1,6 +1,6 @@
 <template>
     <div v-if="visible" :style="overlayStyle">
-        <div :style="modalStyle">
+        <div class="scrollable-modal" :style="modalStyle">
             <p :style="labelStyle">Saldo DAUR</p>
             <p :style="valueStyle">Rp. {{ wallet?.balance ?? 0 }}</p>
 
@@ -131,10 +131,11 @@ const modalStyle = {
     backgroundColor: theme.colors.whiteElement,
     padding: '2rem',
     borderRadius: '24px',
-    width: '650px',
+    width: '900px',
+    maxHeight: '90vh',            // Batasi tinggi modal
+    overflowY: 'auto',            // Aktifkan scroll pada modal
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
 }
-
 const labelStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.semibold,
@@ -226,6 +227,9 @@ const radioBox = {
     borderRadius: '24px',
     fontSize: '16px',
     fontWeight: theme.fonts.weight.medium,
+    cursor: 'pointer',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const nominalInputStyle = {
@@ -249,8 +253,8 @@ const actionButtonsWrapper = {
 }
 
 const cancelBtn = {
-    backgroundColor: '#EB5757',
-    color: '#fff',
+    backgroundColor: theme.colors.red,
+    color: theme.colors.whiteElement,
     border: 'none',
     padding: '12px 24px',
     borderRadius: '999px',
@@ -273,3 +277,16 @@ const confirmBtn = {
 }
 
 </script>
+
+<style scoped>
+.scrollable-modal::-webkit-scrollbar {
+    width: 8px;
+}
+.scrollable-modal::-webkit-scrollbar-thumb {
+    background: none;
+    border-radius: 5px;
+}
+.scrollable-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+</style>

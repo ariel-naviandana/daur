@@ -6,7 +6,7 @@
         @click="$emit('showDetail', item)"
     >
         <div :style="containerStyle">
-            <div v-if="isAdmin" :style="profileColumnStyle">
+             <div v-if="isAdmin" :style="profileColumnStyle">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="35"
