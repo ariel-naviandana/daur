@@ -3,7 +3,7 @@
         <div :style="modalStyle">
             <h3 :style="titleStyle">Konfirmasi Hapus</h3>
             <p :style="messageStyle">
-                Apakah Anda yakin ingin menghapus item <strong>{{ itemName }}</strong>?
+                Apakah Anda yakin ingin menghapus <strong>{{ itemName }}</strong>?
             </p>
             <div :style="buttonContainerStyle">
                 <button
