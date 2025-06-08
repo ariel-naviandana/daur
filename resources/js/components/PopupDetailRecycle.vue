@@ -95,7 +95,24 @@
 
             <div :style="{ marginBottom: '24px' }">
                 <h3 :style="sectionTitleStyle">Lokasi di Map</h3>
-                <div id="detail-recycle-map" style="height: 250px; width: 100%; border-radius: 8px; overflow: hidden; background: #eee;"></div>
+                <div style="height: 250px; width: 100%; border-radius: 8px; overflow: hidden; background: #eee;">
+                    <LMap
+                        ref="map"
+                        :zoom="15"
+                        :center="[item.latitude || -6.2, item.longitude || 106.816666]"
+                        style="height: 100%; width: 100%"
+                    >
+                        <LTileLayer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution="© OpenStreetMap"
+                        />
+                        <LMarker
+                            :lat-lng="[item.latitude || -6.2, item.longitude || 106.816666]"
+                            :draggable="false"
+                            :icon="leafletIcon"
+                        />
+                    </LMap>
+                </div>
             </div>
 
             <div :style="addressContainerStyle">
@@ -160,18 +177,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
+import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-delete (L.Icon.Default.prototype as any)._getIconUrl
 const leafletIcon = L.icon({
-    iconUrl: '/images/marker-icon.png',
-    iconRetinaUrl: '/images/marker-icon-2x.png',
-    shadowUrl: '/images/marker-shadow.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -192,6 +209,8 @@ const emit = defineEmits(['close', 'accept', 'reject', 'done'])
 const isAdmin = computed(() => props.isAdmin ?? false)
 const isFullScreenOpen = ref(false)
 const fullScreenImage = ref<string>('')
+
+const map = ref(null)
 
 const closeModal = () => {
     emit('close')
@@ -271,42 +290,19 @@ const getWasteTypeUnit = (item: RecycleTransactionItem) => {
     return item.waste_type?.unit || ''
 }
 
-let map: L.Map | null = null
-let marker: L.Marker | null = null
-
-const initMap = async () => {
-    await nextTick()
-    if (!props.item.latitude || !props.item.longitude) return
-    if (map) return
-    map = L.map('detail-recycle-map', { attributionControl: false, zoomControl: true }).setView([props.item.latitude, props.item.longitude], 15)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-    }).addTo(map)
-    marker = L.marker([props.item.latitude, props.item.longitude], { draggable: false, icon: leafletIcon }).addTo(map)
-}
-
-const destroyMap = () => {
-    if (map) {
-        map.remove()
-        map = null
-        marker = null
-    }
-}
-
 watch(
     () => props.isOpen,
-    value => {
-        if (value) setTimeout(() => initMap(), 200)
-        else destroyMap()
+    async (value) => {
+        if (value) {
+            await nextTick()
+            setTimeout(() => {
+                if (map.value) {
+                    map.value.leafletObject.invalidateSize()
+                }
+            }, 200)
+        }
     }
 )
-
-onMounted(() => {
-    if (props.isOpen) setTimeout(() => initMap(), 200)
-})
-onUnmounted(() => {
-    destroyMap()
-})
 
 const overlayStyle = {
     position: 'fixed',
@@ -541,14 +537,14 @@ const rejectButtonStyle = {
     ...buttonBaseStyle,
     backgroundColor: theme.colors.red,
     transition: '0.2s ease-in-out',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
 }
 
 const acceptButtonStyle = {
     ...buttonBaseStyle,
     backgroundColor: theme.colors.primary,
     transition: '0.2s ease-in-out',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
 }
 
 const fullScreenOverlayStyle = {
@@ -591,12 +587,12 @@ const fullScreenCloseButtonStyle = {
 
 const buttonHoverStyleReject = {
     transform: 'scale(1.05)',
-    backgroundColor: '#B5271D',
+    backgroundColor: '#B5271D'
 }
 
 const buttonHoverStyleAccept = {
     transform: 'scale(1.05)',
-    backgroundColor: '#2d862d',
+    backgroundColor: '#2d862d'
 }
 </script>
 

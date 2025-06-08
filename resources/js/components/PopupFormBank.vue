@@ -7,7 +7,7 @@
                     <label :style="labelStyle">Nama Bank Sampah</label>
                     <input v-model="form.name" type="text" :style="inputStyle" required />
                 </div>
-                <div :style="formGroupStyle" style="position:relative;">
+                <div :style="formGroupStyle" style="position: relative;">
                     <label :style="labelStyle">Alamat</label>
                     <div :style="formGroupStyle">
                         <input
@@ -36,7 +36,26 @@
                 </div>
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Pilih Lokasi di Map</label>
-                    <div id="leaflet-map" :style="mapStyle"></div>
+                    <div style="height: 250px; width: 100%; border-radius: 8px; overflow: hidden; background: #eee;">
+                        <LMap
+                            ref="map"
+                            :zoom="15"
+                            :center="[form.latitude ?? defaultLat, form.longitude ?? defaultLng]"
+                            style="height: 100%; width: 100%"
+                            @click="handleMapClick"
+                        >
+                            <LTileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution="© OpenStreetMap"
+                            />
+                            <LMarker
+                                :lat-lng="[form.latitude ?? defaultLat, form.longitude ?? defaultLng]"
+                                :draggable="true"
+                                :icon="leafletIcon"
+                                @dragend="handleMarkerDragend"
+                            />
+                        </LMap>
+                    </div>
                 </div>
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Telepon</label>
@@ -71,14 +90,14 @@ import { ref, watch, onMounted, nextTick } from 'vue'
 import { theme } from '@/helpers/theme'
 import { useBankApi } from '@/composables/useBankApi'
 import { Bank } from '@/interfaces/Bank'
+import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-delete (L.Icon.Default.prototype as any)._getIconUrl
 const leafletIcon = L.icon({
-    iconUrl: '/images/marker-icon.png',
-    iconRetinaUrl: '/images/marker-icon-2x.png',
-    shadowUrl: '/images/marker-shadow.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -100,25 +119,16 @@ const form = ref<Bank>({
     address: '',
     phone: '',
     latitude: defaultLat.value,
-    longitude: defaultLng.value,
+    longitude: defaultLng.value
 })
 const { saveBank } = useBankApi()
 
-let map: L.Map | null = null
-let marker: L.Marker | null = null
-
+const map = ref(null)
 const addressInput = ref('')
 const addressSuggestions = ref<{ formatted: string, lat: number, lng: number }[]>([])
 const showAutocomplete = ref(false)
 const addressInputRef = ref<HTMLInputElement | null>(null)
 let autocompleteTimeout: any = null
-
-const mapStyle = {
-    width: '100%',
-    height: '250px',
-    borderRadius: '8px',
-    marginBottom: '8px'
-}
 
 const geocode = async (address: string) => {
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${OPENCAGE_API_KEY}&language=id&countrycode=id&limit=5`
@@ -135,17 +145,32 @@ const reverseGeocode = async (lat: number, lng: number) => {
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${OPENCAGE_API_KEY}&language=id&countrycode=id&limit=1`
     const res = await fetch(url)
     const data = await res.json()
-    if (data.results && data.results.length > 0) {
-        return data.results[0].formatted
-    }
-    return ''
+    return data.results?.[0]?.formatted || ''
 }
 
 const setLatLng = (lat: number, lng: number) => {
     form.value.latitude = +lat.toFixed(7)
     form.value.longitude = +lng.toFixed(7)
-    marker?.setLatLng([lat, lng])
-    map?.setView([lat, lng])
+}
+
+const handleMapClick = async (e: any) => {
+    const { lat, lng } = e.latlng
+    setLatLng(lat, lng)
+    const address = await reverseGeocode(lat, lng)
+    if (address) {
+        form.value.address = address
+        addressInput.value = address
+    }
+}
+
+const handleMarkerDragend = async (e: any) => {
+    const pos = e.target.getLatLng()
+    setLatLng(pos.lat, pos.lng)
+    const address = await reverseGeocode(pos.lat, pos.lng)
+    if (address) {
+        form.value.address = address
+        addressInput.value = address
+    }
 }
 
 const selectSuggestion = (suggestion: { formatted: string, lat: number, lng: number }) => {
@@ -212,45 +237,6 @@ const getCurrentPosition = (): Promise<{ lat: number, lng: number }> => {
     })
 }
 
-const initializeMap = async () => {
-    await nextTick()
-    if (!props.bank) {
-        const pos = await getCurrentPosition()
-        defaultLat.value = pos.lat
-        defaultLng.value = pos.lng
-        form.value.latitude = pos.lat
-        form.value.longitude = pos.lng
-    }
-    if (map) return
-
-    map = L.map('leaflet-map').setView([form.value.latitude ?? defaultLat.value, form.value.longitude ?? defaultLng.value], 13)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-    }).addTo(map)
-
-    marker = L.marker([form.value.latitude ?? defaultLat.value, form.value.longitude ?? defaultLng.value], { draggable: true, icon: leafletIcon }).addTo(map)
-
-    marker.on('dragend', async () => {
-        const pos = marker!.getLatLng()
-        setLatLng(pos.lat, pos.lng)
-        const address = await reverseGeocode(pos.lat, pos.lng)
-        if (address) {
-            form.value.address = address
-            addressInput.value = address
-        }
-    })
-
-    map.on('click', async (e: any) => {
-        const { lat, lng } = e.latlng
-        setLatLng(lat, lng)
-        const address = await reverseGeocode(lat, lng)
-        if (address) {
-            form.value.address = address
-            addressInput.value = address
-        }
-    })
-}
-
 watch(
     () => props.bank,
     (newVal) => {
@@ -258,22 +244,35 @@ watch(
             ? {
                 ...newVal,
                 latitude: newVal.latitude ?? defaultLat.value,
-                longitude: newVal.longitude ?? defaultLng.value,
+                longitude: newVal.longitude ?? defaultLng.value
             }
             : { id: 0, name: '', address: '', phone: '', latitude: defaultLat.value, longitude: defaultLng.value }
         addressInput.value = form.value.address ?? ''
-        nextTick(() => {
-            if (map && marker && form.value.latitude && form.value.longitude) {
-                marker.setLatLng([form.value.latitude, form.value.longitude])
-                map.setView([form.value.latitude, form.value.longitude])
-            }
-        })
     },
     { immediate: true }
 )
 
-onMounted(() => {
-    initializeMap()
+watch(
+    () => props.bank,
+    async () => {
+        await nextTick()
+        setTimeout(() => {
+            if (map.value) {
+                map.value.leafletObject.invalidateSize()
+            }
+        }, 100)
+    },
+    { immediate: true }
+)
+
+onMounted(async () => {
+    if (!props.bank) {
+        const pos = await getCurrentPosition()
+        defaultLat.value = pos.lat
+        defaultLng.value = pos.lng
+        form.value.latitude = pos.lat
+        form.value.longitude = pos.lng
+    }
 })
 
 const save = async () => {
@@ -293,7 +292,7 @@ const overlayStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 1000,
+    zIndex: 1000
 }
 
 const popupStyle = {
@@ -304,27 +303,27 @@ const popupStyle = {
     maxWidth: '420px',
     maxHeight: '90vh',
     overflowY: 'auto',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
 }
 
 const titleStyle = {
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight.bold,
     marginBottom: '16px',
-    color: theme.colors.darkGrey,
+    color: theme.colors.darkGrey
 }
 
 const formGroupStyle = {
     marginBottom: '16px',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
 }
 
 const labelStyle = {
     fontSize: theme.fonts.size.base,
     marginBottom: '8px',
     color: theme.colors.darkGrey,
-    fontWeight: theme.fonts.weight.medium,
+    fontWeight: theme.fonts.weight.medium
 }
 
 const inputStyle = {
@@ -333,7 +332,7 @@ const inputStyle = {
     borderRadius: '6px',
     border: `1px solid ${theme.colors.lightGrey}`,
     outline: 'none',
-    fontFamily: theme.fonts.family,
+    fontFamily: theme.fonts.family
 }
 
 const autocompleteListStyle = {
@@ -357,12 +356,13 @@ const autocompleteItemStyle = {
     cursor: 'pointer',
     borderBottom: `1px solid ${theme.colors.lightGrey}`,
     background: '#fff',
-    fontSize: theme.fonts.size.base,
+    fontSize: theme.fonts.size.base
 }
+
 const buttonGroupStyle = {
     display: 'flex',
     justifyContent: 'flex-end',
-    gap: '12px',
+    gap: '12px'
 }
 
 const cancelButtonStyle = {
@@ -374,7 +374,7 @@ const cancelButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
+    transition: '0.2s ease-in-out'
 }
 
 const saveButtonStyle = {
@@ -386,23 +386,23 @@ const saveButtonStyle = {
     border: 'none',
     cursor: 'pointer',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: '0.2s ease-in-out',
+    transition: '0.2s ease-in-out'
 }
 
 const buttonHoverStyleCancel = {
     backgroundColor: theme.colors.grey,
-    transform: 'scale(1.05)',
+    transform: 'scale(1.05)'
 }
 
 const buttonHoverStyleSave = {
     backgroundColor: '#2d862d',
-    transform: 'scale(1.05)',
+    transform: 'scale(1.05)'
 }
 </script>
 
 <style scoped>
 @import "leaflet/dist/leaflet.css";
 ::-webkit-scrollbar {
-    display: none;
+    display: none
 }
 </style>
