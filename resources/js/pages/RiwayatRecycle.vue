@@ -80,6 +80,12 @@
             @reject="updateStatus('cancel')"
             :is-admin="false"
         />
+        <PopupNotifikasi
+            :isOpen="showNotifPopup"
+            :title="notifTitle"
+            :message="notifMessage"
+            @close="showNotifPopup = false"
+        />
     </div>
 </template>
 
@@ -92,9 +98,8 @@ import { theme } from '@/helpers/theme'
 import { useRecycleTransactionApi } from '@/composables/useRecycleTransactionApi'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import {User} from "@/interfaces/User"
-import {useAuthStore} from "@/stores/auth"
-
-const authStore = useAuthStore()
+import {useAuthApi} from "@/composables/useAuthApi"
+import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
 
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
@@ -102,7 +107,18 @@ const showPopup = ref(false)
 const selectedItem = ref<RecycleTransaction | null>(null)
 const history = ref<RecycleTransaction[]>([])
 const { getRecycleTransactionsByUser, saveRecycleTransaction } = useRecycleTransactionApi()
-const user = ref<User | null>(null)
+const { getCurrentUser } = useAuthApi()
+const user = ref<User>()
+
+const showNotifPopup = ref(false)
+const notifTitle = ref('')
+const notifMessage = ref('')
+
+const showNotif = (title: string, message: string) => {
+    notifTitle.value = title
+    notifMessage.value = message
+    showNotifPopup.value = true
+}
 
 const fetchHistory = async () => {
     try {
@@ -113,8 +129,8 @@ const fetchHistory = async () => {
 }
 
 onMounted(async () => {
-    user.value = await authStore.user
-    await fetchHistory()
+    user.value = await getCurrentUser()
+    fetchHistory()
 })
 
 const filteredHistory = computed(() => {
@@ -157,11 +173,11 @@ const updateStatus = async (newStatus: string) => {
                 )
                 closePopup()
             } else {
-                alert('Gagal memperbarui status transaksi')
+                showNotif('Gagal!', 'Gagal memperbarui status transaksi')
             }
         } catch (error) {
             console.error('Error updating transaction status:', error)
-            alert('Terjadi kesalahan saat memperbarui status')
+            showNotif('Kesalahan!', 'Terjadi kesalahan saat memperbarui status')
         }
     }
 }

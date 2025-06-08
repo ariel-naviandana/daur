@@ -26,7 +26,12 @@
                     </div>
                 </div>
                 <div v-else :style="dateStyle">{{ formattedDate }}</div>
-                <button @click="closeModal" :style="closeButtonStyle">
+                <button
+                    @click="closeModal"
+                    @mouseover="isHoverClose = true"
+                    @mouseleave="isHoverClose = false"
+                    :style="[closeButtonStyle, isHoverClose ? hoverCloseStyle : {}]"
+                >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -93,11 +98,6 @@
                 </div>
             </div>
 
-            <div :style="{ marginBottom: '24px' }">
-                <h3 :style="sectionTitleStyle">Lokasi di Map</h3>
-                <div id="detail-recycle-map" style="height: 250px; width: 100%; border-radius: 8px; overflow: hidden; background: #eee;"></div>
-            </div>
-
             <div :style="addressContainerStyle">
                 <h3 :style="sectionTitleStyle">Catatan</h3>
                 <p :style="addressStyle">{{ item.note || 'Tidak ada catatan' }}</p>
@@ -105,7 +105,7 @@
 
             <div v-if="isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
                 <button
-                    @click="handleReject"
+                    @click="confirmAction('reject')"
                     :style="[rejectButtonStyle, isHoverReject ? buttonHoverStyleReject : {}]"
                     @mouseover="isHoverReject = true"
                     @mouseleave="isHoverReject = false"
@@ -113,7 +113,7 @@
                     Tolak
                 </button>
                 <button
-                    @click="handleAccept"
+                    @click="confirmAction('accept')"
                     :style="[acceptButtonStyle, isHoverAccept ? buttonHoverStyleAccept : {}]"
                     @mouseover="isHoverAccept = true"
                     @mouseleave="isHoverAccept = false"
@@ -124,7 +124,7 @@
 
             <div v-if="isAdmin && item.status === 'process'" :style="actionButtonsContainer">
                 <button
-                    @click="handleDone"
+                    @click="confirmAction('done')"
                     :style="[acceptButtonStyle, isHoverAccept ? buttonHoverStyleAccept : {}]"
                     @mouseover="isHoverAccept = true"
                     @mouseleave="isHoverAccept = false"
@@ -135,7 +135,7 @@
 
             <div v-if="!isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
                 <button
-                    @click="handleReject"
+                    @click="confirmAction('reject')"
                     :style="[rejectButtonStyle, isHoverReject ? buttonHoverStyleReject : {}]"
                     @mouseover="isHoverReject = true"
                     @mouseleave="isHoverReject = false"
@@ -157,18 +157,25 @@
             </button>
         </div>
     </div>
+
+    <PopupEditStatusRecycle
+        v-if="confirmation"
+        :message="`Apakah Anda yakin ingin ${confirmation.label.toLowerCase()} transaksi ini?`"
+        @confirm="handleConfirm"
+        @cancel="cancelConfirm"
+
+    />
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { computed, ref } from 'vue'
 import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-
+import PopupEditStatusRecycle from './PopupEditStatusRecycle.vue'
 const isHoverReject = ref(false)
 const isHoverAccept = ref(false)
+const isHoverClose = ref(false)
 
 const props = defineProps<{
     isOpen: boolean
@@ -180,6 +187,34 @@ const emit = defineEmits(['close', 'accept', 'reject', 'done'])
 
 const isAdmin = computed(() => props.isAdmin ?? false)
 const isFullScreenOpen = ref(false)
+const item = computed(() => props.item)
+
+const confirmation = ref<null | {
+    type: 'accept' | 'reject' | 'done',
+    label: string
+}>(null)
+
+const confirmAction = (type: 'accept' | 'reject' | 'done') => {
+    let label = ''
+    if (type === 'accept') label = 'Terima'
+    else if (type === 'reject') label = isAdmin.value && item.value.status === 'waiting' ? 'Tolak' : 'Batalkan'
+    else if (type === 'done') label = 'Selesaikan'
+    confirmation.value = { type, label }
+}
+
+const handleConfirm = () => {
+    if (!confirmation.value) return
+    const type = confirmation.value.type
+    if (type === 'accept') emit('accept')
+    else if (type === 'reject') emit('reject')
+    else if (type === 'done') emit('done')
+    confirmation.value = null
+}
+
+const cancelConfirm = () => {
+    confirmation.value = null
+}
+
 const fullScreenImage = ref<string>('')
 
 const closeModal = () => {
@@ -259,43 +294,6 @@ const getWasteTypeImage = (item: RecycleTransactionItem) => {
 const getWasteTypeUnit = (item: RecycleTransactionItem) => {
     return item.waste_type?.unit || ''
 }
-
-let map: L.Map | null = null
-let marker: L.Marker | null = null
-
-const initMap = async () => {
-    await nextTick()
-    if (!props.item.latitude || !props.item.longitude) return
-    if (map) return
-    map = L.map('detail-recycle-map', { attributionControl: false, zoomControl: true }).setView([props.item.latitude, props.item.longitude], 15)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-    }).addTo(map)
-    marker = L.marker([props.item.latitude, props.item.longitude], { draggable: false }).addTo(map)
-}
-
-const destroyMap = () => {
-    if (map) {
-        map.remove()
-        map = null
-        marker = null
-    }
-}
-
-watch(
-    () => props.isOpen,
-    value => {
-        if (value) setTimeout(() => initMap(), 200)
-        else destroyMap()
-    }
-)
-
-onMounted(() => {
-    if (props.isOpen) setTimeout(() => initMap(), 200)
-})
-onUnmounted(() => {
-    destroyMap()
-})
 
 const overlayStyle = {
     position: 'fixed',
@@ -587,10 +585,14 @@ const buttonHoverStyleAccept = {
     transform: 'scale(1.05)',
     backgroundColor: '#2d862d',
 }
+
+const hoverCloseStyle = {
+    color: theme.colors.black,
+    transform: 'scale(1.05)',
+}
 </script>
 
 <style scoped>
-@import "leaflet/dist/leaflet.css";
 ::-webkit-scrollbar {
     display: none
 }

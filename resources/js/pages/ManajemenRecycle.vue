@@ -105,6 +105,11 @@
             @done="updateStatus('success')"
             :is-admin="true"
         />
+        <PopupNotifikasi
+            :pesan="pesanNotifikasi"
+            :isOpen="showNotifikasi"
+            @close="showNotifikasi = false"
+        />
     </div>
 </template>
 
@@ -120,6 +125,8 @@ import {useWalletTransactionApi} from "@/composables/useWalletTransactionApi"
 import {WalletTransaction} from "@/interfaces/WalletTransaction"
 import {useWalletApi} from "@/composables/useWalletApi"
 import {Wallet} from "@/interfaces/Wallet"
+import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
+
 const {saveWalletTransaction} = useWalletTransactionApi()
 const selectedFilter = ref<string>('all')
 const selectedSort = ref<string>('latest')
@@ -129,6 +136,8 @@ const selectedItem = ref<RecycleTransaction | null>(null)
 const history = ref<RecycleTransaction[]>([])
 const { getRecycleTransactions, saveRecycleTransaction } = useRecycleTransactionApi()
 const { saveWallet } = useWalletApi()
+const showNotifikasi = ref(false)
+const pesanNotifikasi = ref('')
 
 const fetchHistory = async () => {
     try {
@@ -201,7 +210,8 @@ const updateStatus = async (newStatus: string) => {
                     }
                     await saveWallet(wallet)
                 } else {
-                    alert('Gagal memperbarui saldo dompet')
+                    pesanNotifikasi.value = 'Gagal memperbarui saldo dompet'
+                    showNotifikasi.value = true
                 }
             }
 
@@ -211,13 +221,15 @@ const updateStatus = async (newStatus: string) => {
                 )
                 closePopup()
             } else {
-                alert('Gagal memperbarui status transaksi')
+                pesanNotifikasi.value = 'Gagal memperbarui status transaksi'
+                showNotifikasi.value = true
             }
 
             await fetchHistory()
         } catch (error) {
             console.error('Error updating transaction status:', error)
-            alert('Terjadi kesalahan saat memperbarui status')
+            pesanNotifikasi.value = 'Terjadi kesalahan saat memperbarui status'
+            showNotifikasi.value = true
         }
     }
 }
