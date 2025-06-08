@@ -9,11 +9,8 @@ export function useAuthApi() {
         try {
             await initCsrf()
             const response = await apiClient.post('/register', form)
-            const user = response.data.user
-            if (user) {
-                window.location.href = user.role === 'master_admin' || user.role === 'bank_admin' ? '/admin' : '/'
-            }
-            return user
+            window.location.href = '/login'
+            return response.data.user
         } catch (error) {
             console.error('Error registering user:', error)
             return null
