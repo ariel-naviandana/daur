@@ -124,7 +124,12 @@
         <div v-if="selectedUser" :style="popupDetail">
             <div :style="popupOverlay" @click="closePopup"></div>
             <div :style="popupContainer">
-                <button @click="closePopup" :style="btnClosePopup">
+                <button
+                    @click="closePopup"
+                    @mouseover="isHoverClose = true"
+                    @mouseleave="isHoverClose = false"
+                    :style="[btnClosePopup, isHoverClose ? hoverCloseStyle : {}]"
+                >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
                          stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -157,11 +162,11 @@
                 <div :style="containerAktivitas">
                     <div>
                         <p :style="labelAktivitas">Saldo DAUR</p>
-                        <p :style="valueAktivitas">Rp. {{ selectedUser.saldo ? selectedUser.saldo.toLocaleString('id-ID') : '0' }}</p>
+                        <p :style="valueAktivitas">Rp. {{ selectedUser.wallet?.balance ? selectedUser.wallet.balance.toLocaleString('id-ID') : '0' }}</p>
                     </div>
                     <div>
-                        <p :style="labelAktivitas">Total Sampah</p>
-                        <p :style="valueAktivitas">{{ selectedUser.totalSampah ?? 0 }} Kg</p>
+                        <p :style="labelAktivitas">Total Recycle</p>
+                        <p :style="valueAktivitas">{{ totalRecycle ?? 0 }}</p>
                     </div>
                     <div>
                         <p :style="labelAktivitas">Recycle</p>
@@ -195,6 +200,12 @@
             actionLabel="Blokir User"
             @close="isDeletePopupOpen = false"
             @confirm="handleDeleteConfirmed"
+            />
+        <PopupNotifikasi
+            :title="popup.title"
+            :message="popup.message"
+            :isOpen="popup.isOpen"
+            @close="tutupPopup"
         />
     </div>
 </template>
@@ -207,6 +218,10 @@ import { onMounted, onUnmounted } from 'vue'
 import { useUserApi } from "@/composables/useUserApi"
 import PopupEditRole from "@/components/PopupEditRole.vue"
 import PopupDelete from "@/components/PopupDelete.vue"
+import PopupNotifikasi from "@/components/PopupNotifikasi.vue"
+import {useRecycleTransactionApi} from "@/composables/useRecycleTransactionApi.js"
+
+const { getRecycleTransactionsByUser } = useRecycleTransactionApi()
 
 const dropdownRefs = {}
 const { getUsers, deleteUser } = useUserApi()
@@ -226,6 +241,30 @@ const userToDelete = ref(null)
 const isDeletePopupOpen = ref(false)
 
 const dropdownOpenId = ref(null)
+
+const isHoverClose = ref(false)
+
+const popup = ref({
+    isOpen: false,
+    title: '',
+    message: '',
+})
+
+const tampilkanPopup = (title, message) => {
+    popup.value = {
+        isOpen: true,
+        title,
+        message
+    }
+}
+
+const tutupPopup = () => {
+    popup.value.isOpen = false
+}
+
+const eksekusiAksi = () => {
+    popup.value.isOpen = false
+}
 
 const handleClickOutside = (event) => {
     const openDropdown = dropdownOpenId.value
@@ -267,7 +306,11 @@ const filteredUsers = computed(() => {
     return result
 })
 
-const openUserPopup = (user) => {
+const totalRecycle = ref(0)
+
+const openUserPopup = async (user) => {
+    const recycles = await getRecycleTransactionsByUser(user.id)
+    totalRecycle.value = recycles.length
     selectedUser.value = user
 }
 
@@ -279,12 +322,12 @@ const toggleDropdown = (userId) => {
     dropdownOpenId.value = dropdownOpenId.value === userId ? null : userId
 }
 
-// Fungsi untuk membuka popup edit role   
+// Fungsi untuk membuka popup edit role
 const openEditRolePopup = (user) => {
     editRoleUser.value = user
 }
 
-// Fungsi untuk menutup popup edit role   
+// Fungsi untuk menutup popup edit role
 const closeEditRolePopup = () => {
     editRoleUser.value = false
 }
@@ -299,6 +342,8 @@ const handleAction = (action, user) => {
     } else if (action === 'delete') {
         userToDelete.value = user
         isDeletePopupOpen.value = true
+    } else if (action === 'block') {
+        tampilkanPopup('Blokir User', `Fitur blokir user belum tersedia.`)
     }
     dropdownOpenId.value = null
 }
@@ -549,7 +594,7 @@ const btnClosePopup = {
     position: 'absolute',
     top: '22px',
     right: '22px',
-    color: '#000',
+    color: theme.colors.darkGrey,
     background: 'none',
     border: 'none',
     cursor: 'pointer',
@@ -615,6 +660,11 @@ const iconAktivitas = {
     color: theme.colors.primary,
     display: 'flex',
     justifyContent: 'center',
+}
+
+const hoverCloseStyle = {
+    color: theme.colors.black,
+    transform: 'scale(1.05)',
 }
 </script>
 

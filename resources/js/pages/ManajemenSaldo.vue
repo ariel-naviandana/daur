@@ -156,14 +156,12 @@ const permintaanPenarikan = computed(() =>
 
 async function handleApprove(trx: WalletTransaction) {
     const payload = { ...trx, status: 'approved' }
-    console.log('Payload approve:', payload)
     await saveWalletTransaction(payload)
     await fetchTransactions()
     await fetchUsername()
 }
 async function handleReject(trx: WalletTransaction) {
     const payload = { ...trx, status: 'rejected' }
-    console.log('Payload approve:', payload)
     await saveWalletTransaction(payload)
     await fetchTransactions()
     await fetchUsername()
@@ -172,9 +170,6 @@ async function handleReject(trx: WalletTransaction) {
 const getTabButtonStyle = (tab: string) => {
     const isActive = activeTab.value === tab
     const isHovered = hoveredTab.value === tab
-    if (isActive) {
-        console.log('Aktif:', tab, tabButtonActiveStyle)
-    }
 
     if (isActive) {
         return {

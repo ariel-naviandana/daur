@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { theme } from '@/helpers/theme'
 import { ref } from 'vue'
-import {WalletTransaction} from "@/interfaces/WalletTransaction";
+import {WalletTransaction} from "@/interfaces/WalletTransaction"
 
 const props = defineProps<{ transaction: WalletTransaction, userName: string }>()
 defineEmits(['approve', 'reject'])

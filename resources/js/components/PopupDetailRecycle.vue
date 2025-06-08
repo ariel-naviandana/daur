@@ -26,7 +26,12 @@
                     </div>
                 </div>
                 <div v-else :style="dateStyle">{{ formattedDate }}</div>
-                <button @click="closeModal" :style="closeButtonStyle">
+                <button
+                    @click="closeModal"
+                    @mouseover="isHoverClose = true"
+                    @mouseleave="isHoverClose = false"
+                    :style="[closeButtonStyle, isHoverClose ? hoverCloseStyle : {}]"
+                >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -105,7 +110,7 @@
 
             <div v-if="isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
                 <button
-                    @click="handleReject"
+                    @click="confirmAction('reject')"
                     :style="[rejectButtonStyle, isHoverReject ? buttonHoverStyleReject : {}]"
                     @mouseover="isHoverReject = true"
                     @mouseleave="isHoverReject = false"
@@ -113,7 +118,7 @@
                     Tolak
                 </button>
                 <button
-                    @click="handleAccept"
+                    @click="confirmAction('accept')"
                     :style="[acceptButtonStyle, isHoverAccept ? buttonHoverStyleAccept : {}]"
                     @mouseover="isHoverAccept = true"
                     @mouseleave="isHoverAccept = false"
@@ -124,7 +129,7 @@
 
             <div v-if="isAdmin && item.status === 'process'" :style="actionButtonsContainer">
                 <button
-                    @click="handleDone"
+                    @click="confirmAction('done')"
                     :style="[acceptButtonStyle, isHoverAccept ? buttonHoverStyleAccept : {}]"
                     @mouseover="isHoverAccept = true"
                     @mouseleave="isHoverAccept = false"
@@ -135,7 +140,7 @@
 
             <div v-if="!isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
                 <button
-                    @click="handleReject"
+                    @click="confirmAction('reject')"
                     :style="[rejectButtonStyle, isHoverReject ? buttonHoverStyleReject : {}]"
                     @mouseover="isHoverReject = true"
                     @mouseleave="isHoverReject = false"
@@ -157,6 +162,14 @@
             </button>
         </div>
     </div>
+
+    <PopupEditStatusRecycle
+        v-if="confirmation"
+        :message="`Apakah Anda yakin ingin ${confirmation.label.toLowerCase()} transaksi ini?`"
+        @confirm="handleConfirm"
+        @cancel="cancelConfirm"
+
+    />
 </template>
 
 <script lang="ts" setup>
@@ -167,8 +180,10 @@ import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+import PopupEditStatusRecycle from './PopupEditStatusRecycle.vue'
 const isHoverReject = ref(false)
 const isHoverAccept = ref(false)
+const isHoverClose = ref(false)
 
 const props = defineProps<{
     isOpen: boolean
@@ -180,6 +195,34 @@ const emit = defineEmits(['close', 'accept', 'reject', 'done'])
 
 const isAdmin = computed(() => props.isAdmin ?? false)
 const isFullScreenOpen = ref(false)
+const item = computed(() => props.item)
+
+const confirmation = ref<null | {
+    type: 'accept' | 'reject' | 'done',
+    label: string
+}>(null)
+
+const confirmAction = (type: 'accept' | 'reject' | 'done') => {
+    let label = ''
+    if (type === 'accept') label = 'Terima'
+    else if (type === 'reject') label = isAdmin.value && item.value.status === 'waiting' ? 'Tolak' : 'Batalkan'
+    else if (type === 'done') label = 'Selesaikan'
+    confirmation.value = { type, label }
+}
+
+const handleConfirm = () => {
+    if (!confirmation.value) return
+    const type = confirmation.value.type
+    if (type === 'accept') emit('accept')
+    else if (type === 'reject') emit('reject')
+    else if (type === 'done') emit('done')
+    confirmation.value = null
+}
+
+const cancelConfirm = () => {
+    confirmation.value = null
+}
+
 const fullScreenImage = ref<string>('')
 
 const closeModal = () => {
@@ -586,6 +629,11 @@ const buttonHoverStyleReject = {
 const buttonHoverStyleAccept = {
     transform: 'scale(1.05)',
     backgroundColor: '#2d862d',
+}
+
+const hoverCloseStyle = {
+    color: theme.colors.black,
+    transform: 'scale(1.05)',
 }
 </script>
 

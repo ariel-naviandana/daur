@@ -28,7 +28,7 @@
 
 
 <script lang="ts" setup>
-import {computed, ref} from "vue";
+import {computed, ref} from "vue"
 import { theme } from '@/helpers/theme'
 import { WalletTransaction } from "@/interfaces/WalletTransaction"
 const props = defineProps<{ transaction: WalletTransaction, userName: string }>()

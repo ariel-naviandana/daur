@@ -1,5 +1,10 @@
 <template>
-    <li :style="cardStyle">
+    <li
+        :style="cardStyle"
+        @mouseenter="isHovered = true"
+        @mouseleave="isHovered = false"
+        @click="$emit('showDetail', item)"
+    >
         <div :style="containerStyle">
              <div v-if="isAdmin" :style="profileColumnStyle">
                 <svg
@@ -49,7 +54,7 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     :style="arrowStyle"
-                    @click="$emit('showDetail', item)"
+
                 >
                     <path d="M9 18l6-6-6-6"/>
                 </svg>
@@ -64,6 +69,8 @@ import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import {User} from "@/interfaces/User"
 import axios from "axios"
+
+const isHovered = ref(false)
 
 const props = defineProps<{ item: RecycleTransaction; isAdmin?: boolean }>()
 defineEmits(['showDetail'])
@@ -109,16 +116,21 @@ const capitalizedStatus = computed(() => {
     return status.charAt(0).toUpperCase() + status.slice(1)
 })
 
-const cardStyle = {
+const cardStyle = computed(() => ({
     backgroundColor: theme.colors.whiteElement,
     borderRadius: '12px',
     padding: '16px',
     marginBottom: '12px',
-    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+    boxShadow: isHovered.value
+        ? '0 4px 10px rgba(0, 0, 0, 0.1)'
+        : '0 1px 2px rgba(0,0,0,0.05)',
     fontFamily: theme.fonts.family,
     color: theme.colors.darkGrey,
     listStyle: 'none',
-}
+    transition: 'all 0.3s ease',
+    transform: isHovered.value ? 'translateY(-2px)' : 'none',
+    cursor: 'pointer',
+}))
 
 const containerStyle = {
     display: 'grid',

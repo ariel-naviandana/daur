@@ -117,6 +117,17 @@
             </div>
         </div>
     </div>
+    <PopupEditArticle
+        :isOpen="showConfirmPopup"
+        :itemName="form.title || 'artikel ini'"
+        @confirm="() => { showConfirmPopup = false; saveArticleNow(); }"
+        @close="() => { showConfirmPopup = false }"
+    />
+    <PopupNotifikasi
+        v-if="showNotif"
+        :message="notifMessage"
+        @close="showNotif = false"
+    />
 </template>
 
 <script setup lang="ts">
@@ -124,12 +135,17 @@ import { theme } from '@/helpers/theme'
 import { ref, watch } from 'vue'
 import { useArticleApi } from '@/composables/useArticleApi'
 import type { Article } from '@/interfaces/Article'
+import PopupEditArticle from './PopupEditArticle.vue'
+import PopupNotifikasi from './PopupNotifikasi.vue'
 
 const { saveArticle } = useArticleApi()
 const isUploading = ref(false)
 const isHoverCancel = ref(false)
 const isHoverSave = ref(false)
 const isHoverTambahGambar = ref(false)
+const showConfirmPopup = ref(false)
+const showNotif = ref(false)
+const notifMessage = ref('')
 
 const props = defineProps<{
     article: Article | null
@@ -191,7 +207,8 @@ const uploadToCloudinary = async (file: File) => {
         form.value.image_url = data.secure_url
     } catch (error) {
         console.error('Error uploading to Cloudinary:', error)
-        alert('Gagal mengunggah gambar. Silakan coba lagi.')
+        notifMessage.value = 'Gagal mengunggah gambar. Silakan coba lagi.'
+        showNotif.value = true
     } finally {
         isUploading.value = false
     }
@@ -199,10 +216,20 @@ const uploadToCloudinary = async (file: File) => {
 
 const submitForm = async () => {
     if (isUploading.value) {
-        alert('Mohon tunggu hingga gambar selesai diunggah.')
+        notifMessage.value = 'Mohon tunggu hingga gambar selesai diunggah.'
+        showNotif.value = true
         return
     }
 
+    if (props.isEdit) {
+        showConfirmPopup.value = true // Tampilkan modal konfirmasi jika mode edit
+        return
+    }
+
+    await saveArticleNow()
+}
+
+const saveArticleNow = async () => {
     const article: Article = {
         id: form.value.id || 0,
         title: form.value.title || '',
@@ -220,7 +247,8 @@ const submitForm = async () => {
     if (success) {
         emit('saved')
     } else {
-        alert('Gagal menyimpan artikel.')
+        notifMessage.value = 'Gagal menyimpan artikel.'
+        showNotif.value = true
     }
 }
 
@@ -267,7 +295,8 @@ const buttonContainer = {
 const headerCancel = {
     backgroundColor: theme.colors.red,
     color: theme.colors.whiteElement,
-    padding: '8px 28px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '30px',
     fontSize: theme.fonts.size.base,
     marginRight: '8px',
@@ -283,7 +312,8 @@ const buttonHoverStyleCancel = {
 const headerSave = {
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
-    padding: '8px 30px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '30px',
     fontSize: theme.fonts.size.base,
     cursor: 'pointer',

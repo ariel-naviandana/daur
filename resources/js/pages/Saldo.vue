@@ -67,12 +67,12 @@
 
 <script lang="ts" setup>
 import { ref , computed} from 'vue'
-import { onMounted } from "vue";
+import { onMounted } from "vue"
 import { theme } from '@/helpers/theme'
 import { WalletTransaction } from "@/interfaces/WalletTransaction"
 import { useWalletTransactionApi } from "@/composables/useWalletTransactionApi"
 import { useWalletApi } from "@/composables/useWalletApi"
-import { useAuthApi} from "@/composables/useAuthApi";
+import { useAuthApi} from "@/composables/useAuthApi"
 import SaldoCard from "@/components/SaldoCard.vue"
 import WithdrawalCard from "@/components/PopupWithdrawal.vue"
 import MutasiSaldoCard from "@/components/MutasiSaldoCard.vue"
@@ -92,16 +92,10 @@ const isHoverDownload = ref(false)
 const isHoverFilter = ref(false)
 const filterMonth = ref('this')
 
-const { getCurrentUser } = useAuthApi()
 const authStore = useAuthStore()
 const { getWallet } = useWalletApi()
 const { saveWalletTransaction } = useWalletTransactionApi()
 const { getWalletTransactions } = useWalletTransactionApi()
-
-onMounted(async () => {
-    userId.value = user.id
-    wallet.value = await getWallet(user.id)
-})
 
 onMounted(async () => {
     user.value = await authStore.user

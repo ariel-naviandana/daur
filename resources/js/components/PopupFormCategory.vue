@@ -1,24 +1,21 @@
 <template>
     <div :style="overlayStyle">
         <div :style="popupStyle">
-            <h2 :style="titleStyle">{{ category ? 'Edit Kategori' : 'Tambah Kategori' }}</h2>
+            <h2 :style="titleStyle">{{ form.id !== 0 ? 'Edit Kategori' : 'Tambah Kategori' }}</h2>
             <form @submit.prevent="save">
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Nama Kategori</label>
                     <input v-model="form.name" type="text" :style="inputStyle" required />
                 </div>
+
                 <div :style="formGroupStyle">
                     <label :style="labelStyle">Gambar (Opsional)</label>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        @change="handleFileChange"
-                        :style="inputStyle"
-                    />
+                    <input type="file" accept="image/*" @change="handleFileChange" :style="inputStyle" />
                     <div v-if="previewImage" :style="previewContainerStyle">
                         <img :src="previewImage" :style="previewImageStyle" />
                     </div>
                 </div>
+
                 <div :style="buttonGroupStyle">
                     <button
                         type="button"
@@ -41,6 +38,14 @@
                 </div>
             </form>
         </div>
+
+        <PopupEdit
+            v-if="showConfirmSavePopup"
+            :is-open="showConfirmSavePopup"
+            :item-name="form.name"
+            @close="cancelConfirm"
+            @confirm="confirmSave"
+        />
     </div>
 </template>
 
@@ -50,15 +55,17 @@ import { theme } from '@/helpers/theme'
 import { useCategoryApi } from '@/composables/useCategoryApi'
 import { useImageApi } from '@/composables/useImageApi'
 import { Category } from '@/interfaces/Category'
-
-const isHoverCancel = ref(false)
-const isHoverSave = ref(false)
+import PopupEdit from './PopupEdit.vue'
 
 const props = defineProps<{ category?: Category | null }>()
 const emit = defineEmits(['close', 'saved'])
 
-const form = ref<Category>({ id: 0, name: '', image: '' })
+const isHoverCancel = ref(false)
+const isHoverSave = ref(false)
+const showConfirmSavePopup = ref(false)
 const previewImage = ref<string | null>(null)
+const form = ref<Category>({ id: 0, name: '', image: '' })
+
 const { saveCategory } = useCategoryApi()
 const { isUploading, uploadToCloudinary } = useImageApi()
 
@@ -85,16 +92,32 @@ const handleFileChange = async (event: Event) => {
     if (imageUrl) form.value.image = imageUrl
 }
 
-const save = async () => {
+const save = () => {
+    // Jika edit, tampilkan konfirmasi
+    if (form.value.id !== 0) {
+        showConfirmSavePopup.value = true
+    } else {
+        confirmSave()
+    }
+}
+
+const confirmSave = async () => {
+    showConfirmSavePopup.value = false
+
     try {
         await saveCategory(form.value)
         emit('saved')
         emit('close')
     } catch (error) {
-        console.error('Error saving category:', error)
+        console.error('Gagal menyimpan kategori:', error)
     }
 }
 
+const cancelConfirm = () => {
+    showConfirmSavePopup.value = false
+}
+
+// Styles
 const overlayStyle = {
     position: 'fixed',
     top: 0,
@@ -155,7 +178,8 @@ const buttonGroupStyle = {
 }
 
 const cancelButtonStyle = {
-    padding: '8px 16px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '8px',
     backgroundColor: theme.colors.lightGrey,
     color: theme.colors.darkGrey,
@@ -167,7 +191,8 @@ const cancelButtonStyle = {
 }
 
 const saveButtonStyle = {
-    padding: '8px 16px',
+    padding: '8px',
+    width: '120px',
     borderRadius: '8px',
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
@@ -203,6 +228,6 @@ const previewImageStyle = {
 
 <style scoped>
 ::-webkit-scrollbar {
-    display: none
+    display: none;
 }
 </style>
