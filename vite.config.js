@@ -8,7 +8,7 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
-            buildDirectory: 'public/dist',
+            buildDirectory: 'public/build',
         }),
         tailwindcss(),
         vue({
@@ -22,21 +22,9 @@ export default defineConfig({
     ],
     base: '/',
     build: {
-        outDir: 'public/dist',
+        outDir: 'public/build',
         emptyOutDir: true,
         manifest: 'manifest.json',
-        rollupOptions: {
-            output: {
-                chunkFileNames: 'js/[name]-[hash].js',
-                entryFileNames: 'js/[name].js',
-                assetFileNames: ({ name }) => {
-                    if (/\.css$/.test(name ?? '')) {
-                        return 'css/[name]-[hash][extname]'
-                    }
-                    return 'assets/[name]-[hash][extname]'
-                },
-            },
-        },
     },
     server: {
         https: false,
