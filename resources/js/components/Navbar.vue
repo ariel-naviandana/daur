@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center">
             <div class="logo">
                 <a href="/">
-                    <img src="/public/images/logo-daur.png" alt="DAUR Logo" :style="logoStyle" />
+                    <img src="/images/logo-daur.png" alt="DAUR Logo" :style="logoStyle" />
                 </a>
             </div>
 

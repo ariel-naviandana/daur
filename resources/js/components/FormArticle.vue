@@ -43,7 +43,7 @@
                         />
                         <img
                             v-else
-                            src="/public/images/icon-upload.svg"
+                            src="/images/icon-upload.svg"
                             alt="upload icon"
                             :style="defaultCover"
                         />

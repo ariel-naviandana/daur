@@ -34,7 +34,7 @@
 
             <div :style="transactionRow">
                 <div :style="transactionIcon">
-                    <img src="/public/images/ic-transaction.svg">
+                    <img src="/images/ic-transaction.svg">
                 </div>
                 <div :style="transactionInfo">
                     <p :style="transactionNameInfo">Rudi Tabootie</p>

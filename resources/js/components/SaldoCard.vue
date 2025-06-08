@@ -8,7 +8,7 @@
                 @mouseover="isHover = true"
                 @mouseleave="isHover = false"
                 @click="tarikSaldo">
-            <img src="/public/images/withdraw-icon.svg" alt="" style="margin-right: 10px" />
+            <img src="/images/withdraw-icon.svg" alt="" style="margin-right: 10px" />
             <div style="display: flex; justify-content: center; align-items: center;">
                 <span>Penarikan dana</span>
             </div>

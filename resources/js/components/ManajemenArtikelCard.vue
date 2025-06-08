@@ -10,7 +10,7 @@
             />
             <img
                 v-else
-                src="/public/images/icon_article.svg"
+                src="/images/icon_article.svg"
                 alt="Artikel"
                 :style="imageStyle"
             />

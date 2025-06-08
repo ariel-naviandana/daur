@@ -27,28 +27,28 @@
                         <div class="card" :style="cardStyle">
                             <div class="badge" :style="badgeStyle">1</div>
                             <div class="card-body" :style="cardBodyStyle">
-                                <img :style="cardImgStyle" src="/public/images/langkah1.svg" alt="Pilih dan Kemas" />
+                                <img :style="cardImgStyle" src="/images/langkah1.svg" alt="Pilih dan Kemas" />
                                 <div class="label" :style="labelStyle">Pilah dan Kemas</div>
                             </div>
                         </div>
                         <div class="card" :style="cardStyle">
                             <div class="badge" :style="badgeStyle">2</div>
                             <div class="card-body" :style="cardBodyStyle">
-                                <img :style="cardImgStyle" src="/public/images/langkah2.svg" alt="Buat Transaksi" />
+                                <img :style="cardImgStyle" src="/images/langkah2.svg" alt="Buat Transaksi" />
                                 <div class="label" :style="labelStyle">Buat Transaksi</div>
                             </div>
                         </div>
                         <div class="card" :style="cardStyle">
                             <div class="badge" :style="badgeStyle">3</div>
                             <div class="card-body" :style="cardBodyStyle">
-                                <img :style="cardImgStyle" src="/public/images/langkah3.svg" alt="Kirim Sampah" />
+                                <img :style="cardImgStyle" src="/images/langkah3.svg" alt="Kirim Sampah" />
                                 <div class="label" :style="labelStyle">Kirim Sampah</div>
                             </div>
                         </div>
                         <div class="card" :style="cardStyle">
                             <div class="badge" :style="badgeStyle">4</div>
                             <div class="card-body" :style="cardBodyStyle">
-                                <img :style="cardImgStyle" src="/public/images/langkah4.svg" alt="Sampah Terkelola" />
+                                <img :style="cardImgStyle" src="/images/langkah4.svg" alt="Sampah Terkelola" />
                                 <div class="label" :style="labelStyle">Sampah Terkelola</div>
                             </div>
                         </div>

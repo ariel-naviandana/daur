@@ -2,7 +2,7 @@
     <Navbar />
     <div :style="chatPageWrapper">
         <div :style="chatHeader">
-            <img :style="chatHeaderImg" src="/public/images/ic_chat.svg" alt="Chat">
+            <img :style="chatHeaderImg" src="/images/ic_chat.svg" alt="Chat">
             <h2>Chat</h2>
         </div>
         <div :style="chatPage">

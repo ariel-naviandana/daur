@@ -1,7 +1,7 @@
 <template>
     <div :style="chatListStyle">
         <div :style="searchInputWrapperStyle">
-            <img src="/public/images/ic_search.svg" alt="Search" :style="searchIconStyle" />
+            <img src="/images/ic_search.svg" alt="Search" :style="searchIconStyle" />
             <input
                 v-model="searchQuery"
                 placeholder="Cari nama kontak"
@@ -16,7 +16,7 @@
                 :style="[bankItemStyle, selectedContact?.id === contact.id ? activeBankStyle : {}]"
             >
                 <img v-if="contact.profile_picture" :src="contact.profile_picture" alt="avatar" :style="avatarStyle" />
-                <img v-else src="/public/images/profile-icon.svg" alt="avatar" :style="avatarStyle" />
+                <img v-else src="/images/profile-icon.svg" alt="avatar" :style="avatarStyle" />
                 <span>{{ contact.name }}</span>
             </div>
         </div>

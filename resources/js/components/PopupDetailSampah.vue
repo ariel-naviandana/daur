@@ -19,7 +19,7 @@
                      :style="[cardStyle, selectedItem?.id === item.id ? activeCardStyle : {}]"
                      @click="selectItem(item)">
                     <img v-if="item.image" :src="item.image" :alt="item.name" :style="iconStyle" />
-                    <img v-else src="/public/images/icon_article.svg" :alt="item.name" :style="iconStyle" />
+                    <img v-else src="/images/icon_article.svg" :alt="item.name" :style="iconStyle" />
                     <p :style="labelStyle">{{ item.name }}</p>
                     <p :style="priceStyle">Rp{{ item.price_per_unit.toLocaleString('id-ID') }}</p>
                 </div>

@@ -2,7 +2,7 @@
     <div :style="layoutStyle">
         <div :style="containerStyle">
             <div :style="cardStyle">
-                <img src="/public/images/logo-daur.png" alt="DAUR Logo" :style="logoStyle" />
+                <img src="/images/logo-daur.png" alt="DAUR Logo" :style="logoStyle" />
                 <h2 :style="titleStyle">Daftar</h2>
                 <p :style="subtitleStyle">buat akun Anda</p>
 

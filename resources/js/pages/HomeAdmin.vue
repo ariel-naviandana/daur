@@ -5,25 +5,25 @@
         <div class="grid grid-cols-2 gap-4 mb-8">
             <InfoCard title="Total Pengguna" :value="totalUser.toLocaleString('id-ID')">
             <template #icon>
-                <img src="/public/images/people.png" alt="User Icon" class="w-8 h-8" />
+                <img src="/images/people.png" alt="User Icon" class="w-8 h-8" />
             </template>
             </InfoCard>
 
             <InfoCard title="Total Transaksi" :value="`Rp${totalTransactionRecycleRp.toLocaleString('id-ID')}`">
             <template #icon>
-                <img src="/public/images/money.png" alt="Transaction Icon" class="w-8 h-8" />
+                <img src="/images/money.png" alt="Transaction Icon" class="w-8 h-8" />
             </template>
             </InfoCard>
 
             <InfoCard title="Total Recycle" :value="totalRecycle.toLocaleString('id-ID')">
             <template #icon>
-                <img src="/public/images/trash.png" alt="Report Icon" class="w-8 h-8" />
+                <img src="/images/trash.png" alt="Report Icon" class="w-8 h-8" />
             </template>
             </InfoCard>
 
             <InfoCard title="Total Withdraw" :value="`Rp${totalTransactionWithdrawRp.toLocaleString('id-ID')}`">
             <template #icon>
-                <img src="/public/images/transfer.png" alt="Report Icon" class="w-8 h-8" />
+                <img src="/images/transfer.png" alt="Report Icon" class="w-8 h-8" />
             </template>
             </InfoCard>
         </div>

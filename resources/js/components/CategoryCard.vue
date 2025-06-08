@@ -1,7 +1,7 @@
 <template>
     <div :style="cardStyle">
         <img v-if="category.image" :src="category.image" :alt="category.name" :style="imageStyle" />
-        <img v-else src="/public/images/icon_article.svg" :alt="category.name" :style="imageStyle" />
+        <img v-else src="/images/icon_article.svg" :alt="category.name" :style="imageStyle" />
         <div :style="contentStyle">
             <p :style="nameStyle">{{ category.name }}</p>
             <div :style="actionsStyle">

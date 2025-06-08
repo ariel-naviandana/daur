@@ -45,7 +45,7 @@
                             class="btn_tambah"
                             @click="openCreateForm"
                         >
-                            <img src="/public/images/icon_plus.svg" alt="Tambah Artikel" />
+                            <img src="/images/icon_plus.svg" alt="Tambah Artikel" />
                             Tambah
                         </button>
                         <div :style="searchWrapperStyle">

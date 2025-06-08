@@ -2,7 +2,7 @@
     <div v-if="selectedContact" :style="chatWindow">
         <div :style="chatHeader">
             <img v-if="selectedContact.profile_picture" :src="selectedContact.profile_picture" alt="avatar" :style="avatar" />
-            <img v-else src="/public/images/profile-icon.svg" alt="avatar" :style="avatar" />
+            <img v-else src="/images/profile-icon.svg" alt="avatar" :style="avatar" />
             <h2>{{ selectedContact.name }}</h2>
         </div>
         <div :style="chatMessages">
@@ -39,7 +39,7 @@
                 @change="uploadImage"
             />
             <button :style="iconButton" @click="$refs.fileInput.click()" :disabled="isUploading">
-                <img src="/public/images/camera-icon.svg" alt="Camera" :style="iconImg" />
+                <img src="/images/camera-icon.svg" alt="Camera" :style="iconImg" />
             </button>
             <input
                 v-model="newMessage"
@@ -49,7 +49,7 @@
                 :disabled="isUploading"
             />
             <button :style="iconButton" @click="sendMessage" :disabled="isUploading">
-                <img src="/public/images/send-icon.svg" alt="Send" :style="iconImg" />
+                <img src="/images/send-icon.svg" alt="Send" :style="iconImg" />
             </button>
         </div>
     </div>

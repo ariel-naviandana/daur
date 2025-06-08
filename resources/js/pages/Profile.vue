@@ -14,7 +14,7 @@
           @click="triggerFileInput"
           style="position: absolute; bottom: 10px; right: 10px; background-color: #FFFFFF; border-radius: 50%; padding: 6px; cursor: pointer; box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);"
         >
-          <img src="/public/images/edit.png" alt="Edit" style="width: 20px; height: 20px;" />
+          <img src="/images/edit.png" alt="Edit" style="width: 20px; height: 20px;" />
         </div>
 
         <input
@@ -43,7 +43,7 @@
           <h2 :style="headingStyle">Riwayat</h2>
           <a href="/riwayat">
             <img
-              src="/public/images/icon_history.svg"
+              src="/images/icon_history.svg"
               alt="Riwayat"
               :style="[iconStyle, hoverRiwayat ? hoverIconStyle : {}]"
             />

@@ -9,7 +9,7 @@
                     @mouseleave="isHover = false"
                     @click=""
                 >
-                    <img src="/public/images/back-btn.svg" alt="">
+                    <img src="/images/back-btn.svg" alt="">
                     <div style="display: flex; justify-content: center; align-items: center;">
                         <span>Kembali ke profile</span>
                     </div>
