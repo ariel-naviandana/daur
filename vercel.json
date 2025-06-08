@@ -45,6 +45,13 @@
         {
             "src": "/(.*)",
             "dest": "/public/index.php"
+        },
+        {
+            "src": "/images/(.*)",
+            "dest": "/public/images/$1",
+            "headers": {
+                "Cache-Control": "public, max-age=86400"
+            }
         }
     ],
     "env": {
