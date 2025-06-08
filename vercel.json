@@ -6,8 +6,7 @@
             "use": "@vercel/static-build",
             "config": {
                 "installCommand": "npm install",
-                "buildCommand": "npm run build",
-                "outputDirectory": "public"
+                "buildCommand": "npm run build"
             }
         },
         {
@@ -15,7 +14,7 @@
             "use": "vercel-php@0.7.3",
             "config": {
                 "installCommand": "composer install --no-dev --optimize-autoloader",
-                "buildCommand": "php artisan optimize",
+                "buildCommand": "php artisan optimize:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache",
                 "phpExtensions": ["mbstring", "pdo_mysql", "json", "openssl", "bcmath", "xml", "tokenizer"]
             }
         }
@@ -23,29 +22,29 @@
     "routes": [
         {
             "src": "/build/(.*)",
-            "dest": "/build/$1",
+            "dest": "/public/build/$1",
             "headers": {
                 "Cache-Control": "public, max-age=31536000, immutable"
             }
         },
         {
             "src": "/assets/(.*)",
-            "dest": "/build/assets/$1",
+            "dest": "/public/build/assets/$1",
             "headers": {
                 "Cache-Control": "public, max-age=31536000, immutable"
             }
         },
         {
             "src": "/favicon.ico",
-            "dest": "/build/favicon.ico"
+            "dest": "/public/favicon.ico"
         },
         {
             "src": "/robots.txt",
-            "dest": "/robots.txt"
+            "dest": "/public/robots.txt"
         },
         {
             "src": "/(.*)",
-            "dest": "/index.php"
+            "dest": "/public/index.php"
         }
     ],
     "env": {
@@ -77,10 +76,5 @@
         "MAIL_MAILER": "log",
         "VITE_APP_NAME": "${APP_NAME}",
         "NODE_ENV": "production"
-    },
-    "functions": {
-        "public/index.php": {
-            "runtime": "vercel-php@0.7.3"
-        }
     }
 }
