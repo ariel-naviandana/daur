@@ -17,14 +17,14 @@
             "config": {
                 "installCommand": "npm install",
                 "buildCommand": "npm run build",
-                "outputDirectory": "public/build"
+                "outputDirectory": "public/dist"
             }
         }
     ],
     "routes": [
-        { "src": "/build/(.*)", "dest": "/public/build/$1" },
+        { "src": "/dist/(.*)", "dest": "/public/dist/$1" },
         { "src": "/images/(.*)", "dest": "/public/images/$1" },
-        { "src": "/favicon.ico", "dest": "/public/build/favicon.ico" },
+        { "src": "/favicon.ico", "dest": "/public/dist/favicon.ico" },
         { "src": "/(.*)", "dest": "/public/index.php" }
     ],
     "env": {

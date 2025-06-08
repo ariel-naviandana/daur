@@ -1,14 +1,14 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import tailwindcss from '@tailwindcss/vite';
-import vue from '@vitejs/plugin-vue';
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+import tailwindcss from '@tailwindcss/vite'
+import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
-            buildDirectory: 'public/build',
+            buildDirectory: 'public/dist',
         }),
         tailwindcss(),
         vue({
@@ -22,7 +22,7 @@ export default defineConfig({
     ],
     base: '/',
     build: {
-        outDir: 'public/build',
+        outDir: 'public/dist',
         emptyOutDir: true,
         manifest: 'manifest.json',
         rollupOptions: {
@@ -31,9 +31,9 @@ export default defineConfig({
                 entryFileNames: 'js/[name].js',
                 assetFileNames: ({ name }) => {
                     if (/\.css$/.test(name ?? '')) {
-                        return 'css/[name]-[hash][extname]';
+                        return 'css/[name]-[hash][extname]'
                     }
-                    return 'assets/[name]-[hash][extname]';
+                    return 'assets/[name]-[hash][extname]'
                 },
             },
         },
@@ -42,4 +42,4 @@ export default defineConfig({
         https: false,
         host: '0.0.0.0',
     },
-});
+})
