@@ -93,14 +93,14 @@ const isHoverFilter = ref(false)
 const filterMonth = ref('this')
 
 const authStore = useAuthStore()
-const { getWallet } = useWalletApi()
+const { getWallet, getWalletByUser } = useWalletApi()
 const { saveWalletTransaction } = useWalletTransactionApi()
 const { getWalletTransactions } = useWalletTransactionApi()
 
 onMounted(async () => {
     user.value = await authStore.user
     userId.value = user.value.id
-    wallet.value = await getWallet(userId.value)
+    wallet.value = await getWalletByUser(userId.value)
     await fetchWalletTransaction()
 })
 
@@ -192,7 +192,7 @@ const handleWithdraw = async (payload: WalletTransaction) => {
 
 const reloadWallet = async () => {
     if (userId.value) {
-        wallet.value = await getWallet(userId.value)
+        wallet.value = await getWalletByUser(userId.value)
     }
 }
 

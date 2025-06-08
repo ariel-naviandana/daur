@@ -25,6 +25,16 @@ export function useWalletApi() {
         }
     }
 
+    const getWalletByUser = async (id: number): Promise<Wallet | null> => {
+        try {
+            const response = await apiClient.get(`/wallets-user/${id}`)
+            return response.data
+        } catch (error) {
+            console.error('Error fetching wallet:', error)
+            return null
+        }
+    }
+
     const saveWallet = async (form: Wallet): Promise<boolean> => {
         try {
             await initCsrf()
@@ -54,6 +64,7 @@ export function useWalletApi() {
     return {
         getWallets,
         getWallet,
+        getWalletByUser,
         saveWallet,
         deleteWallet,
     }

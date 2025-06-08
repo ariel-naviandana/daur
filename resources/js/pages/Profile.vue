@@ -133,7 +133,7 @@ import {useWalletApi} from "@/composables/useWalletApi"
 import {useRecycleTransactionApi} from "@/composables/useRecycleTransactionApi"
 
 const { getRecycleTransactionsByUser } = useRecycleTransactionApi()
-const { getWallet } = useWalletApi()
+const { getWallet, getWalletByUser } = useWalletApi()
 
 const saldoDaur = ref<number>(0)
 const totalSampah = ref<number>(0)
@@ -174,7 +174,7 @@ onMounted(async () => {
     userId.value = user.id
     const recycleTransactions = await getRecycleTransactionsByUser(user.id)
     totalSampah.value = recycleTransactions.length
-    const wallet = await getWallet(user.id)
+    const wallet = await getWalletByUser(user.id)
     saldoDaur.value = wallet?.balance || 0
   }
 })
