@@ -110,12 +110,14 @@ import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
 import { useAuthApi } from '@/composables/useAuthApi'
 import { useImageApi } from '@/composables/useImageApi'
+import {useAuthStore} from "@/stores/auth"
 
 const saldoDaur = ref<number>(0)
 const totalSampah = ref<number>(0)
 
-const { getCurrentUser, updateProfile } = useAuthApi()
+const { updateProfile } = useAuthApi()
 const { uploadToCloudinary } = useImageApi()
+const authStore = useAuthStore()
 
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const selectedImage = ref<File | null>(null)
@@ -136,13 +138,13 @@ const triggerFileInput = () => {
 }
 
 onMounted(async () => {
-  const user = await getCurrentUser()
+  const user = await authStore.user
   if (user) {
     nama.value = user.name || ''
     alamat.value = user.address || ''
     phone.value = user.phone || ''
     userProfileImage.value = user.profile_picture || null
-    userId.value = user.id 
+    userId.value = user.id
     saldoDaur.value = user.wallet?.balance ?? 0
     totalSampah.value = user.recycleTransactions?.reduce((sum, tx) => sum + (tx.total_quantity ?? 0), 0) ?? 0
   }
@@ -291,13 +293,15 @@ const buttonContainerStyle = {
 }
 
 const buttonStyle = {
-  backgroundColor: theme.colors.primary,
-  color: 'white',
-  fontWeight: theme.fonts.weight.semibold,
-  fontSize: theme.fonts.size.base,
-  border: 'none',
-  borderRadius: '999px',
-  padding: '10px 30px',
-  cursor: 'pointer',
+    backgroundColor: theme.colors.primary,
+    color: 'white',
+    fontWeight: theme.fonts.weight.semibold,
+    fontSize: theme.fonts.size.base,
+    border: 'none',
+    borderRadius: '999px',
+    padding: '10px 30px',
+    cursor: 'pointer',
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 </script>

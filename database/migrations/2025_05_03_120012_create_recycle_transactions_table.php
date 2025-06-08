@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('bank_id')->nullable()->constrained()->onDelete('set null');
             $table->text('pickup_address')->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->datetime('appointment_time');
             $table->text('note')->nullable();
             $table->enum('method', ['pickup', 'dropoff']);

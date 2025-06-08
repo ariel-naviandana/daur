@@ -4,7 +4,7 @@
             <div :style="cardStyle">
                 <img src="/public/images/logo-daur.png" alt="DAUR Logo" :style="logoStyle" />
                 <h2 :style="titleStyle">Selamat Datang</h2>
-                <p :style="subtitleStyle">masuk akun Anda</p>
+                <p :style="subtitleStyle">Masuk akun Anda</p>
 
                 <!-- Form Login -->
                 <form :style="formStyle" @submit.prevent="handleLogin">
@@ -25,21 +25,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import { useAuthApi } from '@/composables/useAuthApi'
+import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
-const { login, getCurrentUser } = useAuthApi()
-
+const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
-
-onMounted(async () => {
-    const user = await getCurrentUser()
-    if (user) {
-        window.location.href = user.role === 'master_admin' || user.role === 'bank_admin' ? '/admin' : '/'
-        window.history.pushState({}, '', window.location.href)
-    }
-})
 
 const handleLogin = async () => {
     if (!email.value || !password.value) {
@@ -52,7 +43,7 @@ const handleLogin = async () => {
         password: password.value,
     }
 
-    const user = await login(credentials)
+    const user = await authStore.login(credentials)
     if (!user) {
         alert('Email atau kata sandi salah!')
     }

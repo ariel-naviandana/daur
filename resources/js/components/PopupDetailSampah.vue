@@ -26,7 +26,12 @@
             </div>
 
             <div :style="quantityContainerStyle">
-                <button @click="decreaseQuantity" :style="minusButtonStyle">
+                <button
+                    @click="decreaseQuantity"
+                    :style="[minusButtonStyle, isHoverMinus ? buttonHoverStyleMinus : {}]"
+                    @mouseover="isHoverMinus = true"
+                    @mouseleave="isHoverMinus = false"
+                >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -34,7 +39,12 @@
                 <span :style="quantityStyle">
                     {{ quantity }} {{ selectedItem?.unit || '' }}
                 </span>
-                <button @click="increaseQuantity" :style="plusButtonStyle">
+                <button
+                    @click="increaseQuantity"
+                    :style="[plusButtonStyle, isHoverPlus ? buttonHoverStylePlus : {}]"
+                    @mouseover="isHoverPlus = true"
+                    @mouseleave="isHoverPlus = false"
+                >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -42,7 +52,14 @@
                 </button>
             </div>
 
-            <button @click="addItems" :style="addButtonStyle">Tambah</button>
+            <button
+                @click="addItems"
+                :style="[addButtonStyle, isHoverAdd ? buttonHoverStyleAdd : {}]"
+                @mouseover="isHoverAdd = true"
+                @mouseleave="isHoverAdd = false"
+            >
+                Tambah
+            </button>
         </div>
     </div>
 </template>
@@ -66,6 +83,9 @@ const quantity = ref(1)
 const wasteTypes = ref<WasteType[]>([])
 const selectedItem = ref<WasteType | null>(null)
 const { getWasteTypesByCategory } = useWasteTypeApi()
+const isHoverMinus = ref(false)
+const isHoverPlus = ref(false)
+const isHoverAdd = ref(false)
 
 const fetchWasteTypes = async (categoryId: number) => {
     try {
@@ -241,7 +261,14 @@ const minusButtonStyle = {
     borderRadius: '50%',
     cursor: 'pointer',
     color: theme.colors.whiteElement,
-    padding: 0
+    padding: 0,
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+}
+
+const buttonHoverStyleMinus = {
+    backgroundColor: '#B5271D',
+    transform: 'scale(1.05)',
 }
 
 const plusButtonStyle = {
@@ -255,7 +282,14 @@ const plusButtonStyle = {
     borderRadius: '50%',
     cursor: 'pointer',
     color: theme.colors.whiteElement,
-    padding: 0
+    padding: 0,
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+}
+
+const buttonHoverStylePlus = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
 }
 
 const quantityStyle = {
@@ -280,7 +314,13 @@ const addButtonStyle = {
     fontSize: theme.fonts.size.base,
     fontWeight: theme.fonts.weight.bold,
     cursor: 'pointer',
-    transition: 'background-color 0.2s ease'
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+}
+
+const buttonHoverStyleAdd = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
 }
 </script>
 

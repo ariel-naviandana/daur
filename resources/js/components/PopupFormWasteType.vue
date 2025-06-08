@@ -38,8 +38,22 @@
                     </div>
                 </div>
                 <div :style="buttonGroupStyle">
-                    <button type="button" :style="cancelButtonStyle" @click="$emit('close')">Batal</button>
-                    <button type="submit" :style="saveButtonStyle" :disabled="isUploading">
+                    <button
+                        type="button"
+                        :style="[cancelButtonStyle, isHoverCancel ? buttonHoverStyleCancel : {}]"
+                        @mouseover="isHoverCancel = true"
+                        @mouseleave="isHoverCancel = false"
+                        @click="$emit('close')"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="submit"
+                        :style="[saveButtonStyle, isHoverSave ? buttonHoverStyleSave : {}]"
+                        @mouseover="isHoverSave = true"
+                        @mouseleave="isHoverSave = false"
+                        :disabled="isUploading"
+                    >
                         {{ isUploading ? 'Mengunggah...' : 'Simpan' }}
                     </button>
                 </div>
@@ -55,6 +69,9 @@ import { useWasteTypeApi } from '@/composables/useWasteTypeApi'
 import { useImageApi } from '@/composables/useImageApi'
 import { WasteType } from '@/interfaces/WasteType'
 import { Category } from '@/interfaces/Category'
+
+const isHoverCancel = ref(false)
+const isHoverSave = ref(false)
 
 const props = defineProps<{ wasteType?: WasteType | null, categories: Category[] }>()
 const emit = defineEmits(['close', 'saved'])
@@ -190,22 +207,36 @@ const buttonGroupStyle = {
 
 const cancelButtonStyle = {
     padding: '8px 16px',
-    borderRadius: '6px',
+    borderRadius: '8px',
     backgroundColor: theme.colors.lightGrey,
     color: theme.colors.darkGrey,
     fontSize: theme.fonts.size.base,
     border: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
 }
 
 const saveButtonStyle = {
     padding: '8px 16px',
-    borderRadius: '6px',
+    borderRadius: '8px',
     backgroundColor: theme.colors.primary,
     color: theme.colors.whiteElement,
     fontSize: theme.fonts.size.base,
     border: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: '0.2s ease-in-out',
+}
+
+const buttonHoverStyleCancel = {
+    backgroundColor: theme.colors.grey,
+    transform: 'scale(1.05)',
+}
+
+const buttonHoverStyleSave = {
+    backgroundColor: '#2d862d',
+    transform: 'scale(1.05)',
 }
 </script>
 

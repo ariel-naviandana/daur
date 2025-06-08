@@ -93,22 +93,55 @@
                 </div>
             </div>
 
+            <div :style="{ marginBottom: '24px' }">
+                <h3 :style="sectionTitleStyle">Lokasi di Map</h3>
+                <div id="detail-recycle-map" style="height: 250px; width: 100%; border-radius: 8px; overflow: hidden; background: #eee;"></div>
+            </div>
+
             <div :style="addressContainerStyle">
                 <h3 :style="sectionTitleStyle">Catatan</h3>
                 <p :style="addressStyle">{{ item.note || 'Tidak ada catatan' }}</p>
             </div>
 
             <div v-if="isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
-                <button @click="handleReject" :style="rejectButtonStyle">Tolak</button>
-                <button @click="handleAccept" :style="acceptButtonStyle">Terima</button>
+                <button
+                    @click="handleReject"
+                    :style="[rejectButtonStyle, isHoverReject ? buttonHoverStyleReject : {}]"
+                    @mouseover="isHoverReject = true"
+                    @mouseleave="isHoverReject = false"
+                >
+                    Tolak
+                </button>
+                <button
+                    @click="handleAccept"
+                    :style="[acceptButtonStyle, isHoverAccept ? buttonHoverStyleAccept : {}]"
+                    @mouseover="isHoverAccept = true"
+                    @mouseleave="isHoverAccept = false"
+                >
+                    Terima
+                </button>
             </div>
 
             <div v-if="isAdmin && item.status === 'process'" :style="actionButtonsContainer">
-                <button @click="handleDone" :style="acceptButtonStyle">Selesai</button>
+                <button
+                    @click="handleDone"
+                    :style="[acceptButtonStyle, isHoverAccept ? buttonHoverStyleAccept : {}]"
+                    @mouseover="isHoverAccept = true"
+                    @mouseleave="isHoverAccept = false"
+                >
+                    Selesai
+                </button>
             </div>
 
             <div v-if="!isAdmin && item.status === 'waiting'" :style="actionButtonsContainer">
-                <button @click="handleReject" :style="rejectButtonStyle">Batalkan</button>
+                <button
+                    @click="handleReject"
+                    :style="[rejectButtonStyle, isHoverReject ? buttonHoverStyleReject : {}]"
+                    @mouseover="isHoverReject = true"
+                    @mouseleave="isHoverReject = false"
+                >
+                    Batalkan
+                </button>
             </div>
         </div>
     </div>
@@ -127,10 +160,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { theme } from '@/helpers/theme'
 import { RecycleTransaction } from '@/interfaces/RecycleTransaction'
 import { RecycleTransactionItem } from '@/interfaces/RecycleTransactionItem'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
+const isHoverReject = ref(false)
+const isHoverAccept = ref(false)
 
 const props = defineProps<{
     isOpen: boolean
@@ -221,6 +259,43 @@ const getWasteTypeImage = (item: RecycleTransactionItem) => {
 const getWasteTypeUnit = (item: RecycleTransactionItem) => {
     return item.waste_type?.unit || ''
 }
+
+let map: L.Map | null = null
+let marker: L.Marker | null = null
+
+const initMap = async () => {
+    await nextTick()
+    if (!props.item.latitude || !props.item.longitude) return
+    if (map) return
+    map = L.map('detail-recycle-map', { attributionControl: false, zoomControl: true }).setView([props.item.latitude, props.item.longitude], 15)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map)
+    marker = L.marker([props.item.latitude, props.item.longitude], { draggable: false }).addTo(map)
+}
+
+const destroyMap = () => {
+    if (map) {
+        map.remove()
+        map = null
+        marker = null
+    }
+}
+
+watch(
+    () => props.isOpen,
+    value => {
+        if (value) setTimeout(() => initMap(), 200)
+        else destroyMap()
+    }
+)
+
+onMounted(() => {
+    if (props.isOpen) setTimeout(() => initMap(), 200)
+})
+onUnmounted(() => {
+    destroyMap()
+})
 
 const overlayStyle = {
     position: 'fixed',
@@ -445,7 +520,7 @@ const buttonBaseStyle = {
     padding: '6px 28px',
     borderRadius: '30px',
     fontSize: theme.fonts.size.base,
-    fontWeight: theme.fonts.weight.medium,
+    fontWeight: theme.fonts.weight.semibold,
     color: theme.colors.whiteElement,
     cursor: 'pointer',
     border: 'none'
@@ -453,12 +528,16 @@ const buttonBaseStyle = {
 
 const rejectButtonStyle = {
     ...buttonBaseStyle,
-    backgroundColor: theme.colors.red
+    backgroundColor: theme.colors.red,
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const acceptButtonStyle = {
     ...buttonBaseStyle,
-    backgroundColor: theme.colors.primary
+    backgroundColor: theme.colors.primary,
+    transition: '0.2s ease-in-out',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 }
 
 const fullScreenOverlayStyle = {
@@ -498,9 +577,20 @@ const fullScreenCloseButtonStyle = {
     padding: '4px',
     color: theme.colors.whiteElement
 }
+
+const buttonHoverStyleReject = {
+    transform: 'scale(1.05)',
+    backgroundColor: '#B5271D',
+}
+
+const buttonHoverStyleAccept = {
+    transform: 'scale(1.05)',
+    backgroundColor: '#2d862d',
+}
 </script>
 
 <style scoped>
+@import "leaflet/dist/leaflet.css";
 ::-webkit-scrollbar {
     display: none
 }

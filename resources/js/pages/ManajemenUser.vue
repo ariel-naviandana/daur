@@ -527,7 +527,7 @@ const popupHeader = {
     display: 'flex',
     alignItems: 'flex-start',
     gap: '16px',
-    padding: '20px',
+    padding: '14px',
 }
 
 const profileImageWrapper = {

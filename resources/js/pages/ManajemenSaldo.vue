@@ -7,20 +7,26 @@
         <div :style="contentWrapperStyle">
             <div :style="tabWrapperStyle">
                 <button
-                    :style="[tabButtonBaseStyle, activeTab === 'masuk' ? tabButtonActiveStyle : tabButtonInactiveStyle]"
+                    :style="getTabButtonStyle('masuk')"
                     @click="activeTab = 'masuk'"
+                    @mouseenter="hoveredTab = 'masuk'"
+                    @mouseleave="hoveredTab = ''"
                 >
                     Saldo Masuk
                 </button>
                 <button
-                    :style="[tabButtonBaseStyle, activeTab === 'keluar' ? tabButtonActiveStyle : tabButtonInactiveStyle]"
+                    :style="getTabButtonStyle('keluar')"
                     @click="activeTab = 'keluar'"
+                    @mouseenter="hoveredTab = 'keluar'"
+                    @mouseleave="hoveredTab = ''"
                 >
                     Saldo Keluar
                 </button>
                 <button
-                    :style="[tabButtonBaseStyle, activeTab === 'penarikan' ? tabButtonActiveStyle : tabButtonInactiveStyle]"
+                    :style="getTabButtonStyle('penarikan')"
                     @click="activeTab = 'penarikan'"
+                    @mouseenter="hoveredTab = 'penarikan'"
+                    @mouseleave="hoveredTab = ''"
                 >
                     Permintaan Penarikan
                 </button>
@@ -46,6 +52,28 @@ import Navbar from '@/components/Navbar.vue'
 import { theme } from '@/helpers/theme'
 
 const activeTab = ref<'masuk' | 'keluar' | 'penarikan'>('masuk')
+const hoveredTab = ref('')
+
+const getTabButtonStyle = (tab: string) => {
+    const isActive = activeTab.value === tab
+    const isHovered = hoveredTab.value === tab
+    if (isActive) {
+        console.log('Aktif:', tab, tabButtonActiveStyle)
+    }
+
+    if (isActive) {
+        return {
+            ...tabButtonBaseStyle,
+            ...tabButtonActiveStyle,
+        }
+    } else {
+        return {
+            ...tabButtonBaseStyle,
+            ...tabButtonInactiveStyle,
+            backgroundColor: isHovered ? theme.colors.lightGrey : theme.colors.white,
+        }
+    }
+}
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -91,7 +119,7 @@ const tabButtonBaseStyle = {
 
 const tabButtonActiveStyle = {
     backgroundColor: theme.colors.primary,
-    color: theme.colors.white,
+    color: theme.colors.whiteElement,
 }
 
 const tabButtonInactiveStyle = {

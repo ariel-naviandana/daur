@@ -88,12 +88,20 @@
                                         :style="linkStyle('/riwayat')">
                                         Riwayat</a>
                                 </li>
+                                <li v-if="!isMasterAdmin && !isBankAdmin">
+                                    <a
+                                        href="/saldo"
+                                        class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                        @click="toggleSidebar"
+                                        :style="linkStyle('/saldo')">
+                                        Saldo</a>
+                                </li>
                                 <li>
                                     <a
                                         href="#"
                                         class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                                         :style="linkStyle('/logout')"
-                                        @click="logout"
+                                        @click="logoutAndCloseSidebar"
                                     >Logout</a>
                                 </li>
                             </ul>
@@ -144,6 +152,9 @@
                 <li v-if="!isMasterAdmin && !isBankAdmin">
                     <a href="/riwayat" @click="toggleSidebar" :style="linkStyle('/riwayat')">Riwayat</a>
                 </li>
+                <li v-if="!isMasterAdmin && !isBankAdmin">
+                    <a href="/saldo" @click="toggleSidebar" :style="linkStyle('/saldo')">Saldo</a>
+                </li>
                 <li v-if="user">
                     <a href="#" @click="logoutAndCloseSidebar" :style="linkStyle('/logout')">Logout</a>
                 </li>
@@ -155,17 +166,17 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
 import { theme } from '@/helpers/theme'
-import { useAuthApi } from '@/composables/useAuthApi'
 import { User } from '@/interfaces/User'
+import {useAuthStore} from "@/stores/auth"
 
-const { getCurrentUser, logout } = useAuthApi()
+const authStore = useAuthStore()
 
 const user = ref<User | null>(null)
 const sidebarOpen = ref(false)
 const showDropdown = ref(false)
 
 onMounted(async () => {
-    user.value = await getCurrentUser()
+    user.value = await authStore.user
 
     const publicPaths = ['/', '/artikel', '/login', '/register']
     if (!user.value && !publicPaths.includes(window.location.pathname)) {
@@ -204,7 +215,7 @@ const toggleDropdown = () => {
 }
 
 const logoutAndCloseSidebar = async () => {
-    await logout()
+    await authStore.logout()
     sidebarOpen.value = false
 }
 

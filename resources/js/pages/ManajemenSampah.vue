@@ -25,14 +25,18 @@
             </div>
             <div :style="tabsContainerStyle">
                 <button
-                    :style="[tabStyle, activeTab === 'category' ? activeTabStyle : {}]"
+                    :style="getCategoryTabStyle()"
                     @click="activeTab = 'category'"
+                    @mouseenter="isHoveringCategory = true"
+                    @mouseleave="isHoveringCategory = false"
                 >
                     Kategori Sampah
                 </button>
                 <button
-                    :style="[tabStyle, activeTab === 'wastetype' ? activeTabStyle : {}]"
+                    :style="getWasteTypeTabStyle()"
                     @click="activeTab = 'wastetype'"
+                    @mouseenter="isHoveringWasteType = true"
+                    @mouseleave="isHoveringWasteType = false"
                 >
                     Jenis Sampah
                 </button>
@@ -55,6 +59,34 @@ import WasteTypeManagement from '@/components/ManajemenWasteType.vue'
 import { theme } from '@/helpers/theme'
 
 const activeTab = ref<'category' | 'wastetype'>('category')
+const isHoveringCategory = ref(false)
+const isHoveringWasteType = ref(false)
+
+const getCategoryTabStyle = () => {
+    if (activeTab.value === 'category') {
+        return { ...tabStyle, ...activeTabStyle }
+    } else if (isHoveringCategory.value) {
+        return {
+            ...tabStyle,
+            backgroundColor: theme.colors.lightGrey,
+        }
+    } else {
+        return tabStyle
+    }
+}
+
+const getWasteTypeTabStyle = () => {
+    if (activeTab.value === 'wastetype') {
+        return { ...tabStyle, ...activeTabStyle }
+    } else if (isHoveringWasteType.value) {
+        return {
+            ...tabStyle,
+            backgroundColor: theme.colors.lightGrey,
+        }
+    } else {
+        return tabStyle
+    }
+}
 
 const layoutStyle = {
     backgroundColor: theme.colors.whiteBg,
@@ -93,7 +125,7 @@ const tabsContainerStyle = {
 
 const tabStyle = {
     padding: '8px 16px',
-    borderRadius: '6px',
+    borderRadius: '8px',
     border: `1px solid ${theme.colors.lightGrey}`,
     fontSize: theme.fonts.size.base,
     cursor: 'pointer',

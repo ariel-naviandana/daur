@@ -1,10 +1,13 @@
-import axios from 'axios'
+import apiClient from '../helpers/axios'
+import { useCsrf } from './useCsrf'
 import { WalletTransaction } from '../interfaces/WalletTransaction'
 
 export function useWalletTransactionApi() {
+    const { initCsrf } = useCsrf()
+
     const getWalletTransactions = async (): Promise<WalletTransaction[]> => {
         try {
-            const response = await axios.get('/wallet-transactions')
+            const response = await apiClient.get('/wallet-transactions')
             return response.data
         } catch (error) {
             console.error('Error fetching wallet transactions:', error)
@@ -14,7 +17,7 @@ export function useWalletTransactionApi() {
 
     const getWalletTransaction = async (id: number): Promise<WalletTransaction | null> => {
         try {
-            const response = await axios.get(`/wallet-transactions/${id}`)
+            const response = await apiClient.get(`/wallet-transactions/${id}`)
             return response.data
         } catch (error) {
             console.error('Error fetching wallet transaction:', error)
@@ -24,15 +27,11 @@ export function useWalletTransactionApi() {
 
     const saveWalletTransaction = async (form: WalletTransaction): Promise<boolean> => {
         try {
-            const config = {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            }
+            await initCsrf()
             if (form.id) {
-                await axios.put(`/wallet-transactions/${form.id}`, form, config)
+                await apiClient.put(`/wallet-transactions/${form.id}`, form)
             } else {
-                await axios.post('/wallet-transactions', form, config)
+                await apiClient.post('/wallet-transactions', form)
             }
             return true
         } catch (error) {
@@ -43,11 +42,8 @@ export function useWalletTransactionApi() {
 
     const deleteWalletTransaction = async (id: number): Promise<boolean> => {
         try {
-            await axios.delete(`/wallet-transactions/${id}`, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                },
-            })
+            await initCsrf()
+            await apiClient.delete(`/wallet-transactions/${id}`)
             return true
         } catch (error) {
             console.error('Error deleting wallet transaction:', error)
