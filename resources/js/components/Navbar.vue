@@ -49,22 +49,27 @@
                 <template v-else>
                     <div class="flex items-center gap-4">
                         <a href="#" @click.prevent="toggleDropdown" :style="profileLinkStyle">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="35"
-                                height="35"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                :style="iconStyle"
-                            >
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <circle cx="12" cy="10" r="3"></circle>
-                                <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
-                            </svg>
+                            <template v-if="user.profile_picture">
+                                <img :src="user.profile_picture" alt="Profile Picture" :style="profilePictureStyle" />
+                            </template>
+                            <template v-else>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="35"
+                                    height="35"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    :style="iconStyle"
+                                >
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                    <path d="M7 18.5c.9-2.3 2.5-3.5 5-3.5s4.1 1.2 5 3.5"></path>
+                                </svg>
+                            </template>
                         </a>
                         <div
                             v-if="showDropdown"
@@ -249,6 +254,13 @@ const profileLinkStyle = {
     alignItems: 'center',
     justifyContent: 'center',
 }
+
+const profilePictureStyle = {
+    width: '35px',
+    height: '35px',
+    borderRadius: '50%',
+    objectFit: 'cover',
+}
 </script>
 
 <style scoped>
@@ -268,7 +280,7 @@ a:hover {
 }
 
 .login-button:hover {
-    background-color: #388E3C; /* warna hijau lebih gelap */
-    transform: scale(1.1);     /* membesarkan tombol */
+    background-color: #388E3C;
+    transform: scale(1.1);
 }
 </style>
