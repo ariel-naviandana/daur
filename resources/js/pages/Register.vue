@@ -6,7 +6,6 @@
                 <h2 :style="titleStyle">Daftar</h2>
                 <p :style="subtitleStyle">buat akun Anda</p>
 
-                <!-- Form Register -->
                 <form :style="formStyle" @submit.prevent="handleRegister">
                     <label>Nama</label>
                     <input type="text" placeholder="Masukkan nama" v-model="name" required />
@@ -14,6 +13,28 @@
                     <input type="email" placeholder="Masukkan email" v-model="email" required />
                     <label>Kata sandi</label>
                     <input type="password" placeholder="Masukkan kata sandi" v-model="password" required />
+                    <div v-if="password" :style="passwordCriteriaStyle">
+                        <p :style="getCriteriaStyle(hasMinLength)">
+                            <span :style="checklistIconStyle(hasMinLength)"> {{ hasMinLength ? '✓' : '✗' }} </span>
+                            Minimal 8 karakter
+                        </p>
+                        <p :style="getCriteriaStyle(hasLowercase)">
+                            <span :style="checklistIconStyle(hasLowercase)"> {{ hasLowercase ? '✓' : '✗' }} </span>
+                            Huruf kecil (a-z)
+                        </p>
+                        <p :style="getCriteriaStyle(hasUppercase)">
+                            <span :style="checklistIconStyle(hasUppercase)"> {{ hasUppercase ? '✓' : '✗' }} </span>
+                            Huruf besar (A-Z)
+                        </p>
+                        <p :style="getCriteriaStyle(hasNumber)">
+                            <span :style="checklistIconStyle(hasNumber)"> {{ hasNumber ? '✓' : '✗' }} </span>
+                            Angka (0-9)
+                        </p>
+                        <p :style="getCriteriaStyle(hasSpecialChar)">
+                            <span :style="checklistIconStyle(hasSpecialChar)"> {{ hasSpecialChar ? '✓' : '✗' }} </span>
+                            Karakter khusus (!@#$%^&*)
+                        </p>
+                    </div>
                     <label>Konfirmasi kata sandi</label>
                     <input type="password" placeholder="Masukkan ulang kata sandi" v-model="confirmPassword" required />
 
@@ -27,7 +48,6 @@
             </div>
         </div>
 
-        <!-- PopupNotifikasi -->
         <PopupNotifikasi
             :isOpen="popup.isOpen"
             :title="popup.title"
@@ -38,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useAuthApi } from '@/composables/useAuthApi'
 import { User } from '@/interfaces/User'
 import PopupNotifikasi from '@/components/PopupNotifikasi.vue'
@@ -56,15 +76,55 @@ const popup = reactive({
     message: ''
 })
 
+const hasMinLength = computed(() => password.value.length >= 8)
+const hasLowercase = computed(() => /[a-z]/.test(password.value))
+const hasUppercase = computed(() => /[A-Z]/.test(password.value))
+const hasNumber = computed(() => /\d/.test(password.value))
+const hasSpecialChar = computed(() => /[!@#$%^&*]/.test(password.value))
+
+const isPasswordValid = computed(() =>
+    hasMinLength.value &&
+    hasLowercase.value &&
+    hasUppercase.value &&
+    hasNumber.value &&
+    hasSpecialChar.value
+)
+
 const showPopup = (title: string, message: string) => {
     popup.title = title
     popup.message = message
     popup.isOpen = true
 }
 
+const getCriteriaStyle = (isValid: boolean) => ({
+    color: isValid ? '#4CAF50' : '#FF0000',
+    fontSize: '12px',
+    margin: '4px 0',
+    display: 'flex',
+    alignItems: 'center'
+})
+
+const checklistIconStyle = (isValid: boolean) => ({
+    display: 'inline-block',
+    width: '16px',
+    textAlign: 'center',
+    marginRight: '8px',
+    fontWeight: 'bold'
+})
+
+const passwordCriteriaStyle = {
+    marginTop: '8px',
+    textAlign: 'left'
+}
+
 const handleRegister = async () => {
     if (!name.value || !email.value || !password.value || !confirmPassword.value) {
         showPopup('Peringatan', 'Mohon lengkapi semua data.')
+        return
+    }
+
+    if (!isPasswordValid.value) {
+        showPopup('Peringatan', 'Kata sandi tidak memenuhi kriteria.')
         return
     }
 
@@ -83,10 +143,9 @@ const handleRegister = async () => {
     const user = await register(userData as User)
     if (user) {
         showPopup('Sukses', 'Pendaftaran berhasil!')
-        // Redirect setelah popup ditutup
         const closeWatcher = watch(() => popup.isOpen, (val) => {
             if (!val) {
-                closeWatcher() // stop watch
+                closeWatcher()
                 window.location.href = '/login'
             }
         })
