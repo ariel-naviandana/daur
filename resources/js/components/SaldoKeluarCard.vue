@@ -11,6 +11,7 @@
                 </div>
             </div>
 
+            //Field tujuan transfer
             <div :style="tujuanTransfer">
                 <p style="color: #aaa; fontSize: 0.85rem;">
                     {{ transaction.method ? (transaction.method.toUpperCase() + ' — ') : '' }}
