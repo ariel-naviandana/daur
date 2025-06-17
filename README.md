@@ -1,61 +1,227 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<h1 align="center">
+    <img width="450px" src="https://github.com/user-attachments/assets/5c5cd5db-64f8-45f4-a5d7-2890c3d52bcc">
+</h1>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+## DAUR - Aplikasi Web Pengelolaan Sampah
+<p allign="justify">
+DAUR adalah aplikasi web yang dirancang untuk membantu masyarakat dalam mengelola sampah secara digital. Aplikasi ini memungkinkan pengguna untuk memilah sampah, mengajukan layanan daur ulang (pick-up atau self drop), terhubung dengan bank sampah terdekat, serta memperoleh saldo dari hasil daur ulang. DAUR juga menyediakan fitur edukasi tentang jenis-jenis sampah dan memfasilitasi komunikasi antara pengguna dan pengelola sampah.
 </p>
 
-## About Laravel
+## Cara instalasi dan menjalankan aplikasi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- a
+- a
+- a
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Struktur proyek
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+📦app
+ ┣ 📂Http
+ ┃ ┣ 📂Controllers
+ ┃ ┃ ┣ 📜AdminPageController.php
+ ┃ ┃ ┣ 📜ArticleController.php
+ ┃ ┃ ┣ 📜AuthController.php
+ ┃ ┃ ┣ 📜BankController.php
+ ┃ ┃ ┣ 📜CategoryController.php
+ ┃ ┃ ┣ 📜ChatController.php
+ ┃ ┃ ┣ 📜Controller.php
+ ┃ ┃ ┣ 📜PageController.php
+ ┃ ┃ ┣ 📜RecycleTransactionController.php
+ ┃ ┃ ┣ 📜RecycleTransactionItemController.php
+ ┃ ┃ ┣ 📜UserController.php
+ ┃ ┃ ┣ 📜WalletController.php
+ ┃ ┃ ┣ 📜WalletTransactionController.php
+ ┃ ┃ ┗ 📜WasteTypeController.php
+ ┃ ┗ 📂Middleware
+ ┃ ┃ ┣ 📜AuthMiddleware.php
+ ┃ ┃ ┣ 📜ForceHttps.php
+ ┃ ┃ ┣ 📜NoCacheMiddleware.php
+ ┃ ┃ ┗ 📜RedirectToHome.php
+ ┣ 📂Models
+ ┃ ┣ 📜Article.php
+ ┃ ┣ 📜Bank.php
+ ┃ ┣ 📜Category.php
+ ┃ ┣ 📜Chat.php
+ ┃ ┣ 📜RecycleTransaction.php
+ ┃ ┣ 📜RecycleTransactionItem.php
+ ┃ ┣ 📜User.php
+ ┃ ┣ 📜Wallet.php
+ ┃ ┣ 📜WalletTransaction.php
+ ┃ ┗ 📜WasteType.php
+ ┗ 📂Providers
+ ┃ ┗ 📜AppServiceProvider.php
+📦public
+ ┣ 📂build
+ ┃ ┣ 📂assets
+ ┃ ┗ 📜manifest.json
+ ┣ 📂images
+ ┃ ┣ 📜artikel2.jpg
+ ┃ ┣ 📜Artikel3.png
+ ┃ ┣ 📜artikel4.jpg
+ ┃ ┣ 📜artikel5.jpg
+ ┃ ┣ 📜back-btn.svg
+ ┃ ┣ 📜camera-icon.svg
+ ┃ ┣ 📜edit.png
+ ┃ ┣ 📜hero-image.png
+ ┃ ┣ 📜ic-transaction.svg
+ ┃ ┣ 📜icon-upload.svg
+ ┃ ┣ 📜icon_article.svg
+ ┃ ┣ 📜icon_history.svg
+ ┃ ┣ 📜icon_plus.svg
+ ┃ ┣ 📜ic_chat.svg
+ ┃ ┣ 📜ic_jenis_aluminium.svg
+ ┃ ┣ 📜ic_jenis_alumunium.svg
+ ┃ ┣ 📜ic_jenis_besi.svg
+ ┃ ┣ 📜ic_jenis_botol_kaca.svg
+ ┃ ┣ 📜ic_jenis_botol_plastik.svg
+ ┃ ┣ 📜ic_jenis_kardus.svg
+ ┃ ┣ 📜ic_jenis_kertas.svg
+ ┃ ┣ 📜ic_manajemen_user.svg
+ ┃ ┣ 📜ic_search.svg
+ ┃ ┣ 📜image.png
+ ┃ ┣ 📜langkah1.svg
+ ┃ ┣ 📜langkah2.svg
+ ┃ ┣ 📜langkah3.svg
+ ┃ ┣ 📜langkah4.svg
+ ┃ ┣ 📜list-icon.png
+ ┃ ┣ 📜logo-daur.png
+ ┃ ┣ 📜marker-icon-2x.png
+ ┃ ┣ 📜marker-icon.png
+ ┃ ┣ 📜marker-shadow.png
+ ┃ ┣ 📜money-in.svg
+ ┃ ┣ 📜money-out.svg
+ ┃ ┣ 📜money.png
+ ┃ ┣ 📜people.png
+ ┃ ┣ 📜profile-icon.svg
+ ┃ ┣ 📜profile-pict-holder.svg
+ ┃ ┣ 📜recycle-image.png
+ ┃ ┣ 📜send-icon.svg
+ ┃ ┣ 📜transfer.png
+ ┃ ┣ 📜trash.png
+ ┃ ┣ 📜user-icon.png
+ ┃ ┗ 📜withdraw-icon.svg
+ ┣ 📜.htaccess
+ ┣ 📜favicon.ico
+ ┣ 📜index.php
+ ┗ 📜robots.txt
+📦resources
+ ┣ 📂css
+ ┃ ┗ 📜app.css
+ ┣ 📂js
+ ┃ ┣ 📂components
+ ┃ ┃ ┣ 📜ArtikelCard.vue
+ ┃ ┃ ┣ 📜BankCard.vue
+ ┃ ┃ ┣ 📜CategoryCard.vue
+ ┃ ┃ ┣ 📜CategoryList.vue
+ ┃ ┃ ┣ 📜ChatList.vue
+ ┃ ┃ ┣ 📜ChatWindow.vue
+ ┃ ┃ ┣ 📜FormArticle.vue
+ ┃ ┃ ┣ 📜InfoCard.vue
+ ┃ ┃ ┣ 📜ManajemenArtikelCard.vue
+ ┃ ┃ ┣ 📜ManajemenCategory.vue
+ ┃ ┃ ┣ 📜ManajemenWasteType.vue
+ ┃ ┃ ┣ 📜MessageInput.vue
+ ┃ ┃ ┣ 📜MutasiSaldoCard.vue
+ ┃ ┃ ┣ 📜Navbar.vue
+ ┃ ┃ ┣ 📜PermintaanPenarikanCard.vue
+ ┃ ┃ ┣ 📜PopupConfirm.vue
+ ┃ ┃ ┣ 📜PopupDelete.vue
+ ┃ ┃ ┣ 📜PopupDeleteArticle.vue
+ ┃ ┃ ┣ 📜PopupDetailRecycle.vue
+ ┃ ┃ ┣ 📜PopupDetailSampah.vue
+ ┃ ┃ ┣ 📜PopupEdit.vue
+ ┃ ┃ ┣ 📜PopupEditArticle.vue
+ ┃ ┃ ┣ 📜PopupEditRole.vue
+ ┃ ┃ ┣ 📜PopupFormBank.vue
+ ┃ ┃ ┣ 📜PopupFormCategory.vue
+ ┃ ┃ ┣ 📜PopupFormWasteType.vue
+ ┃ ┃ ┣ 📜PopupNotifikasi.vue
+ ┃ ┃ ┣ 📜PopupSimpanProfile.vue
+ ┃ ┃ ┣ 📜PopupWithdrawal.vue
+ ┃ ┃ ┣ 📜ProfileIcon.vue
+ ┃ ┃ ┣ 📜RecycleCard.vue
+ ┃ ┃ ┣ 📜SaldoCard.vue
+ ┃ ┃ ┣ 📜SaldoKeluarCard.vue
+ ┃ ┃ ┣ 📜SaldoMasukCard.vue
+ ┃ ┃ ┣ 📜TransactionCard.vue
+ ┃ ┃ ┣ 📜UserStatCard.vue
+ ┃ ┃ ┗ 📜WasteTypeCard.vue
+ ┃ ┣ 📂composables
+ ┃ ┃ ┣ 📜useArticleApi.ts
+ ┃ ┃ ┣ 📜useAuthApi.ts
+ ┃ ┃ ┣ 📜useBankApi.ts
+ ┃ ┃ ┣ 📜useCategoryApi.ts
+ ┃ ┃ ┣ 📜useChatApi.ts
+ ┃ ┃ ┣ 📜useCsrf.ts
+ ┃ ┃ ┣ 📜useImageApi.ts
+ ┃ ┃ ┣ 📜useRecycleTransactionApi.ts
+ ┃ ┃ ┣ 📜useRecycleTransactionItemApi.ts
+ ┃ ┃ ┣ 📜useUserApi.ts
+ ┃ ┃ ┣ 📜useWalletApi.ts
+ ┃ ┃ ┣ 📜useWalletTransactionApi.ts
+ ┃ ┃ ┗ 📜useWasteTypeApi.ts
+ ┃ ┣ 📂helpers
+ ┃ ┃ ┣ 📜axios.ts
+ ┃ ┃ ┗ 📜theme.ts
+ ┃ ┣ 📂interfaces
+ ┃ ┃ ┣ 📜Article.ts
+ ┃ ┃ ┣ 📜Bank.ts
+ ┃ ┃ ┣ 📜Category.ts
+ ┃ ┃ ┣ 📜Chat.ts
+ ┃ ┃ ┣ 📜RecycleTransaction.ts
+ ┃ ┃ ┣ 📜RecycleTransactionItem.ts
+ ┃ ┃ ┣ 📜User.ts
+ ┃ ┃ ┣ 📜Wallet.ts
+ ┃ ┃ ┣ 📜WalletTransaction.ts
+ ┃ ┃ ┗ 📜WasteType.ts
+ ┃ ┣ 📂pages
+ ┃ ┃ ┣ 📜Artikel.vue
+ ┃ ┃ ┣ 📜Chat.vue
+ ┃ ┃ ┣ 📜Home.vue
+ ┃ ┃ ┣ 📜HomeAdmin.vue
+ ┃ ┃ ┣ 📜Login.vue
+ ┃ ┃ ┣ 📜ManajemenArtikel.vue
+ ┃ ┃ ┣ 📜ManajemenBank.vue
+ ┃ ┃ ┣ 📜ManajemenRecycle.vue
+ ┃ ┃ ┣ 📜ManajemenSaldo.vue
+ ┃ ┃ ┣ 📜ManajemenSampah.vue
+ ┃ ┃ ┣ 📜ManajemenUser.vue
+ ┃ ┃ ┣ 📜Profile.vue
+ ┃ ┃ ┣ 📜Recycle.vue
+ ┃ ┃ ┣ 📜Register.vue
+ ┃ ┃ ┣ 📜RiwayatRecycle.vue
+ ┃ ┃ ┗ 📜Saldo.vue
+ ┃ ┣ 📂stores
+ ┃ ┃ ┗ 📜auth.ts
+ ┃ ┣ 📜app.ts
+ ┃ ┗ 📜bootstrap.js
+ ┗ 📂views
+ ┃ ┣ 📜admin-users.blade.php
+ ┃ ┣ 📜artikel.blade.php
+ ┃ ┣ 📜chat.blade.php
+ ┃ ┣ 📜home-admin.blade.php
+ ┃ ┣ 📜home.blade.php
+ ┃ ┣ 📜login.blade.php
+ ┃ ┣ 📜manajemen-artikel.blade.php
+ ┃ ┣ 📜manajemen-bank.blade.php
+ ┃ ┣ 📜manajemen-recycle.blade.php
+ ┃ ┣ 📜manajemen-saldo.blade.php
+ ┃ ┣ 📜manajemen-sampah.blade.php
+ ┃ ┣ 📜master.blade.php
+ ┃ ┣ 📜profile.blade.php
+ ┃ ┣ 📜recycle.blade.php
+ ┃ ┣ 📜register.blade.php
+ ┃ ┣ 📜riwayat-recycle.blade.php
+ ┃ ┗ 📜saldo.blade.php
+📦routes
+ ┣ 📜console.php
+ ┗ 📜web.php
+📜.env
+📜composer.json
+📜package.json
+📜tsconfig.js
+📜vercel.json
+📜vite.config.js
+```
