@@ -29,8 +29,44 @@ Alternatif jika tidak dapat diakses :
   ```php artisan serve```
 5. Buka terminal baru dan jalankan
 ```npm run dev```
-  
-## Struktur proyek
+
+## Fitur-fitur utama aplikasi DAUR
+- Home
+  Informasi lengkap mengenai kategori dan jenis sampah beserta cara pengelolaannya.
+
+- Recycle (Pick-up & Self Drop)  
+  Layanan permintaan pengambilan atau pengantaran sampah ke bank sampah.
+
+- Riwayat Recycle  
+  Melacak semua transaksi daur ulang pengguna.
+
+- Chat  
+  Komunikasi langsung dengan admin atau bank sampah daerah.
+
+- Akun Pengguna
+  Kelola data akun, saldo hasil daur ulang, dan histori transaksi.
+
+- Dompet Digital (E-Wallet)  
+  Menyimpan saldo hasil daur ulang dan riwayat transaksi keuangan.
+
+- Artikel  
+  Artikel-artikel seputar lingkungan dan pengelolaan sampah.
+
+
+## Tech Stack
+![Laravel](https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white)
+
+![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+
+![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
+
+
+## Struktur Proyek
+
+<details>
+<summary>Klik untuk membuka struktur lengkap</summary>
 
 ```
 📦app
@@ -241,3 +277,39 @@ Alternatif jika tidak dapat diakses :
 📜vercel.json
 📜vite.config.js
 ```
+
+</details>
+
+### Proyek ini menggunakan arsitektur **fullstack** dengan **Laravel** untuk backend dan **Vue 3 + TypeScript** untuk frontend.
+
+#### Backend (Laravel)
+- `app/Http/Controllers/`  
+  Berisi controller utama `AuthController`, `UserController`, `WalletController`, `RecycleTransactionController`, dll.
+- `app/Http/Middleware/`  
+  Berisi middleware seperti `AuthMiddleware` & `ForceHttps` untuk keamanan.
+- `app/Models/`  
+  Eloquent model : `User`, `Article`, `RecycleTransaction`, dll.
+- `app/Providers/AppServiceProvider.php`  
+  Binding service dan konfigurasi global.
+- `routes/web.php`  
+  Routing web Laravel.
+
+#### Frontend (Vue 3 + TypeScript)
+- `resources/js/components/`  
+  Reusable UI components : `ArtikelCard.vue`, `PopupEdit.vue`, dll.
+- `resources/js/composables/`  
+  API logic (Axios) : `useUserApi.ts`, `useImageApi.ts`, dll.
+- `resources/js/interfaces/`  
+  Skema entitas TypeScript.
+- `resources/js/stores/`  
+  Manajemen state dengan Pinia (`auth.ts`, dsb).
+- `resources/js/pages/`  
+  Halaman utama : `Home.vue`, `Recycle.vue`, `ManajemenUser.vue`.
+- `vite.config.js`, `tsconfig.json`  
+  Konfigurasi build frontend.
+
+#### Lainnya
+- `public/`
+  untuk menyimpan aset statis (gambar, ikon, dll).
+- `.env`, `composer.json`, `package.json`
+  Konfigurasi lingkungan & dependensi.
