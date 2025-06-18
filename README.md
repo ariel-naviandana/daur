@@ -1,20 +1,36 @@
 <h1 align="center">
-    <img width="450px" src="https://github.com/user-attachments/assets/5c5cd5db-64f8-45f4-a5d7-2890c3d52bcc">
+    <img width="400px" src="https://github.com/user-attachments/assets/5c5cd5db-64f8-45f4-a5d7-2890c3d52bcc">
 </h1>
 
-## DAUR - Aplikasi Web Pengelolaan Sampah
+# DAUR - Aplikasi Web Pengelolaan Sampah
 <p allign="justify">
 DAUR adalah aplikasi web yang dirancang untuk membantu masyarakat dalam mengelola sampah secara digital. Aplikasi ini memungkinkan pengguna untuk memilah sampah, mengajukan layanan daur ulang (pick-up atau self drop), terhubung dengan bank sampah terdekat, serta memperoleh saldo dari hasil daur ulang. DAUR juga menyediakan fitur edukasi tentang jenis-jenis sampah dan memfasilitasi komunikasi antara pengguna dan pengelola sampah.
 </p>
 
+## CATATAN
+Pada tahap development, setiap anggota melakukan push ke branch masing-masing (ariel, ivan, farhah, satria), lalu akan di merge di branch main. Commit history selengkapnya dapat dilihat pada masing-masing branch.
+
+## Tautan video
+<a>https://youtu.be/stQZfjQeYaw</a>
+
 ## Cara instalasi dan menjalankan aplikasi
+### Cara 1
+1. Akses tautan : https://daur-seven.vercel.app/ 
+2. Melakukan Register & Login (dapat dilakukan menggunakan dummy)
 
-- a
-- a
-- a
-
+### Cara 2
+Alternatif jika tidak dapat diakses : 
+1. Clone repository github https://github.com/ariel-naviandana/daur/
+2. Pindah ke branch final
+2. Buat file .env
+3. Jalankan perintah
+  ```php artisan migrate --seed```
+4. Jalankan perintah
+  ```php artisan serve```
+5. Buka terminal baru dan jalankan
+```npm run dev```
+  
 ## Struktur proyek
----
 
 ```
 📦app
