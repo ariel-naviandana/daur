@@ -15,7 +15,7 @@ Pada tahap development, setiap anggota melakukan push ke branch masing-masing (a
 
 ## Cara instalasi dan menjalankan aplikasi
 ### Cara 1
-1. Akses tautan : https://daur-seven.vercel.app/ 
+1. Akses tautan https://daur-seven.vercel.app/ 
 2. Melakukan Register & Login (dapat dilakukan menggunakan dummy)
 
 ### Cara 2
